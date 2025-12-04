@@ -1,0 +1,314 @@
+{
+    "institution_name": "My Primary School",
+    "time_slot_length": 30,
+    "days_per_cycle": 5,
+    "slots_per_day": 9,
+    "sequence": { "venues": 3, "classes": 1, "subjects": 3 },
+    "break_slots": { "Break": [5], "Lunch": [11, 12] },
+    "classes": {
+        "grade_1a": {
+            "name": "Grade 1A",
+            "venue": "room_1",
+            "subjects": {
+                "english": { "time_slots": 4, "slots_per_day": 1 },
+                "science_and_technology": {
+                    "time_slots": 9,
+                    "slots_per_day": 2
+                },
+                "ict": { "time_slots": 3, "slots_per_day": 1 },
+                "maths": { "time_slots": 5, "slots_per_day": 1 }
+            }
+        },
+        "grade_1b": {
+            "name": "Grade 1B",
+            "venue": "room_2",
+            "subjects": {
+                "english": { "time_slots": 4, "slots_per_day": 1 },
+                "science_and_technology": {
+                    "time_slots": 9,
+                    "slots_per_day": 2
+                },
+                "ict": { "time_slots": 3, "slots_per_day": 1 },
+                "maths": { "time_slots": 5, "slots_per_day": 1 }
+            }
+        },
+        "grade_1c": {
+            "name": "Grade 1C",
+            "venue": "room_3",
+            "subjects": {
+                "english": { "time_slots": 4, "slots_per_day": 1 },
+                "science_and_technology": {
+                    "time_slots": 9,
+                    "slots_per_day": 2
+                },
+                "ict": { "time_slots": 3, "slots_per_day": 1 },
+                "maths": { "time_slots": 5, "slots_per_day": 1 }
+            }
+        },
+        "1": {
+            "name": "Grade 1D",
+            "venue": "unavailable",
+            "subjects": { "ict": { "time_slots": 4, "slots_per_day": 1 } }
+        }
+    },
+    "venues": {
+        "room_1": {
+            "name": "Room 1",
+            "location": [12.349294, 24.392941],
+            "location_description": ""
+        },
+        "room_2": {
+            "name": "Room 2",
+            "location": [12.349294, 24.392941],
+            "location_description": ""
+        },
+        "room_3": {
+            "name": "Room 3",
+            "location": [12.349294, 24.392941],
+            "location_description": ""
+        },
+        "comp_lab": {
+            "name": "Computer Lab",
+            "location": [12.349294, 24.392941],
+            "location_description": ""
+        }
+    },
+    "subjects": {
+        "english": { "name": "English", "primary_venue": "primary" },
+        "science_and_technology": {
+            "name": "Science and Technology",
+            "primary_venue": "primary"
+        },
+        "ict": { "name": "ICT", "primary_venue": "comp_lab" },
+        "maths": { "name": "Maths", "primary_venue": "primary" },
+        "3": { "name": "Art", "primary_venue": "unavailable" }
+    },
+    "time_table": {
+        "1": {
+            "1": { "grade_1b": { "subject": "English", "venue": "room_2" } },
+            "2": {
+                "grade_1a": { "subject": "English", "venue": "room_1" },
+                "grade_1b": { "subject": "ICT", "venue": "comp_lab" },
+                "grade_1c": { "subject": "Maths", "venue": "room_3" }
+            },
+            "3": { "grade_1a": { "subject": "ICT", "venue": "comp_lab" } },
+            "4": { "grade_1a": { "subject": "Maths", "venue": "room_1" } },
+            "5": "Break",
+            "6": { "grade_1b": { "subject": "Maths", "venue": "room_2" } },
+            "7": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                },
+                "1": { "subject": "ICT", "venue": "comp_lab" }
+            },
+            "8": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                }
+            },
+            "9": {
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                }
+            },
+            "11": "Lunch",
+            "12": "Lunch"
+        },
+        "2": {
+            "1": {
+                "grade_1a": { "subject": "Maths", "venue": "room_1" },
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "2": {
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "3": { "grade_1c": { "subject": "English", "venue": "room_3" } },
+            "4": {},
+            "5": "Break",
+            "6": {
+                "grade_1b": { "subject": "English", "venue": "room_2" },
+                "grade_1c": { "subject": "Maths", "venue": "room_3" }
+            },
+            "7": {},
+            "8": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1c": { "subject": "ICT", "venue": "comp_lab" }
+            },
+            "9": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1b": { "subject": "Maths", "venue": "room_2" }
+            },
+            "11": "Lunch",
+            "12": "Lunch"
+        },
+        "3": {
+            "1": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1c": { "subject": "Maths", "venue": "room_3" }
+            },
+            "2": {
+                "grade_1a": { "subject": "Maths", "venue": "room_1" },
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                }
+            },
+            "3": {
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "4": {
+                "grade_1a": { "subject": "ICT", "venue": "comp_lab" },
+                "grade_1b": { "subject": "Maths", "venue": "room_2" },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "5": "Break",
+            "6": {},
+            "7": { "grade_1b": { "subject": "ICT", "venue": "comp_lab" } },
+            "8": {},
+            "9": {
+                "grade_1a": { "subject": "English", "venue": "room_1" },
+                "grade_1c": { "subject": "English", "venue": "room_3" },
+                "1": { "subject": "ICT", "venue": "comp_lab" }
+            },
+            "11": "Lunch",
+            "12": "Lunch"
+        },
+        "4": {
+            "1": {
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                }
+            },
+            "2": {
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                },
+                "grade_1c": { "subject": "ICT", "venue": "comp_lab" }
+            },
+            "3": {
+                "grade_1a": { "subject": "ICT", "venue": "comp_lab" },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "4": {
+                "grade_1a": { "subject": "Maths", "venue": "room_1" },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                },
+                "1": { "subject": "ICT", "venue": "comp_lab" }
+            },
+            "5": "Break",
+            "6": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1b": { "subject": "ICT", "venue": "comp_lab" },
+                "grade_1c": { "subject": "Maths", "venue": "room_3" }
+            },
+            "7": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1b": { "subject": "Maths", "venue": "room_2" },
+                "grade_1c": { "subject": "English", "venue": "room_3" }
+            },
+            "8": { "grade_1b": { "subject": "English", "venue": "room_2" } },
+            "9": { "grade_1a": { "subject": "English", "venue": "room_1" } },
+            "11": "Lunch",
+            "12": "Lunch"
+        },
+        "5": {
+            "1": {
+                "grade_1a": { "subject": "English", "venue": "room_1" },
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "2": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1b": {
+                    "subject": "Science and Technology",
+                    "venue": "room_2"
+                },
+                "grade_1c": {
+                    "subject": "Science and Technology",
+                    "venue": "room_3"
+                }
+            },
+            "3": {
+                "grade_1a": {
+                    "subject": "Science and Technology",
+                    "venue": "room_1"
+                },
+                "grade_1c": { "subject": "Maths", "venue": "room_3" }
+            },
+            "4": { "grade_1c": { "subject": "English", "venue": "room_3" } },
+            "5": "Break",
+            "6": {},
+            "7": {
+                "grade_1a": { "subject": "Maths", "venue": "room_1" },
+                "grade_1b": { "subject": "Maths", "venue": "room_2" },
+                "grade_1c": { "subject": "ICT", "venue": "comp_lab" }
+            },
+            "8": { "grade_1b": { "subject": "English", "venue": "room_2" } },
+            "9": { "1": { "subject": "ICT", "venue": "comp_lab" } },
+            "11": "Lunch",
+            "12": "Lunch"
+        }
+    }
+}
