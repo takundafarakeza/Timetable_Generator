@@ -4,22 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1331588a-ba70-4966-bee5-0ce77ca602a4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Timetable_Generator.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/builders.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/data.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/dtypes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/formats.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/generators.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/logger_config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/utils.py" afterDir="false" />
+    <list default="true" id="1331588a-ba70-4966-bee5-0ce77ca602a4" name="Changes" comment="Primary">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/generators.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/generators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/logger_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/logger_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +53,7 @@
       <recent name="C:\Projects\Python\Timetable_Generator" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Timetable_Generator" />
       <option name="ENV_FILES" value="" />
@@ -131,6 +120,19 @@
       <option name="presentableId" value="Default" />
       <updated>1762062178092</updated>
     </task>
+    <task id="LOCAL-00001" summary="Primary">
+      <option name="closed" value="true" />
+      <created>1764823446700</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1764823446700</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Primary" />
+    <option name="LAST_COMMIT_MESSAGE" value="Primary" />
   </component>
 </project>

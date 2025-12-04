@@ -24,8 +24,9 @@ class PrimarySchool:
 
                 days = [str(day) for day in range(1, self.time_table_template.days_per_cycle + 1)]
                 random.shuffle(days)
+                day_count = self.time_table_template.days_per_cycle
 
-                while remaining_slots > 0:
+                while remaining_slots > 0 and day_count > 0:
 
                     for day in days:
 
@@ -34,16 +35,17 @@ class PrimarySchool:
                                                              not in self.time_table_template.breaks and
                                                              self.is_empty(slots[slot], class_, venue)],
                                                             subject["slots_per_day"])
-                        assignment_count = min(remaining_slots, len(empty_slots), subject["slots_per_day"])
+                        assign_count = min(remaining_slots, len(empty_slots), subject["slots_per_day"])
 
-                        while assignment_count > 0:
-                            slots[empty_slots[(assignment_count - assignment_count) ** 2]][class_] = \
+                        while assign_count > 0:
+                            slots[empty_slots[0]][class_] = \
                                 {Types.SUBJECT: self.time_table_template.subjects[subject_id][Types.NAME],
                                  Types.VENUE: venue}
 
-                            empty_slots.remove(empty_slots[(assignment_count - assignment_count) ** 2])
-                            assignment_count -= 1
-                        remaining_slots -= subject["slots_per_day"]
+                            empty_slots.remove(empty_slots[0])
+                            assign_count -= 1
+                            remaining_slots -= 1
+                        day_count -= 1
         return self.time_table_template.time_table
 
     # def patch(self, class_: str, subject_id: str,

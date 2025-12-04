@@ -51,7 +51,7 @@ class Utils:
         if not base_path or not os.path.exists(base_path):
             base_path = os.getenv('APPDATA')
 
-        app_path = os.path.join(base_path, app_name, app_name)
+        app_path = os.path.join(base_path, app_name)
         Path(app_path).mkdir(parents=True, exist_ok=True)
 
         return app_path
