@@ -1,0 +1,275 @@
+{
+    "institution_name": "Test State University",
+    "time_slot_length": 120,
+    "days_per_cycle": 5,
+    "slots_per_day": 4,
+    "sequence": {
+        "courses": 6,
+        "modules": 15,
+        "venues": 10,
+        "lecturers": 14,
+        "blocks": 0
+    },
+    "break_slots": [],
+    "courses": {
+        "1": { "name": "Computer Science", "short_name": "CSC" },
+        "2": { "name": "Computer Systems Engineering", "short_name": "CSE" },
+        "3": { "name": "Cyber Security", "short_name": "CS" },
+        "4": { "name": "Software Engineering", "short_name": "SWE" },
+        "5": {
+            "name": "Artificial Intelligence and Machine Learning",
+            "short_name": "AIML"
+        },
+        "6": { "name": "Cloud Computing", "short_name": "CC" }
+    },
+    "modules": {
+        "1": {
+            "name": "Calculus 1",
+            "code": "HMAT131",
+            "lecturer": "1",
+            "courses": {
+                "2": { "level": "1.1", "course_module_code": "HMAT131" }
+            },
+            "venues": ["1"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "2": {
+            "name": "Discrete Mathematics",
+            "code": "HMAT133",
+            "lecturer": "1",
+            "courses": {
+                "2": { "level": "1.2", "course_module_code": "HMAT133" },
+                "1": { "level": "1.2", "course_module_code": "HMAT133" }
+            },
+            "venues": ["1", "2"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "3": {
+            "name": "Linear Algebra",
+            "code": "HCSE 232",
+            "lecturer": "2",
+            "courses": {},
+            "venues": ["1"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "4": {
+            "name": "Physics 1",
+            "code": "HTENG132",
+            "lecturer": "4",
+            "courses": {
+                "1": { "level": "1.1", "course_module_code": "HTENG132" }
+            },
+            "venues": ["10"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "5": {
+            "name": "Communication Skills",
+            "code": "CS131",
+            "lecturer": "6",
+            "courses": {
+                "1": { "level": "1.1", "course_module_code": "CS131" }
+            },
+            "venues": ["8"],
+            "time_slots": 1,
+            "slots_per_day": 1
+        },
+        "6": {
+            "name": "Database Systems",
+            "code": "HCSE134",
+            "lecturer": "3",
+            "courses": {
+                "1": { "level": "1.2", "course_module_code": "HCSE134" }
+            },
+            "venues": ["2", "3", "4"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "7": {
+            "name": "Software Engineering",
+            "code": "HCSCI136",
+            "lecturer": "11",
+            "courses": {},
+            "venues": ["3", "4"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "8": {
+            "name": "Digital Electronics",
+            "code": "HCSE135",
+            "lecturer": "13",
+            "courses": {},
+            "venues": ["2", "3"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "9": {
+            "name": "Ethics and Professionalism",
+            "code": "HCSE133",
+            "lecturer": "6",
+            "courses": {},
+            "venues": ["2"],
+            "time_slots": 1,
+            "slots_per_day": 1
+        },
+        "10": {
+            "name": "Introduction to Computer Engineering",
+            "code": "HCSE131",
+            "lecturer": "14",
+            "courses": {},
+            "venues": ["3", "4"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "11": {
+            "name": "Algorithms and Data Structures",
+            "code": "HCSCI134",
+            "lecturer": "3",
+            "courses": {},
+            "venues": ["3", "4"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "12": {
+            "name": "Operating Systems",
+            "code": "HCSCI231",
+            "lecturer": "3",
+            "courses": {},
+            "venues": ["1"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "13": {
+            "name": "Computer Architecture and Organisation",
+            "code": "HCSE 232",
+            "lecturer": "7",
+            "courses": {},
+            "venues": ["2", "3", "4"],
+            "time_slots": 2,
+            "slots_per_day": 1
+        },
+        "14": {
+            "name": "Gender Studies",
+            "code": "GS231",
+            "lecturer": "6",
+            "courses": {},
+            "venues": ["9"],
+            "time_slots": 1,
+            "slots_per_day": 1
+        },
+        "15": {
+            "name": "Technopreneurship",
+            "code": "TCNP201",
+            "lecturer": "12",
+            "courses": {},
+            "venues": ["7"],
+            "time_slots": 1,
+            "slots_per_day": 1
+        }
+    },
+    "venues": {
+        "unavailable": {
+            "name": "Unavailable",
+            "location": [0, 0],
+            "location_description": "Unavailable"
+        },
+        "1": {
+            "name": "Maths Room 1",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "2": {
+            "name": "Computer Lab 1",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "3": {
+            "name": "Computer Lab 2",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "4": {
+            "name": "Computer Lab 30",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "5": {
+            "name": "RSSB 4",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "6": {
+            "name": "RSSB 6",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "7": {
+            "name": "RSSB 9",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "8": {
+            "name": "RSSB 15",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "9": { "name": "ELT", "location": [0, 0], "location_description": "" },
+        "10": {
+            "name": "Physics Lab 1",
+            "location": [0, 0],
+            "location_description": ""
+        }
+    },
+    "lecturers": {
+        "unavailable": { "name": "Unavailable" },
+        "1": { "name": "Mr Shauns" },
+        "2": { "name": "Mr Mose" },
+        "3": { "name": "Mr Yin" },
+        "4": { "name": "Mrs Chen" },
+        "5": { "name": "Mr Givins" },
+        "6": { "name": "Mrs West" },
+        "7": { "name": "Mrs Cho" },
+        "8": { "name": "Mr Redcliff" },
+        "9": { "name": "Mr Moyo" },
+        "10": { "name": "Mrs Charles" },
+        "11": { "name": "Mr Quest" },
+        "12": { "name": "Mr Zvega" },
+        "13": { "name": "Mr Vega" },
+        "14": { "name": "Mrs Yolo" }
+    },
+    "time_table": {
+        "1": {
+            "1": {
+                "1": { "venue": "1", "courses": ["CSE-1.1"] },
+                "5": { "venue": "8", "courses": ["CSC-1.1"] },
+                "6": { "venue": "4", "courses": ["CSC-1.2"] }
+            },
+            "2": {},
+            "3": {},
+            "4": {
+                "2": { "venue": "2", "courses": ["CSE-1.2", "CSC-1.2"] },
+                "4": { "venue": "10", "courses": ["CSC-1.1"] }
+            }
+        },
+        "2": {
+            "1": {},
+            "2": {},
+            "3": {},
+            "4": { "4": { "venue": "10", "courses": ["CSC-1.1"] } }
+        },
+        "3": { "1": {}, "2": {}, "3": {}, "4": {} },
+        "4": { "1": {}, "2": {}, "3": {}, "4": {} },
+        "5": {
+            "1": {},
+            "2": {},
+            "3": { "2": { "venue": "2", "courses": ["CSE-1.2", "CSC-1.2"] } },
+            "4": {
+                "1": { "venue": "1", "courses": ["CSE-1.1"] },
+                "6": { "venue": "4", "courses": ["CSC-1.2"] }
+            }
+        }
+    }
+}

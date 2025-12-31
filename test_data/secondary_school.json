@@ -1,0 +1,821 @@
+{
+    "institution_name": "Test High School",
+    "time_slot_length": 30,
+    "days_per_cycle": 6,
+    "slots_per_day": 9,
+    "sequence": {
+        "classes": 18,
+        "subjects": 14,
+        "venues": 22,
+        "teachers": 5,
+        "blocks": 0
+    },
+    "break_slots": [],
+    "block_slots": {},
+    "classes": {
+        "1": {
+            "name": "1A",
+            "venue": "5",
+            "subjects": {
+                "1": { "teacher": "4", "time_slots": 4, "slots_per_day": 1 },
+                "2": { "teacher": "3", "time_slots": 4, "slots_per_day": 1 },
+                "3": { "teacher": "5", "time_slots": 4, "slots_per_day": 1 },
+                "5": { "teacher": "1", "time_slots": 4, "slots_per_day": 1 }
+            }
+        },
+        "2": {
+            "name": "1B",
+            "venue": "6",
+            "subjects": {
+                "1": { "teacher": "4", "time_slots": 4, "slots_per_day": 1 },
+                "2": { "teacher": "3", "time_slots": 4, "slots_per_day": 1 },
+                "3": { "teacher": "5", "time_slots": 4, "slots_per_day": 1 },
+                "5": { "teacher": "1", "time_slots": 4, "slots_per_day": 1 }
+            }
+        },
+        "3": {
+            "name": "1C",
+            "venue": "7",
+            "subjects": {
+                "1": { "teacher": "4", "time_slots": 4, "slots_per_day": 1 },
+                "2": { "teacher": "3", "time_slots": 4, "slots_per_day": 1 },
+                "3": { "teacher": "5", "time_slots": 4, "slots_per_day": 1 },
+                "5": { "teacher": "1", "time_slots": 4, "slots_per_day": 1 }
+            }
+        },
+        "4": {
+            "name": "2A",
+            "venue": "8",
+            "subjects": {
+                "1": { "teacher": "4", "time_slots": 3, "slots_per_day": 2 },
+                "2": { "teacher": "3", "time_slots": 4, "slots_per_day": 1 },
+                "3": { "teacher": "5", "time_slots": 4, "slots_per_day": 1 },
+                "5": { "teacher": "1", "time_slots": 3, "slots_per_day": 1 }
+            }
+        },
+        "5": {
+            "name": "2B",
+            "venue": "9",
+            "subjects": {
+                "1": { "teacher": "4", "time_slots": 3, "slots_per_day": 2 },
+                "2": { "teacher": "3", "time_slots": 4, "slots_per_day": 1 },
+                "3": { "teacher": "5", "time_slots": 4, "slots_per_day": 1 },
+                "5": { "teacher": "1", "time_slots": 3, "slots_per_day": 1 }
+            }
+        },
+        "6": {
+            "name": "2C",
+            "venue": "10",
+            "subjects": {
+                "1": { "teacher": "4", "time_slots": 3, "slots_per_day": 2 },
+                "2": { "teacher": "3", "time_slots": 4, "slots_per_day": 1 },
+                "3": { "teacher": "5", "time_slots": 4, "slots_per_day": 1 },
+                "5": { "teacher": "1", "time_slots": 3, "slots_per_day": 1 }
+            }
+        },
+        "7": { "name": "3 Com 1", "venue": "11", "subjects": {} },
+        "8": { "name": "3 Com 2", "venue": "12", "subjects": {} },
+        "9": { "name": "3 Sciences", "venue": "13", "subjects": {} },
+        "10": { "name": "4 Com 1", "venue": "14", "subjects": {} },
+        "11": { "name": "4 Com 2", "venue": "15", "subjects": {} },
+        "12": { "name": "4 Sciences", "venue": "16", "subjects": {} },
+        "13": { "name": "L6 Arts", "venue": "17", "subjects": {} },
+        "14": { "name": "L6 Tutorials", "venue": "18", "subjects": {} },
+        "15": { "name": "L6 Sciences", "venue": "19", "subjects": {} },
+        "16": { "name": "U6 Arts", "venue": "20", "subjects": {} },
+        "17": { "name": "U6 Tutorials", "venue": "21", "subjects": {} },
+        "18": { "name": "U6 Sciences", "venue": "22", "subjects": {} }
+    },
+    "subjects": {
+        "1": { "name": "Shona", "primary_venue": "primary" },
+        "2": { "name": "English", "primary_venue": "primary" },
+        "3": { "name": "Maths", "primary_venue": "primary" },
+        "4": { "name": "Heritage", "primary_venue": "primary" },
+        "5": { "name": "Accounts", "primary_venue": "primary" },
+        "6": { "name": "Biology", "primary_venue": "3" },
+        "8": { "name": "Physics", "primary_venue": "2" },
+        "9": { "name": "Chemistry", "primary_venue": "4" },
+        "10": { "name": "Economics", "primary_venue": "primary" },
+        "11": { "name": "Statistics", "primary_venue": "primary" },
+        "12": { "name": "Pure Maths", "primary_venue": "primary" },
+        "13": { "name": "Computer Science", "primary_venue": "1" },
+        "14": { "name": "Combined Science", "primary_venue": "primary" }
+    },
+    "venues": {
+        "unavailable": {
+            "name": "Unavailable",
+            "location": [0, 0],
+            "location_description": "Unavailable"
+        },
+        "1": {
+            "name": "Computer Lab",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "2": {
+            "name": "Physics Lab",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "3": {
+            "name": "Biology Lab",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "4": {
+            "name": "Chemistry Lab",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "5": { "name": "1A", "location": [0, 0], "location_description": "" },
+        "6": { "name": "1B", "location": [0, 0], "location_description": "" },
+        "7": { "name": "1C", "location": [0, 0], "location_description": "" },
+        "8": { "name": "2A", "location": [0, 0], "location_description": "" },
+        "9": { "name": "2B", "location": [0, 0], "location_description": "" },
+        "10": { "name": "2C", "location": [0, 0], "location_description": "" },
+        "11": {
+            "name": "3 Com 1",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "12": {
+            "name": "3 Com 2",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "13": {
+            "name": "3 Sciences",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "14": {
+            "name": "4 Com 1",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "15": {
+            "name": "4 Com 2",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "16": {
+            "name": "4 Sciences",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "17": {
+            "name": "L6 Arts",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "18": {
+            "name": "L6 Tutorials",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "19": {
+            "name": "L6 Sciences",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "20": {
+            "name": "U6 Arts",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "21": {
+            "name": "U6 Tutorials",
+            "location": [0, 0],
+            "location_description": ""
+        },
+        "22": {
+            "name": "U6 Sciences",
+            "location": [0, 0],
+            "location_description": ""
+        }
+    },
+    "teachers": {
+        "unavailable": { "name": "Unavailable" },
+        "1": { "name": "Mr Kay" },
+        "2": { "name": "Mr Cho" },
+        "3": { "name": "Mrs Lim" },
+        "4": { "name": "Mr Moyo" },
+        "5": { "name": "Mrs Rodriguez" }
+    },
+    "time_table": {
+        "1": {
+            "1": {
+                "data": {
+                    "teachers": ["3", "1"],
+                    "venues": ["5", "6"],
+                    "classes": ["1", "2"]
+                },
+                "events": {
+                    "1": { "subject": "English", "venue": "5", "teacher": "3" },
+                    "2": { "subject": "Accounts", "venue": "6", "teacher": "1" }
+                }
+            },
+            "2": {
+                "data": { "teachers": [], "venues": [], "classes": [] },
+                "events": {}
+            },
+            "3": {
+                "data": {
+                    "teachers": ["3", "5"],
+                    "venues": ["6", "10"],
+                    "classes": ["2", "6"]
+                },
+                "events": {
+                    "2": { "subject": "English", "venue": "6", "teacher": "3" },
+                    "6": { "subject": "Maths", "venue": "10", "teacher": "5" }
+                }
+            },
+            "4": {
+                "data": {
+                    "teachers": ["1"],
+                    "venues": ["7"],
+                    "classes": ["3"]
+                },
+                "events": {
+                    "3": { "subject": "Accounts", "venue": "7", "teacher": "1" }
+                }
+            },
+            "5": {
+                "data": {
+                    "teachers": ["5", "3"],
+                    "venues": ["5", "8"],
+                    "classes": ["1", "4"]
+                },
+                "events": {
+                    "1": { "subject": "Maths", "venue": "5", "teacher": "5" },
+                    "4": { "subject": "English", "venue": "8", "teacher": "3" }
+                }
+            },
+            "6": {
+                "data": {
+                    "teachers": ["5", "1"],
+                    "venues": ["6", "10"],
+                    "classes": ["2", "6"]
+                },
+                "events": {
+                    "2": { "subject": "Maths", "venue": "6", "teacher": "5" },
+                    "6": {
+                        "subject": "Accounts",
+                        "venue": "10",
+                        "teacher": "1"
+                    }
+                }
+            },
+            "7": {
+                "data": {
+                    "teachers": ["5"],
+                    "venues": ["7"],
+                    "classes": ["3"]
+                },
+                "events": {
+                    "3": { "subject": "Maths", "venue": "7", "teacher": "5" }
+                }
+            },
+            "8": {
+                "data": {
+                    "teachers": ["5"],
+                    "venues": ["8"],
+                    "classes": ["4"]
+                },
+                "events": {
+                    "4": { "subject": "Maths", "venue": "8", "teacher": "5" }
+                }
+            },
+            "9": {
+                "data": {
+                    "teachers": ["1", "4", "5", "3"],
+                    "venues": ["5", "6", "9", "10"],
+                    "classes": ["1", "2", "5", "6"]
+                },
+                "events": {
+                    "1": {
+                        "subject": "Accounts",
+                        "venue": "5",
+                        "teacher": "1"
+                    },
+                    "2": { "subject": "Shona", "venue": "6", "teacher": "4" },
+                    "5": { "subject": "Maths", "venue": "9", "teacher": "5" },
+                    "6": { "subject": "English", "venue": "10", "teacher": "3" }
+                }
+            }
+        },
+        "2": {
+            "1": {
+                "data": {
+                    "teachers": ["4"],
+                    "venues": ["5"],
+                    "classes": ["1"]
+                },
+                "events": {
+                    "1": { "subject": "Shona", "venue": "5", "teacher": "4" }
+                }
+            },
+            "2": {
+                "data": {
+                    "teachers": ["3", "1", "4"],
+                    "venues": ["6", "7", "10"],
+                    "classes": ["2", "3", "6"]
+                },
+                "events": {
+                    "2": { "subject": "English", "venue": "6", "teacher": "3" },
+                    "3": {
+                        "subject": "Accounts",
+                        "venue": "7",
+                        "teacher": "1"
+                    },
+                    "6": { "subject": "Shona", "venue": "10", "teacher": "4" }
+                }
+            },
+            "3": {
+                "data": {
+                    "teachers": ["4"],
+                    "venues": ["10"],
+                    "classes": ["6"]
+                },
+                "events": {
+                    "6": { "subject": "Shona", "venue": "10", "teacher": "4" }
+                }
+            },
+            "4": {
+                "data": {
+                    "teachers": ["3", "5"],
+                    "venues": ["5", "7"],
+                    "classes": ["1", "3"]
+                },
+                "events": {
+                    "1": { "subject": "English", "venue": "5", "teacher": "3" },
+                    "3": { "subject": "Maths", "venue": "7", "teacher": "5" }
+                }
+            },
+            "5": {
+                "data": { "teachers": [], "venues": [], "classes": [] },
+                "events": {}
+            },
+            "6": {
+                "data": {
+                    "teachers": ["3"],
+                    "venues": ["8"],
+                    "classes": ["4"]
+                },
+                "events": {
+                    "4": { "subject": "English", "venue": "8", "teacher": "3" }
+                }
+            },
+            "7": {
+                "data": {
+                    "teachers": ["3"],
+                    "venues": ["9"],
+                    "classes": ["5"]
+                },
+                "events": {
+                    "5": { "subject": "English", "venue": "9", "teacher": "3" }
+                }
+            },
+            "8": {
+                "data": {
+                    "teachers": ["5"],
+                    "venues": ["10"],
+                    "classes": ["6"]
+                },
+                "events": {
+                    "6": { "subject": "Maths", "venue": "10", "teacher": "5" }
+                }
+            },
+            "9": {
+                "data": { "teachers": [], "venues": [], "classes": [] },
+                "events": {}
+            }
+        },
+        "3": {
+            "1": {
+                "data": {
+                    "teachers": ["1", "3", "5"],
+                    "venues": ["5", "9", "10"],
+                    "classes": ["1", "5", "6"]
+                },
+                "events": {
+                    "1": {
+                        "subject": "Accounts",
+                        "venue": "5",
+                        "teacher": "1"
+                    },
+                    "5": { "subject": "English", "venue": "9", "teacher": "3" },
+                    "6": { "subject": "Maths", "venue": "10", "teacher": "5" }
+                }
+            },
+            "2": {
+                "data": {
+                    "teachers": ["5", "3", "1"],
+                    "venues": ["5", "6", "7"],
+                    "classes": ["1", "2", "3"]
+                },
+                "events": {
+                    "1": { "subject": "Maths", "venue": "5", "teacher": "5" },
+                    "2": { "subject": "English", "venue": "6", "teacher": "3" },
+                    "3": { "subject": "Accounts", "venue": "7", "teacher": "1" }
+                }
+            },
+            "3": {
+                "data": {
+                    "teachers": ["3"],
+                    "venues": ["8"],
+                    "classes": ["4"]
+                },
+                "events": {
+                    "4": { "subject": "English", "venue": "8", "teacher": "3" }
+                }
+            },
+            "4": {
+                "data": {
+                    "teachers": ["3", "4", "1"],
+                    "venues": ["5", "7", "10"],
+                    "classes": ["1", "3", "6"]
+                },
+                "events": {
+                    "1": { "subject": "English", "venue": "5", "teacher": "3" },
+                    "3": { "subject": "Shona", "venue": "7", "teacher": "4" },
+                    "6": {
+                        "subject": "Accounts",
+                        "venue": "10",
+                        "teacher": "1"
+                    }
+                }
+            },
+            "5": {
+                "data": {
+                    "teachers": ["3", "1", "5"],
+                    "venues": ["7", "8", "9"],
+                    "classes": ["3", "4", "5"]
+                },
+                "events": {
+                    "3": { "subject": "English", "venue": "7", "teacher": "3" },
+                    "4": {
+                        "subject": "Accounts",
+                        "venue": "8",
+                        "teacher": "1"
+                    },
+                    "5": { "subject": "Maths", "venue": "9", "teacher": "5" }
+                }
+            },
+            "6": {
+                "data": { "teachers": [], "venues": [], "classes": [] },
+                "events": {}
+            },
+            "7": {
+                "data": { "teachers": [], "venues": [], "classes": [] },
+                "events": {}
+            },
+            "8": {
+                "data": {
+                    "teachers": ["5", "1"],
+                    "venues": ["8", "9"],
+                    "classes": ["4", "5"]
+                },
+                "events": {
+                    "4": { "subject": "Maths", "venue": "8", "teacher": "5" },
+                    "5": { "subject": "Accounts", "venue": "9", "teacher": "1" }
+                }
+            },
+            "9": {
+                "data": {
+                    "teachers": ["1", "5", "3"],
+                    "venues": ["6", "7", "10"],
+                    "classes": ["2", "3", "6"]
+                },
+                "events": {
+                    "2": {
+                        "subject": "Accounts",
+                        "venue": "6",
+                        "teacher": "1"
+                    },
+                    "3": { "subject": "Maths", "venue": "7", "teacher": "5" },
+                    "6": { "subject": "English", "venue": "10", "teacher": "3" }
+                }
+            }
+        },
+        "4": {
+            "1": {
+                "data": {
+                    "teachers": ["5", "3"],
+                    "venues": ["5", "7"],
+                    "classes": ["1", "3"]
+                },
+                "events": {
+                    "1": { "subject": "Maths", "venue": "5", "teacher": "5" },
+                    "3": { "subject": "English", "venue": "7", "teacher": "3" }
+                }
+            },
+            "2": {
+                "data": {
+                    "teachers": ["3"],
+                    "venues": ["8"],
+                    "classes": ["4"]
+                },
+                "events": {
+                    "4": { "subject": "English", "venue": "8", "teacher": "3" }
+                }
+            },
+            "3": {
+                "data": {
+                    "teachers": ["4"],
+                    "venues": ["5"],
+                    "classes": ["1"]
+                },
+                "events": {
+                    "1": { "subject": "Shona", "venue": "5", "teacher": "4" }
+                }
+            },
+            "4": {
+                "data": {
+                    "teachers": ["1", "4"],
+                    "venues": ["5", "7"],
+                    "classes": ["1", "3"]
+                },
+                "events": {
+                    "1": {
+                        "subject": "Accounts",
+                        "venue": "5",
+                        "teacher": "1"
+                    },
+                    "3": { "subject": "Shona", "venue": "7", "teacher": "4" }
+                }
+            },
+            "5": {
+                "data": {
+                    "teachers": ["3"],
+                    "venues": ["10"],
+                    "classes": ["6"]
+                },
+                "events": {
+                    "6": { "subject": "English", "venue": "10", "teacher": "3" }
+                }
+            },
+            "6": {
+                "data": {
+                    "teachers": ["5", "1"],
+                    "venues": ["6", "10"],
+                    "classes": ["2", "6"]
+                },
+                "events": {
+                    "2": { "subject": "Maths", "venue": "6", "teacher": "5" },
+                    "6": {
+                        "subject": "Accounts",
+                        "venue": "10",
+                        "teacher": "1"
+                    }
+                }
+            },
+            "7": {
+                "data": { "teachers": [], "venues": [], "classes": [] },
+                "events": {}
+            },
+            "8": {
+                "data": {
+                    "teachers": ["4", "1", "3"],
+                    "venues": ["6", "8", "9"],
+                    "classes": ["2", "4", "5"]
+                },
+                "events": {
+                    "2": { "subject": "Shona", "venue": "6", "teacher": "4" },
+                    "4": {
+                        "subject": "Accounts",
+                        "venue": "8",
+                        "teacher": "1"
+                    },
+                    "5": { "subject": "English", "venue": "9", "teacher": "3" }
+                }
+            },
+            "9": {
+                "data": {
+                    "teachers": ["1"],
+                    "venues": ["9"],
+                    "classes": ["5"]
+                },
+                "events": {
+                    "5": { "subject": "Accounts", "venue": "9", "teacher": "1" }
+                }
+            }
+        },
+        "5": {
+            "1": {
+                "data": {
+                    "teachers": ["4"],
+                    "venues": ["5"],
+                    "classes": ["1"]
+                },
+                "events": {
+                    "1": { "subject": "Shona", "venue": "5", "teacher": "4" }
+                }
+            },
+            "2": {
+                "data": {
+                    "teachers": ["1"],
+                    "venues": ["6"],
+                    "classes": ["2"]
+                },
+                "events": {
+                    "2": { "subject": "Accounts", "venue": "6", "teacher": "1" }
+                }
+            },
+            "3": {
+                "data": {
+                    "teachers": ["4", "1", "5"],
+                    "venues": ["6", "7", "8"],
+                    "classes": ["2", "3", "4"]
+                },
+                "events": {
+                    "2": { "subject": "Shona", "venue": "6", "teacher": "4" },
+                    "3": {
+                        "subject": "Accounts",
+                        "venue": "7",
+                        "teacher": "1"
+                    },
+                    "4": { "subject": "Maths", "venue": "8", "teacher": "5" }
+                }
+            },
+            "4": {
+                "data": {
+                    "teachers": ["5", "3"],
+                    "venues": ["5", "10"],
+                    "classes": ["1", "6"]
+                },
+                "events": {
+                    "1": { "subject": "Maths", "venue": "5", "teacher": "5" },
+                    "6": { "subject": "English", "venue": "10", "teacher": "3" }
+                }
+            },
+            "5": {
+                "data": {
+                    "teachers": ["4"],
+                    "venues": ["9"],
+                    "classes": ["5"]
+                },
+                "events": {
+                    "5": { "subject": "Shona", "venue": "9", "teacher": "4" }
+                }
+            },
+            "6": {
+                "data": {
+                    "teachers": ["5", "4"],
+                    "venues": ["9", "10"],
+                    "classes": ["5", "6"]
+                },
+                "events": {
+                    "5": { "subject": "Maths", "venue": "9", "teacher": "5" },
+                    "6": { "subject": "Shona", "venue": "10", "teacher": "4" }
+                }
+            },
+            "7": {
+                "data": {
+                    "teachers": ["1", "5", "4"],
+                    "venues": ["5", "6", "7"],
+                    "classes": ["1", "2", "3"]
+                },
+                "events": {
+                    "1": {
+                        "subject": "Accounts",
+                        "venue": "5",
+                        "teacher": "1"
+                    },
+                    "2": { "subject": "Maths", "venue": "6", "teacher": "5" },
+                    "3": { "subject": "Shona", "venue": "7", "teacher": "4" }
+                }
+            },
+            "8": {
+                "data": {
+                    "teachers": ["3", "4", "1"],
+                    "venues": ["7", "8", "9"],
+                    "classes": ["3", "4", "5"]
+                },
+                "events": {
+                    "3": { "subject": "English", "venue": "7", "teacher": "3" },
+                    "4": { "subject": "Shona", "venue": "8", "teacher": "4" },
+                    "5": { "subject": "Accounts", "venue": "9", "teacher": "1" }
+                }
+            },
+            "9": {
+                "data": {
+                    "teachers": ["3", "4"],
+                    "venues": ["6", "8"],
+                    "classes": ["2", "4"]
+                },
+                "events": {
+                    "2": { "subject": "English", "venue": "6", "teacher": "3" },
+                    "4": { "subject": "Shona", "venue": "8", "teacher": "4" }
+                }
+            }
+        },
+        "6": {
+            "1": {
+                "data": {
+                    "teachers": ["4"],
+                    "venues": ["8"],
+                    "classes": ["4"]
+                },
+                "events": {
+                    "4": { "subject": "Shona", "venue": "8", "teacher": "4" }
+                }
+            },
+            "2": {
+                "data": {
+                    "teachers": ["1", "4", "5"],
+                    "venues": ["8", "9", "10"],
+                    "classes": ["4", "5", "6"]
+                },
+                "events": {
+                    "4": {
+                        "subject": "Accounts",
+                        "venue": "8",
+                        "teacher": "1"
+                    },
+                    "5": { "subject": "Shona", "venue": "9", "teacher": "4" },
+                    "6": { "subject": "Maths", "venue": "10", "teacher": "5" }
+                }
+            },
+            "3": {
+                "data": {
+                    "teachers": ["5", "4"],
+                    "venues": ["6", "9"],
+                    "classes": ["2", "5"]
+                },
+                "events": {
+                    "2": { "subject": "Maths", "venue": "6", "teacher": "5" },
+                    "5": { "subject": "Shona", "venue": "9", "teacher": "4" }
+                }
+            },
+            "4": {
+                "data": {
+                    "teachers": ["4", "3"],
+                    "venues": ["7", "9"],
+                    "classes": ["3", "5"]
+                },
+                "events": {
+                    "3": { "subject": "Shona", "venue": "7", "teacher": "4" },
+                    "5": { "subject": "English", "venue": "9", "teacher": "3" }
+                }
+            },
+            "5": {
+                "data": {
+                    "teachers": ["4", "3"],
+                    "venues": ["6", "7"],
+                    "classes": ["2", "3"]
+                },
+                "events": {
+                    "2": { "subject": "Shona", "venue": "6", "teacher": "4" },
+                    "3": { "subject": "English", "venue": "7", "teacher": "3" }
+                }
+            },
+            "6": {
+                "data": {
+                    "teachers": ["3"],
+                    "venues": ["5"],
+                    "classes": ["1"]
+                },
+                "events": {
+                    "1": { "subject": "English", "venue": "5", "teacher": "3" }
+                }
+            },
+            "7": {
+                "data": {
+                    "teachers": ["4", "5"],
+                    "venues": ["5", "8"],
+                    "classes": ["1", "4"]
+                },
+                "events": {
+                    "1": { "subject": "Shona", "venue": "5", "teacher": "4" },
+                    "4": { "subject": "Maths", "venue": "8", "teacher": "5" }
+                }
+            },
+            "8": {
+                "data": {
+                    "teachers": ["1", "5"],
+                    "venues": ["6", "9"],
+                    "classes": ["2", "5"]
+                },
+                "events": {
+                    "2": {
+                        "subject": "Accounts",
+                        "venue": "6",
+                        "teacher": "1"
+                    },
+                    "5": { "subject": "Maths", "venue": "9", "teacher": "5" }
+                }
+            },
+            "9": {
+                "data": {
+                    "teachers": ["5"],
+                    "venues": ["7"],
+                    "classes": ["3"]
+                },
+                "events": {
+                    "3": { "subject": "Maths", "venue": "7", "teacher": "5" }
+                }
+            }
+        }
+    }
+}

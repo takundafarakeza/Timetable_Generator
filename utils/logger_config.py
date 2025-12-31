@@ -1,9 +1,12 @@
 import logging
-import os.path as path
+import os
 from .utils import Utils
 from logging.handlers import RotatingFileHandler
 
-LOG_FILE = path.join(Utils.get_appdata_path(), "logs", "logs.txt")
+PATH = Utils.get_log_path()
+LOG_FILE = os.path.join(PATH, "logs.txt")
+open(LOG_FILE, "w").close()
+
 handler = RotatingFileHandler(
     LOG_FILE,
     maxBytes=5_000_000,
