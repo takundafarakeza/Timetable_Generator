@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_class_dialogXeOhlK.ui'
+## Form generated from reading UI file 'add_class_dialogNAQyyv.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -87,6 +87,7 @@ class Ui_AddClass(object):
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -109,7 +110,7 @@ class Ui_AddClass(object):
         self.verticalLayout = QVBoxLayout(self.main_container)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(1, 1, 1, 1)
         self.toolbar = QWidget(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 30))

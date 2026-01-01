@@ -50,6 +50,15 @@ class Teacher:
 
 
 @dataclass
+class Block:
+    id: str
+    name: str
+    subjects: dict
+    classes: list
+    length: int
+
+
+@dataclass
 class Lecturer:
     id: str
     name: str

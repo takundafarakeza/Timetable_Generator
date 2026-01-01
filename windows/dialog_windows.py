@@ -11,16 +11,16 @@ from ui import (ui_add_module_dialog, ui_add_class_dialog,
                 ui_add_venue_dialog, ui_add_course_dialog, ui_add_subject_dialog,
                 ui_add_teacher_dialog, ui_add_lecturer_dialog,
                 ui_add_module_data_dialog, ui_add_class_data_dialog,
-                ui_add_class_primary_data_dialog)
+                ui_add_class_primary_data_dialog, ui_add_block_dialog,
+                ui_add_block_data_dialog)
 
 
 class AddModuleWindow(QDialog):
-
     saved = Signal(str)
 
     def __init__(self, builder: TertiaryBuilder, edit: bool = False,
-                 module_id: str = None):
-        super().__init__()
+                 module_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_module_dialog.Ui_AddModule()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -86,7 +86,7 @@ class AddModuleWindow(QDialog):
                                            self.module_lecturer.currentData(), self.module_slots_per_cycle.value(),
                                            self.module_slots_per_day.value())
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
             return
 
         self.saved.emit(Types.MODULES)
@@ -97,8 +97,8 @@ class AddModuleWindow(QDialog):
 class AddModuleDataWindow(QDialog):
     saved = Signal(str)
 
-    def __init__(self, builder: TertiaryBuilder, module_id: str):
-        super().__init__()
+    def __init__(self, builder: TertiaryBuilder, module_id: str, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_module_data_dialog.Ui_AddModule()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -115,11 +115,12 @@ class AddModuleDataWindow(QDialog):
         self.module_course_level = self.ui.module_course_level_select
         self.module_course_add_btn = self.ui.module_add_course_btn
         self.module_venues_table = self.ui.module_venues_table
-        self.module_venue_select = self.ui.module_course_select
+        self.module_venue_select = self.ui.module_venue_select
         self.module_venue_add_btn = self.ui.module_add_venue_btn
 
         self.module_course_level.lineEdit().setPlaceholderText("Level")
         self.module_course_select.lineEdit().setPlaceholderText("Course")
+        self.module_venue_select.lineEdit().setPlaceholderText("Venue")
         self.ui.module_save.clicked.connect(self.save)
         self.ui.close_btn.clicked.connect(self.save)
         self.ui.module_add_course_btn.clicked.connect(self.add_course)
@@ -150,23 +151,36 @@ class AddModuleDataWindow(QDialog):
 
     def add_venue(self):
         venue = self.module_venue_select.currentData()
+
+        if not venue:
+            MessageBox(self).warning("Not Found", "This venue is not found! You can add it"
+                                                  " in the venue section.")
+            return
+
         module_venues = self.builder.module_get(self.module_id).venues
 
         if venue in module_venues:
-            MessageBox().warning(self, "Already Exits", "This venue is already used!")
+            MessageBox(self).warning("Already Exits", "This venue is already used!")
             return
         else:
             if self.builder.module_add_venue(venue, self.module_id):
                 self.venues_populate()
+                self.venues_select_populate()
             else:
-                MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
     def add_course(self):
         course = self.module_course_select.currentData()
+
+        if not course:
+            MessageBox(self).warning("Not Found", "This course is not found! You can add it"
+                                                  " in the courses section.")
+            return
+
         module_courses = self.builder.module_get(self.module_id).courses
 
         if course in module_courses:
-            MessageBox().warning(self, "Already Exits", "This course is already added!")
+            MessageBox(self).warning("Already Exits", "This course is already added!")
             return
         else:
             course_module_code = (self.ui.module_course_module_code.text() if
@@ -178,10 +192,9 @@ class AddModuleDataWindow(QDialog):
                 self.courses_populate()
                 self.module_course_module_code.clear()
                 self.module_course_level.setCurrentText("")
-                self.venues_select_populate()
                 self.courses_select_populate()
             else:
-                MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
     def venues_select_populate(self):
         venues = self.builder.venue_get_all()
@@ -237,7 +250,7 @@ class AddModuleDataWindow(QDialog):
             self.venues_populate()
         except Exception as e:
             logger.critical(str(e))
-            MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
     def delete_course(self, module_id, course_id):
         try:
@@ -245,15 +258,15 @@ class AddModuleDataWindow(QDialog):
             self.courses_populate()
         except Exception as e:
             logger.critical(str(e))
-            MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
 
 class AddSubjectWindow(QDialog):
     saved = Signal(str)
 
     def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder], edit: bool = False,
-                 subject_id: str = None):
-        super().__init__()
+                 subject_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_subject_dialog.Ui_AddSubject()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -275,7 +288,8 @@ class AddSubjectWindow(QDialog):
         if self.edit:
             subject = self.builder.subject_get(self.subject_id)
             self.subject_name.setText(subject.name)
-            self.subject_venue.setCurrentText(self.builder.venue_get(subject.primary_venue).name)
+            self.subject_venue.setCurrentText(self.builder.venue_get(subject.primary_venue).name
+                                              if subject.primary_venue != Types.VENUE_PRIMARY else "Primary")
 
     def close(self):
         self.subject_name.clear()
@@ -298,7 +312,7 @@ class AddSubjectWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.subject_change_data(self.subject_id, Types.NAME, subject_name)
@@ -307,9 +321,9 @@ class AddSubjectWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
 
     def venue_select_populate(self):
         venues = self.builder.venue_get_all()
@@ -324,8 +338,8 @@ class AddLecturerWindow(QDialog):
     saved = Signal(str)
 
     def __init__(self, builder: TertiaryBuilder, edit: bool = False,
-                 lecturer_id: str = None):
-        super().__init__()
+                 lecturer_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_lecturer_dialog.Ui_AddLecturer()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -364,7 +378,7 @@ class AddLecturerWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.lecturer_change_name(self.lecturer_id, lecturer_name)
@@ -372,17 +386,17 @@ class AddLecturerWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
 
 
 class AddTeacherWindow(QDialog):
     saved = Signal(str)
 
     def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder], edit: bool = False,
-                 teacher_id: str = None):
-        super().__init__()
+                 teacher_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_teacher_dialog.Ui_AddTeacher()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -421,7 +435,7 @@ class AddTeacherWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.teacher_change_name(self.teacher_id, teacher_name)
@@ -429,17 +443,17 @@ class AddTeacherWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
 
 
 class AddCourseWindow(QDialog):
     saved = Signal(str)
 
     def __init__(self, builder: TertiaryBuilder, edit: bool = False,
-                 course_id: str = None):
-        super().__init__()
+                 course_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_course_dialog.Ui_AddCourse()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -482,7 +496,7 @@ class AddCourseWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.course_change_data(self.course_id, Types.NAME, course_name)
@@ -491,17 +505,17 @@ class AddCourseWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
 
 
 class AddClassWindow(QDialog):
     saved = Signal(str)
 
     def __init__(self, builder: SecondaryBuilder, edit: bool = False,
-                 class_id: str = None):
-        super().__init__()
+                 class_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_class_dialog.Ui_AddClass()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -545,7 +559,7 @@ class AddClassWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.class_change_data(self.class_id, Types.NAME, class_name)
@@ -554,9 +568,9 @@ class AddClassWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
 
     def venue_select_populate(self):
         venues = self.builder.venue_get_all()
@@ -569,8 +583,8 @@ class AddClassWindow(QDialog):
 class AddClassDataWindow(QDialog):
     saved = Signal(str)
 
-    def __init__(self, builder: SecondaryBuilder, class_id: str):
-        super().__init__()
+    def __init__(self, builder: SecondaryBuilder, class_id: str, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_class_data_dialog.Ui_AddClass()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -589,6 +603,7 @@ class AddClassDataWindow(QDialog):
 
         self.ui.class_save.clicked.connect(self.close)
         self.ui.close_btn.clicked.connect(self.close)
+        self.ui.class_add_subject_btn.clicked.connect(self.add_subject)
         self.class_data_table.setShowGrid(False)
 
         self.populate()
@@ -611,7 +626,7 @@ class AddClassDataWindow(QDialog):
         class_subjects = self.builder.class_get(self.class_id).subjects
 
         if subject in class_subjects:
-            MessageBox().warning(self, "Already Exits", "This subject is already added!")
+            MessageBox(self).warning("Already Exits", "This subject is already added!")
             return
         else:
             try:
@@ -621,13 +636,16 @@ class AddClassDataWindow(QDialog):
                                                    self.slots_per_day.value(), teacher)
                     self.saved.emit(Types.CLASSES)
                     self.populate()
+                    self.clear()
+                    self.teachers_select_populate()
+                    self.subjects_select_populate()
                 else:
-                    MessageBox().warning(self, "Out of slots",
-                                         "There are not enough slots for this subject. Try adjusting the time"
-                                         " slots and changing the teacher.")
+                    MessageBox(self).warning("Out of slots",
+                                             "There are not enough slots for this subject. Try adjusting the time"
+                                             " slots and changing the teacher.")
             except Exception as e:
                 logger.critical(str(e))
-                MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
     def teachers_select_populate(self):
         teachers = self.builder.teacher_get_all()
@@ -647,8 +665,9 @@ class AddClassDataWindow(QDialog):
         subjects = self.builder.class_get(self.class_id).subjects
         self.class_data_table.clearContents()
         self.class_data_table.setRowCount(0)
-        subjects = [(subject, self.builder.subject_get(subject).name, subject[Types.TEACHER],
-                     f" slots: [{subjects[subject]['time_slots']}, {subjects[subject]['slots_per_day']}]")
+        subjects = [(subject, self.builder.subject_get(subject).name,
+                     self.builder.teacher_get(subjects[subject][Types.TEACHER]).name,
+                     f" Slots: [{subjects[subject]['time_slots']}, {subjects[subject]['slots_per_day']}]")
                     for subject in subjects]
 
         for subject in subjects:
@@ -657,7 +676,7 @@ class AddClassDataWindow(QDialog):
             self.class_data_table.setRowHeight(row, 50)
             item = RemovableTableItem()
             item.set_header(subject[1])
-            text = f"Teacher: {subject[2]}" + str(subjects[3])
+            text = f"Teacher: {subject[2]} ~" + str(subject[3])
             item.set_text(text)
             remove_func = partial(self.delete_subject, self.class_id, subject[0])
             item.remove_btn.clicked.connect(remove_func)
@@ -669,14 +688,14 @@ class AddClassDataWindow(QDialog):
             self.populate()
         except Exception as e:
             logger.critical(str(e))
-            MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
 
 class AddClassDataPrimaryWindow(QDialog):
     saved = Signal(str)
 
-    def __init__(self, builder: PrimaryBuilder, class_id: str):
-        super().__init__()
+    def __init__(self, builder: PrimaryBuilder, class_id: str, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_class_primary_data_dialog.Ui_AddClass()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -694,6 +713,7 @@ class AddClassDataPrimaryWindow(QDialog):
 
         self.ui.class_save.clicked.connect(self.close)
         self.ui.close_btn.clicked.connect(self.close)
+        self.ui.class_add_subject_btn.clicked.connect(self.add_subject)
         self.class_data_table.setShowGrid(False)
 
         self.populate()
@@ -713,7 +733,7 @@ class AddClassDataPrimaryWindow(QDialog):
         class_subjects = self.builder.class_get(self.class_id).subjects
 
         if subject in class_subjects:
-            MessageBox().warning(self, "Already Exits", "This subject is already added!")
+            MessageBox(self).warning("Already Exits", "This subject is already added!")
             return
         else:
             try:
@@ -723,13 +743,15 @@ class AddClassDataPrimaryWindow(QDialog):
                                                    self.slots_per_day.value())
                     self.saved.emit(Types.CLASSES)
                     self.populate()
+                    self.clear()
+                    self.subjects_select_populate()
                 else:
-                    MessageBox().warning(self, "Out of slots",
-                                         "There are not enough slots for this subject. Try adjusting the time"
-                                         " slots and changing the teacher.")
+                    MessageBox(self).warning("Out of slots",
+                                             "There are not enough slots for this subject. Try adjusting the time"
+                                             " slots and changing the teacher.")
             except Exception as e:
                 logger.critical(str(e))
-                MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
     def subjects_select_populate(self):
         subjects = self.builder.subject_get_all()
@@ -744,7 +766,7 @@ class AddClassDataPrimaryWindow(QDialog):
         self.class_data_table.clearContents()
         self.class_data_table.setRowCount(0)
         subjects = [(subject, self.builder.subject_get(subject).name,
-                     f" slots: [{subjects[subject]['time_slots']}, {subjects[subject]['slots_per_day']}]")
+                     f" Slots: [{subjects[subject]['time_slots']}, {subjects[subject]['slots_per_day']}]")
                     for subject in subjects]
 
         for subject in subjects:
@@ -753,7 +775,7 @@ class AddClassDataPrimaryWindow(QDialog):
             self.class_data_table.setRowHeight(row, 50)
             item = RemovableTableItem()
             item.set_header(subject[1])
-            text = str(subjects[2])
+            text = str(subject[2])
             item.set_text(text)
             remove_func = partial(self.delete_subject, self.class_id, subject[0])
             item.remove_btn.clicked.connect(remove_func)
@@ -765,15 +787,84 @@ class AddClassDataPrimaryWindow(QDialog):
             self.populate()
         except Exception as e:
             logger.critical(str(e))
-            MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+
+class AddBlockWindow(QDialog):
+    saved = Signal(str)
+
+    def __init__(self, builder: SecondaryBuilder, edit: bool = False,
+                 block_id: str = None, parent=None):
+        super().__init__(parent=parent)
+        self.ui = ui_add_block_dialog.Ui_AddBlock()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        self.builder = builder
+        self.edit = edit
+        self.block_id = block_id
+
+        self.block_name = self.ui.block_name
+        self.block_size = self.ui.block_size
+
+        if self.edit:
+            block_ = self.builder.block_get(self.block_id)
+            self.block_name.setText(block_.name)
+            self.block_size.setValue(block_.length)
+
+        self.ui.block_save.clicked.connect(self.save)
+        self.ui.close_btn.clicked.connect(self.close)
+
+    def close(self):
+        self.block_name.clear()
+        self.block_size.setValue(0)
+        super().close()
+
+    def validate(self):
+        return self.block_name.text()
+
+    def save(self):
+        if self.validate():
+
+            block_name = self.block_name.text()
+            block_size = self.block_size.value()
+
+            if not self.edit:
+                try:
+                    self.builder.add_block(block_name, {}, [], block_size)
+                    self.saved.emit(Types.BLOCKS)
+                    self.close()
+                except Exception as e:
+                    logger.critical(str(e))
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+            else:
+                try:
+                    self.builder.class_change_data(self.class_id, Types.NAME, class_name)
+                    self.builder.class_change_data(self.class_id, Types.VENUE, class_venue)
+                    self.saved.emit(Types.CLASSES)
+                    self.close()
+                except Exception as e:
+                    logger.critical(str(e))
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+        else:
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
+
+    def venue_select_populate(self):
+        venues = self.builder.venue_get_all()
+        self.class_venue.clear()
+
+        for venue in venues:
+            self.class_venue.addItem(venue.name, userData=venue.id)
 
 
 class AddVenueWindow(QDialog):
     saved = Signal(str)
 
     def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder, TertiaryBuilder],
-                 edit: bool = False, venue_id: str = None):
-        super().__init__()
+                 edit: bool = False, venue_id: str = None, parent=None):
+        super().__init__(parent=parent)
         self.ui = ui_add_venue_dialog.Ui_AddVenue()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
@@ -828,7 +919,7 @@ class AddVenueWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.venue_change_data(self.venue_id, Types.NAME, venue_name)
@@ -838,6 +929,6 @@ class AddVenueWindow(QDialog):
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
-                    MessageBox().critical(None, "Error", "This is embarrassing! An unexpected error occurred.")
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
         else:
-            MessageBox().warning(self, "Incomplete Input", "Please fill in all the required fields!")
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")

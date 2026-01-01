@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="icons">
     <file>icons/venue-add.svg</file>
+    <file>icons/blocks-white.svg</file>
+    <file>icons/blocks.svg</file>
     <file>icons/drop_up.svg</file>
     <file>icons/courses-add.svg</file>
     <file>icons/drop_down.svg</file>

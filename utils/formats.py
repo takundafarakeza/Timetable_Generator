@@ -94,12 +94,10 @@ class Formats:
         return {"name": name}
 
     @staticmethod
-    def format_block_secondary(subject: str, length: int, classes: str,
-                               teachers: str, venues: str):
+    def format_block_secondary(block_name: str, subjects: dict, classes: list, length: int):
         return {
-            "subject": subject,
-            "time_slots": length,
+            "name": block_name,
+            "subjects": subjects,
             "classes": classes,
-            "teachers": teachers,
-            "venues": venues
+            "time_slots": length
         }

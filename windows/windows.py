@@ -20,7 +20,6 @@ class Viewer(QWidget):
 
 
 class Main(QMainWindow):
-
     file_signal = Signal(str)
 
     def __init__(self):
@@ -50,6 +49,7 @@ class Main(QMainWindow):
         self.classes_btn = self.ui.classes_btn
         self.courses_btn = self.ui.courses_btn
         self.venues_btn = self.ui.venues_btn
+        self.blocks_btn = self.ui.blocks_btn
         self.menu_btns = {
             self.home_btn: {"icons": [u":/icons/icons/home.svg", u":/icons/icons/home-white.svg"],
                             "page": 1},
@@ -57,16 +57,18 @@ class Main(QMainWindow):
                                 "page": 3},
             self.modules_btn: {"icons": [u":/icons/icons/subject.svg", u":/icons/icons/subject-white.svg"],
                                "page": 2},
+            self.blocks_btn: {"icons": [u":/icons/icons/blocks.svg", u":/icons/icons/blocks-white.svg"],
+                              "page": 4},
             self.teachers_btn: {"icons": [u":/icons/icons/teacher.svg", u":/icons/icons/teacher-white.svg"],
-                                "page": 5},
+                                "page": 6},
             self.lecturers_btn: {"icons": [u":/icons/icons/teacher.svg", u":/icons/icons/teacher-white.svg"],
-                                 "page": 4},
+                                 "page": 5},
             self.classes_btn: {"icons": [u":/icons/icons/classes.svg", u":/icons/icons/classes-white.svg"],
-                               "page": 7},
+                               "page": 8},
             self.courses_btn: {"icons": [u":/icons/icons/classes.svg", u":/icons/icons/classes-white.svg"],
-                               "page": 6},
+                               "page": 7},
             self.venues_btn: {"icons": [u":/icons/icons/venues.svg", u":/icons/icons/venues-white.svg"],
-                              "page": 8}
+                              "page": 9}
         }
 
         self.settings_btn = self.ui.settings_btn
@@ -175,7 +177,8 @@ class Main(QMainWindow):
 
         if institution_type == Types.INSTITUTION_PRIMARY:
             buttons = [self.teachers_btn, self.lecturers_btn,
-                       self.modules_btn, self.courses_btn]
+                       self.modules_btn, self.courses_btn,
+                       self.blocks_btn]
             self.show_hide_menu_buttons(buttons)
 
         elif institution_type == Types.INSTITUTION_SECONDARY:
@@ -185,7 +188,7 @@ class Main(QMainWindow):
 
         elif institution_type == Types.INSTITUTION_COLLEGE:
             buttons = [self.teachers_btn, self.subjects_btn,
-                       self.classes_btn]
+                       self.classes_btn, self.blocks_btn]
             self.show_hide_menu_buttons(buttons)
 
     def set_saved(self, status: bool):
@@ -324,7 +327,6 @@ class Boarding(QMainWindow):
 
 
 class StartUp(QMainWindow):
-
     project_open = Signal(str, str)
     project_create = Signal(str, str)
 
@@ -381,7 +383,8 @@ class StartUp(QMainWindow):
             for name, path in recent:
                 self.show_recent(name, path)
 
-    def manage_recent(self, name: str, action: str): ...
+    def manage_recent(self, name: str, action: str):
+        ...
 
     def clear_recent_layout(self):
         for i in range(self.projects_table.count() - 1):

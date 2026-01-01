@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_data_dialognNPcoy.ui'
+## Form generated from reading UI file 'add_module_data_dialogxfZCgv.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -88,6 +88,7 @@ class Ui_AddModule(object):
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -110,7 +111,7 @@ class Ui_AddModule(object):
         self.verticalLayout = QVBoxLayout(self.main_container)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(1, 1, 1, 1)
         self.toolbar = QWidget(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 30))
@@ -183,6 +184,7 @@ class Ui_AddModule(object):
         self.module_venue_select.setObjectName(u"module_venue_select")
         self.module_venue_select.setGeometry(QRect(370, 320, 251, 30))
         self.module_venue_select.setMinimumSize(QSize(0, 30))
+        self.module_venue_select.setEditable(True)
         self.module_venues_table = QTableWidget(self.frame)
         if (self.module_venues_table.columnCount() < 1):
             self.module_venues_table.setColumnCount(1)
@@ -257,7 +259,7 @@ class Ui_AddModule(object):
         self.label.setText(QCoreApplication.translate("AddModule", u"Module Course and Venues", None))
         self.module_save.setText(QCoreApplication.translate("AddModule", u"Close", None))
         self.module_add_course_btn.setText("")
-        self.module_venue_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Select Venue", None))
+        self.module_venue_select.setPlaceholderText("")
         ___qtablewidgetitem = self.module_venues_table.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("AddModule", u"Venues", None));
         ___qtablewidgetitem1 = self.module_courses_table.horizontalHeaderItem(0)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_class_data_dialogoMUkhX.ui'
+## Form generated from reading UI file 'add_class_data_dialogDgoRig.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -25,7 +25,7 @@ class Ui_AddClass(object):
     def setupUi(self, AddClass):
         if not AddClass.objectName():
             AddClass.setObjectName(u"AddClass")
-        AddClass.resize(651, 491)
+        AddClass.resize(648, 491)
         AddClass.setStyleSheet(u"* {\n"
 "	background: transparent;\n"
 "	border: none;\n"
@@ -88,6 +88,7 @@ class Ui_AddClass(object):
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -110,13 +111,13 @@ class Ui_AddClass(object):
         self.verticalLayout = QVBoxLayout(self.main_container)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(1, 1, 1, 1)
         self.toolbar = QWidget(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 30))
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
-        self.close_btn.setGeometry(QRect(710, 0, 33, 30))
+        self.close_btn.setGeometry(QRect(615, 0, 35, 30))
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))
@@ -165,8 +166,8 @@ class Ui_AddClass(object):
         __qtablewidgetitem = QTableWidgetItem()
         self.class_subjects_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
         self.class_subjects_table.setObjectName(u"class_subjects_table")
-        self.class_subjects_table.setGeometry(QRect(350, 20, 271, 311))
-        self.class_subjects_table.horizontalHeader().setDefaultSectionSize(230)
+        self.class_subjects_table.setGeometry(QRect(320, 20, 301, 311))
+        self.class_subjects_table.horizontalHeader().setDefaultSectionSize(270)
         self.title = QLabel(self.frame)
         self.title.setObjectName(u"title")
         self.title.setGeometry(QRect(40, 150, 111, 20))

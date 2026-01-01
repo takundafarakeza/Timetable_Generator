@@ -42,6 +42,7 @@ QComboBox{
 QWidget#main_container{
 	background: #EBECEF;
 	border-radius: 5px;
+	border: 1px solid #B1B1B1;
 }
 
 QWidget#menu_container{
@@ -93,6 +94,11 @@ QPushButton{
 
 QPushButton:hover{
 	background: #DBEAFE;
+}
+
+QToolTip{
+	background: #F3F4F6;
+	border: 1px solid #E3E4E6;
 }
 
 QScrollBar:horizontal {
@@ -738,6 +744,35 @@ color: #F3F4F6;</string>
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="blocks_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Blocks</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../assets/icons.qrc">
+                 <normaloff>:/icons/icons/blocks.svg</normaloff>:/icons/icons/blocks.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="lecturers_btn">
                <property name="minimumSize">
                 <size>
@@ -1015,7 +1050,7 @@ QFrame#bottom QPushButton{
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item>
+          <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
            <widget class="QStackedWidget" name="stacked_container">
             <property name="currentIndex">
              <number>0</number>
@@ -1084,68 +1119,34 @@ QFrame#bottom QPushButton{
                    <property name="frameShadow">
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
-                   <layout class="QGridLayout" name="gridLayout">
-                    <item row="0" column="0">
-                     <widget class="QFrame" name="frame_5">
-                      <property name="frameShape">
-                       <enum>QFrame::Shape::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Shadow::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QFrame" name="frame_8">
-                      <property name="frameShape">
-                       <enum>QFrame::Shape::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Shadow::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2">
-                     <widget class="QFrame" name="frame_9">
-                      <property name="frameShape">
-                       <enum>QFrame::Shape::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Shadow::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QFrame" name="frame_10">
-                      <property name="frameShape">
-                       <enum>QFrame::Shape::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Shadow::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1">
-                     <widget class="QFrame" name="frame_11">
-                      <property name="frameShape">
-                       <enum>QFrame::Shape::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Shadow::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2">
-                     <widget class="QFrame" name="frame_12">
-                      <property name="frameShape">
-                       <enum>QFrame::Shape::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Shadow::Raised</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <widget class="QPushButton" name="pushButton_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>490</x>
+                      <y>150</y>
+                      <width>131</width>
+                      <height>31</height>
+                     </rect>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="cursor">
+                     <cursorShape>PointingHandCursor</cursorShape>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">padding: 5px;
+background: #2F69B2;
+color: #F3F4F6;
+border-radius: 3px;</string>
+                    </property>
+                    <property name="text">
+                     <string>View Timetable</string>
+                    </property>
+                   </widget>
                   </widget>
                  </item>
                  <item>
@@ -1233,7 +1234,7 @@ QFrame#bottom QPushButton{
                         <rect>
                          <x>190</x>
                          <y>10</y>
-                         <width>111</width>
+                         <width>121</width>
                          <height>30</height>
                         </rect>
                        </property>
@@ -1328,7 +1329,7 @@ border-radius: 3px;</string>
                    <property name="frameShadow">
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
-                   <widget class="QComboBox" name="modules_course_filter">
+                   <widget class="SearchableComboBox" name="modules_course_filter">
                     <property name="geometry">
                      <rect>
                       <x>679</x>
@@ -1535,7 +1536,7 @@ border: 1px solid #E3E4E6;
                    <property name="frameShadow">
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
-                   <widget class="QComboBox" name="subjects_class_filter">
+                   <widget class="SearchableComboBox" name="subjects_class_filter">
                     <property name="geometry">
                      <rect>
                       <x>729</x>
@@ -1676,6 +1677,194 @@ border: 1px solid #E3E4E6;
                        <enum>QFrame::Shadow::Raised</enum>
                       </property>
                       <layout class="QVBoxLayout" name="subjects_table_layout">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="blocks_page">
+             <layout class="QVBoxLayout" name="verticalLayout_31">
+              <item>
+               <widget class="QWidget" name="container_10" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_29">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QFrame" name="title_container_8">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Shadow::Raised</enum>
+                   </property>
+                   <widget class="QLabel" name="title_8">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>251</width>
+                      <height>21</height>
+                     </rect>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Manage Blocks</string>
+                    </property>
+                   </widget>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="modules_cnt_8">
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Shadow::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_30">
+                    <item>
+                     <widget class="QFrame" name="module_header_cnt_8">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::Shape::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Shadow::Raised</enum>
+                      </property>
+                      <widget class="QPushButton" name="subjects_add_btn_2">
+                       <property name="geometry">
+                        <rect>
+                         <x>0</x>
+                         <y>10</y>
+                         <width>111</width>
+                         <height>30</height>
+                        </rect>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">padding: 5px;
+background: #57954F;
+color: #F3F4F6;
+border-radius: 3px;</string>
+                       </property>
+                       <property name="text">
+                        <string>  Add Block</string>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../assets/icons.qrc">
+                         <normaloff>:/icons/icons/plus.svg</normaloff>:/icons/icons/plus.svg</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>14</width>
+                         <height>14</height>
+                        </size>
+                       </property>
+                      </widget>
+                      <widget class="QLineEdit" name="blocks_search">
+                       <property name="geometry">
+                        <rect>
+                         <x>719</x>
+                         <y>10</y>
+                         <width>201</width>
+                         <height>30</height>
+                        </rect>
+                       </property>
+                       <property name="placeholderText">
+                        <string>Search Block</string>
+                       </property>
+                      </widget>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="blocks_table_container">
+                      <property name="minimumSize">
+                       <size>
+                        <width>920</width>
+                        <height>405</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>910</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QWidget#blocks_table_container{
+background: #FBFCFE;
+border-radius: 5px;
+border: 1px solid #E3E4E6;
+}</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::Shape::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Shadow::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="subjects_table_layout_2">
                        <property name="spacing">
                         <number>0</number>
                        </property>
@@ -2675,6 +2864,13 @@ border: 1px solid #E3E4E6;
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SearchableComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets.custom_widgets</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../assets/icons.qrc"/>
  </resources>

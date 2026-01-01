@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_class_primary_data_dialogWulVcd.ui'
+## Form generated from reading UI file 'add_class_primary_data_dialogRFabcB.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -25,7 +25,7 @@ class Ui_AddClass(object):
     def setupUi(self, AddClass):
         if not AddClass.objectName():
             AddClass.setObjectName(u"AddClass")
-        AddClass.resize(565, 439)
+        AddClass.resize(620, 439)
         AddClass.setStyleSheet(u"* {\n"
 "	background: transparent;\n"
 "	border: none;\n"
@@ -88,6 +88,7 @@ class Ui_AddClass(object):
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -110,13 +111,13 @@ class Ui_AddClass(object):
         self.verticalLayout = QVBoxLayout(self.main_container)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(1, 1, 1, 1)
         self.toolbar = QWidget(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 30))
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
-        self.close_btn.setGeometry(QRect(530, 0, 33, 30))
+        self.close_btn.setGeometry(QRect(585, 0, 33, 30))
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))
@@ -148,7 +149,7 @@ class Ui_AddClass(object):
         self.frame.setFrameShadow(QFrame.Shadow.Plain)
         self.class_save = QPushButton(self.frame)
         self.class_save.setObjectName(u"class_save")
-        self.class_save.setGeometry(QRect(460, 320, 81, 30))
+        self.class_save.setGeometry(QRect(520, 320, 81, 30))
         self.class_save.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.class_save.setStyleSheet(u"padding: 5px;\n"
 "background: #57954F;\n"
@@ -172,8 +173,8 @@ class Ui_AddClass(object):
         __qtablewidgetitem = QTableWidgetItem()
         self.class_subjects_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
         self.class_subjects_table.setObjectName(u"class_subjects_table")
-        self.class_subjects_table.setGeometry(QRect(340, 20, 201, 281))
-        self.class_subjects_table.horizontalHeader().setDefaultSectionSize(170)
+        self.class_subjects_table.setGeometry(QRect(310, 20, 281, 281))
+        self.class_subjects_table.horizontalHeader().setDefaultSectionSize(250)
         self.slots_per_cycle = QSpinBox(self.frame)
         self.slots_per_cycle.setObjectName(u"slots_per_cycle")
         self.slots_per_cycle.setGeometry(QRect(30, 130, 111, 30))

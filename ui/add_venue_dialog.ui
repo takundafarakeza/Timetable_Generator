@@ -24,15 +24,54 @@ QComboBox{
 	border: 1px solid #D3D4D6;
 	border-radius: 5px;
 	padding-left: 5px;
+	outline: none;
+	background: #FBFCFE;
+}
+
+QComboBox::drop-down{
+	background: transparent;
+}
+
+QComboBox::down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
 }
 
 QSpinBox{
 	border: 1px solid #D3D4D6;
 	border-radius: 5px;
 	padding-left: 5px;
+	background: #FBFCFE;
 }
 
-QLineEdit,
+QSpinBox:down-button{
+	background: transparent;
+}
+
+QSpinBox:up-button{
+	background: transparent;
+}
+
+QSpinBox:down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QSpinBox:up-arrow{
+	image: url(':/icons/icons/drop_up.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QLineEdit{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
 QTextEdit{
 	border: 1px solid #D3D4D6;
 	border-radius: 5px;
@@ -43,6 +82,7 @@ QTextEdit{
 QWidget#main_container {
 	background: #EBECEF;
 	border-radius: 5px;
+	border: 1px solid #B1B1B1;
 }
 
 QWidget#container {
@@ -80,16 +120,16 @@ QWidget#container {
        <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <item>
        <widget class="QWidget" name="toolbar" native="true">

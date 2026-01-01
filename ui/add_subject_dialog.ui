@@ -75,6 +75,7 @@ QLineEdit{
 QWidget#main_container {
 	background: #EBECEF;
 	border-radius: 5px;
+	border: 1px solid #B1B1B1;
 }
 
 QWidget#container {
@@ -112,16 +113,16 @@ QWidget#container {
        <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <item>
        <widget class="QWidget" name="toolbar" native="true">

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
+    <width>648</width>
     <height>491</height>
    </rect>
   </property>
@@ -75,6 +75,7 @@ QLineEdit{
 QWidget#main_container {
 	background: #EBECEF;
 	border-radius: 5px;
+	border: 1px solid #B1B1B1;
 }
 
 QWidget#container {
@@ -112,16 +113,16 @@ QWidget#container {
        <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <item>
        <widget class="QWidget" name="toolbar" native="true">
@@ -134,9 +135,9 @@ QWidget#container {
         <widget class="QPushButton" name="close_btn">
          <property name="geometry">
           <rect>
-           <x>710</x>
+           <x>615</x>
            <y>0</y>
-           <width>33</width>
+           <width>35</width>
            <height>30</height>
           </rect>
          </property>
@@ -253,14 +254,14 @@ border-radius: 3px;</string>
            <widget class="QTableWidget" name="class_subjects_table">
             <property name="geometry">
              <rect>
-              <x>350</x>
+              <x>320</x>
               <y>20</y>
-              <width>271</width>
+              <width>301</width>
               <height>311</height>
              </rect>
             </property>
             <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>230</number>
+             <number>270</number>
             </attribute>
             <column>
              <property name="text">

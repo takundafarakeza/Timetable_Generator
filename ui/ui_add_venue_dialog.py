@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_venue_dialogVyPBNd.ui'
+## Form generated from reading UI file 'add_venue_dialogvmJhmB.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -35,15 +35,55 @@ class Ui_AddVenue(object):
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
 "	padding-left: 5px;\n"
+"	outline: none;\n"
+"	background: #FBFCFE;\n"
+"}\n"
+"\n"
+"QComboBox::drop-down{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow{\n"
+"	image: url(':/icons/icons/drop_down.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
 "}\n"
 "\n"
 "QSpinBox{\n"
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
 "	padding-left: 5px;\n"
+"	background: #FBFCFE;\n"
 "}\n"
 "\n"
-"QLineEdit,\n"
+"QSpinBox:down-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QSpinBox:up-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QSpinBox:down-arrow{\n"
+"	image: url(':/icons/icons/drop_down.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
+"}\n"
+"\n"
+"QSpinBox:up-arrow{\n"
+"	image: url(':/icons/icons/drop_up.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
+"}\n"
+"\n"
+"QLineEdit{\n"
+"	border: 1px solid #D3D4D6;\n"
+"	border-radius: 5px;\n"
+"	padding-left: 5px;"
+                        "\n"
+"	background: #FBFCFE;\n"
+"}\n"
+"\n"
 "QTextEdit{\n"
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
@@ -54,6 +94,7 @@ class Ui_AddVenue(object):
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -76,7 +117,7 @@ class Ui_AddVenue(object):
         self.verticalLayout = QVBoxLayout(self.main_container)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(1, 1, 1, 1)
         self.toolbar = QWidget(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 30))
@@ -114,8 +155,8 @@ class Ui_AddVenue(object):
         self.frame.setFrameShadow(QFrame.Shadow.Plain)
         self.venue_name = QLineEdit(self.frame)
         self.venue_name.setObjectName(u"venue_name")
-        self.venue_name.setGeometry(QRect(30, 30, 241, 35))
-        self.venue_name.setMinimumSize(QSize(0, 35))
+        self.venue_name.setGeometry(QRect(30, 30, 241, 30))
+        self.venue_name.setMinimumSize(QSize(0, 30))
         self.venue_save = QPushButton(self.frame)
         self.venue_save.setObjectName(u"venue_save")
         self.venue_save.setGeometry(QRect(190, 220, 81, 30))
@@ -126,13 +167,13 @@ class Ui_AddVenue(object):
 "border-radius: 3px;")
         self.venue_latitude = QLineEdit(self.frame)
         self.venue_latitude.setObjectName(u"venue_latitude")
-        self.venue_latitude.setGeometry(QRect(30, 80, 111, 35))
-        self.venue_latitude.setMinimumSize(QSize(0, 35))
+        self.venue_latitude.setGeometry(QRect(30, 80, 111, 30))
+        self.venue_latitude.setMinimumSize(QSize(0, 30))
         self.venue_latitude.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.venue_longitude = QLineEdit(self.frame)
         self.venue_longitude.setObjectName(u"venue_longitude")
-        self.venue_longitude.setGeometry(QRect(160, 80, 111, 35))
-        self.venue_longitude.setMinimumSize(QSize(0, 35))
+        self.venue_longitude.setGeometry(QRect(160, 80, 111, 30))
+        self.venue_longitude.setMinimumSize(QSize(0, 30))
         self.venue_longitude.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.venue_location_description = QTextEdit(self.frame)
         self.venue_location_description.setObjectName(u"venue_location_description")

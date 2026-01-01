@@ -3,7 +3,8 @@ from . import Types, Formats
 from .logger_config import logger
 from .data import (Class, Venue, Subject, Teacher, Lecturer, Course,
                    TimeTableInitData, TimetableTempDataPrimary, Module,
-                   TimetableTempDataSecondary, TimetableTempDataTertiary)
+                   TimetableTempDataSecondary, TimetableTempDataTertiary,
+                   Block)
 from .generators import PrimarySchool, SecondarySchool, TertiarySchool
 import json
 
@@ -475,7 +476,7 @@ class SecondaryBuilder(QObject):
             Types.SUBJECTS: 0,
             Types.VENUES: 0,
             Types.TEACHERS: 0,
-            Types.BLOCKS: 0
+            Types.BLOCKS: "b0"
         }
         self._time_table_data[Types.BREAKING_SLOTS] = data.break_slots
 
@@ -654,16 +655,6 @@ class SecondaryBuilder(QObject):
             day, slot, class_id = r
             del time_table[day][slot][class_id]
         self.set_unsaved()
-
-    def timetable_add_block(self, subject: str, classes: str, teachers: str,
-                            venues: str, length: int):
-        block_id = str(self._time_table_data[Types.SEQUENCE][Types.BLOCKS] + 1)
-        self._time_table_data[Types.BLOCKS][block_id] = (
-            Formats.format_block_secondary(subject, length, classes, teachers, venues)
-        )
-        self._time_table_data[Types.SEQUENCE][Types.BLOCKS] = int(block_id)
-        self.set_unsaved()
-        self.set_not_generated()
 
     """ ========== TIMETABLE READ =========="""
 
@@ -997,6 +988,43 @@ class SecondaryBuilder(QObject):
     def teacher_get(self, teacher_id: str):
         teacher_data = self._time_table_data[Types.TEACHERS][teacher_id]
         return Teacher(teacher_id, teacher_data[Types.NAME])
+
+    # ============================ BLOCKS =================================
+
+    def add_block(self, block_name: str, subjects: dict, classes: list, length: int):
+        block_id = "b" + str(int(self._time_table_data[Types.SEQUENCE][Types.BLOCKS][1:]) + 1)
+        self._time_table_data[Types.BLOCKS][block_id] = (
+            Formats.format_block_secondary(block_name, subjects, classes, length)
+        )
+        self._time_table_data[Types.SEQUENCE][Types.BLOCKS] = int(block_id[1:])
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def block_remove(self, block_id):
+        del self._time_table_data[Types.BLOCKS][block_id]
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def block_change_name(self, block_id: str, new_name: str):
+        self._time_table_data[Types.BLOCKS][block_id][Types.NAME] = new_name
+        self.set_unsaved()
+
+    def block_change_size(self, block_id: str, new_size: int):
+        self._time_table_data[Types.BLOCKS][block_id]["time_slots"] = new_size
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def block_get_all(self):
+        blocks_data = self._time_table_data[Types.BLOCKS]
+        blocks = [Block(block, blocks_data[block][Types.NAME], blocks_data[block][Types.SUBJECTS],
+                        blocks_data[block][Types.CLASSES], blocks_data[block]["time_slots"])
+                  for block in blocks_data]
+        return blocks
+
+    def block_get(self, block_id: str):
+        block_data = self._time_table_data[Types.BLOCKS][block_id]
+        return Block(block_id, block_data[Types.NAME], block_data[Types.SUBJECTS],
+                     block_data[Types.CLASSES], block_data["time_slots"])
 
 
 class TertiaryBuilder(QObject):
@@ -1400,7 +1428,7 @@ class TertiaryBuilder(QObject):
     def module_add_venue(self, venue_id: str, module_id: str):
         try:
             module = self._time_table_data[Types.MODULES][module_id]
-            module[Types.VENUE] = venue_id
+            module[Types.VENUES].append(venue_id)
         except Exception as e:
             logger.warning(str(e))
             return False

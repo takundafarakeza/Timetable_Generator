@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'boardingCmCmJQ.ui'
+## Form generated from reading UI file 'boardingpaDFGc.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -37,6 +37,7 @@ class Ui_Boarding(object):
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -85,11 +86,11 @@ class Ui_Boarding(object):
 "}\n"
 "\n"
 "QSpinBox:up-button{\n"
-"	background: transparent;\n"
+"	background"
+                        ": transparent;\n"
 "}\n"
 "\n"
-"QS"
-                        "pinBox:down-arrow{\n"
+"QSpinBox:down-arrow{\n"
 "	image: url(':/icons/icons/drop_down.svg');\n"
 "	height: 24px;\n"
 "	width: 24px;\n"

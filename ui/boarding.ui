@@ -29,6 +29,7 @@
 QWidget#main_container {
 	background: #EBECEF;
 	border-radius: 5px;
+	border: 1px solid #B1B1B1;
 }
 
 QWidget#container {

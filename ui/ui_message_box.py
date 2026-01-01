@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'message_boxOPDgTn.ui'
+## Form generated from reading UI file 'message_boxxjEWOF.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -34,8 +34,8 @@ class Ui_Dialog(object):
 "	background: #DBEAFE;\n"
 "}\n"
 "\n"
-"QFrame#toolbar{\n"
-"	border-bottom: 2px solid #E3E4E6;\n"
+"QWidget#container{\n"
+"	background: #F3F4F6;\n"
 "}")
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setSpacing(0)
@@ -47,41 +47,31 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.toolbar = QFrame(self.container)
-        self.toolbar.setObjectName(u"toolbar")
-        self.toolbar.setMinimumSize(QSize(0, 30))
-        self.toolbar.setMaximumSize(QSize(16777215, 30))
-        self.toolbar.setFrameShape(QFrame.Shape.StyledPanel)
-        self.toolbar.setFrameShadow(QFrame.Shadow.Raised)
-        self.title = QLabel(self.toolbar)
-        self.title.setObjectName(u"title")
-        self.title.setGeometry(QRect(10, 0, 391, 30))
-
-        self.verticalLayout_2.addWidget(self.toolbar)
-
         self.frame = QFrame(self.container)
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.icon = QLabel(self.frame)
         self.icon.setObjectName(u"icon")
-        self.icon.setGeometry(QRect(20, 25, 40, 40))
+        self.icon.setGeometry(QRect(20, 40, 40, 40))
         self.icon.setPixmap(QPixmap(u":/icons/icons/success.svg"))
         self.icon.setScaledContents(True)
         self.text = QLabel(self.frame)
         self.text.setObjectName(u"text")
-        self.text.setGeometry(QRect(90, 10, 301, 45))
-        self.text.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignTop)
+        self.text.setGeometry(QRect(90, 10, 300, 81))
+        self.text.setMaximumSize(QSize(300, 16777215))
+        self.text.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.text.setWordWrap(True)
         self.ok_btn = QPushButton(self.frame)
         self.ok_btn.setObjectName(u"ok_btn")
-        self.ok_btn.setGeometry(QRect(324, 70, 71, 24))
+        self.ok_btn.setGeometry(QRect(315, 95, 71, 24))
         self.ok_btn.setStyleSheet(u"padding: 5px;\n"
 "background: #2F69B2;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
         self.cancel_btn = QPushButton(self.frame)
         self.cancel_btn.setObjectName(u"cancel_btn")
-        self.cancel_btn.setGeometry(QRect(240, 70, 71, 24))
+        self.cancel_btn.setGeometry(QRect(230, 95, 71, 24))
 
         self.verticalLayout_2.addWidget(self.frame)
 
@@ -96,7 +86,6 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.title.setText(QCoreApplication.translate("Dialog", u"Success", None))
         self.icon.setText("")
         self.text.setText(QCoreApplication.translate("Dialog", u"Success", None))
         self.ok_btn.setText(QCoreApplication.translate("Dialog", u"Ok", None))

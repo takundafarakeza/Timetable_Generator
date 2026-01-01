@@ -159,40 +159,48 @@ class LoadingDialog(QDialog):
 
 
 class MessageBox(QDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent=parent)
         self.ui = ui_message_box.Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
-        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setModal(True)
+        self.setStyleSheet("background: #E3E4E6;")
 
         self.cancel_btn = self.ui.cancel_btn
         self.ok_btn = self.ui.ok_btn
         self.icon = self.ui.icon
-        self.title = self.ui.title
         self.text = self.ui.text
 
         self.cancel_btn.clicked.connect(self.close)
         self.ok_btn.clicked.connect(self.close)
+        self.ok_btn.setDefault(True)
+        self.cancel_btn.setAutoDefault(False)
+        self.reposition()
 
-    def information(self, parent, title, text):
+    def reposition(self):
+        parent_center = self.parent().frameGeometry().center()
+        dialog_rect = self.frameGeometry()
+        dialog_rect.moveCenter(parent_center)
+        self.move(dialog_rect.topLeft())
+
+    def information(self, title, text):
         self.icon.setPixmap(QPixmap(u":/icons/icons/success.svg"))
-        self.setParent(parent)
-        self.title.setText(title)
+        self.setWindowTitle(title)
         self.text.setText(text)
         self.show()
 
-    def warning(self, parent, title, text):
+    def warning(self, title, text):
         self.icon.setPixmap(QPixmap(u":/icons/icons/warning.svg"))
-        self.setParent(parent)
-        self.title.setText(title)
+        self.setWindowTitle(title)
         self.text.setText(text)
         self.show()
 
-    def critical(self, parent, title, text):
+    def critical(self, title, text):
         self.icon.setPixmap(QPixmap(u":/icons/icons/error.svg"))
-        self.setParent(parent)
-        self.title.setText(title)
+        self.setWindowTitle(title)
         self.text.setText(text)
         self.show()
 

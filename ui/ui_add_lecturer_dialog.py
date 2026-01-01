@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_lecturer_dialogtfvbve.ui'
+## Form generated from reading UI file 'add_lecturer_dialogVsOXaJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -35,24 +35,59 @@ class Ui_AddLecturer(object):
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
 "	padding-left: 5px;\n"
+"	outline: none;\n"
+"	background: #FBFCFE;\n"
+"}\n"
+"\n"
+"QComboBox::drop-down{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow{\n"
+"	image: url(':/icons/icons/drop_down.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
 "}\n"
 "\n"
 "QSpinBox{\n"
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
 "	padding-left: 5px;\n"
+"	background: #FBFCFE;\n"
+"}\n"
+"\n"
+"QSpinBox:down-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QSpinBox:up-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QSpinBox:down-arrow{\n"
+"	image: url(':/icons/icons/drop_down.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
+"}\n"
+"\n"
+"QSpinBox:up-arrow{\n"
+"	image: url(':/icons/icons/drop_up.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
 "}\n"
 "\n"
 "QLineEdit{\n"
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
-"	padding-left: 5px;\n"
+"	padding-left: 5px;"
+                        "\n"
 "	background: #FBFCFE;\n"
 "}\n"
 "\n"
 "QWidget#main_container {\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#container {\n"
@@ -75,7 +110,7 @@ class Ui_AddLecturer(object):
         self.verticalLayout = QVBoxLayout(self.main_container)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(1, 1, 1, 1)
         self.toolbar = QWidget(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 30))

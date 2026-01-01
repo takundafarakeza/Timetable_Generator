@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QFrame, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton
+from PySide6.QtWidgets import QFrame, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QComboBox, QCompleter
 from PySide6.QtGui import QFont, QIcon
-from PySide6.QtCore import Signal, QSize, QRect
+from PySide6.QtCore import Signal, QSize, QRect, Qt
 
 
 class RemovableTableItem(QWidget):
@@ -79,3 +79,17 @@ class ButtonFrameSilent(QFrame):
     def mouseReleaseEvent(self, event, /):
         self.clicked.emit()
         super().mouseReleaseEvent(event)
+
+
+class SearchableComboBox(QComboBox):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self.setEditable(True)
+
+        completer = QCompleter(self.model(), self)
+        completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        completer.setFilterMode(Qt.MatchFlag.MatchContains)
+        completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        self.setCompleter(completer)
+
+        self.lineEdit().textEdited.connect(completer.complete)

@@ -219,11 +219,11 @@ class AppWindow(Main):
 
     def modules_callback(self, module_id, action):
         if action == "edit":
-            self.dialog_window = AddModuleWindow(self.builder, True, module_id)
+            self.dialog_window = AddModuleWindow(self.builder, True, module_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "add_data":
-            self.dialog_window = AddModuleDataWindow(self.builder, module_id)
+            self.dialog_window = AddModuleDataWindow(self.builder, module_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -232,7 +232,7 @@ class AppWindow(Main):
 
     def subjects_callback(self, subject_id, action):
         if action == "edit":
-            self.dialog_window = AddSubjectWindow(self.builder, True, subject_id)
+            self.dialog_window = AddSubjectWindow(self.builder, True, subject_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -240,7 +240,7 @@ class AppWindow(Main):
 
     def lecturers_callback(self, lecturer_id, action):
         if action == "edit":
-            self.dialog_window = AddLecturerWindow(self.builder, True, lecturer_id)
+            self.dialog_window = AddLecturerWindow(self.builder, True, lecturer_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -248,7 +248,7 @@ class AppWindow(Main):
 
     def teachers_callback(self, teacher_id, action):
         if action == "edit":
-            self.dialog_window = AddTeacherWindow(self.builder, True, teacher_id)
+            self.dialog_window = AddTeacherWindow(self.builder, True, teacher_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -256,7 +256,7 @@ class AppWindow(Main):
 
     def courses_callback(self, course_id, action):
         if action == "edit":
-            self.dialog_window = AddCourseWindow(self.builder, True, course_id)
+            self.dialog_window = AddCourseWindow(self.builder, True, course_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -264,14 +264,14 @@ class AppWindow(Main):
 
     def classes_callback(self, class_id, action):
         if action == "edit":
-            self.dialog_window = AddClassWindow(self.builder, True, class_id)
+            self.dialog_window = AddClassWindow(self.builder, True, class_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "add_subjects":
             if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
-                self.dialog_window = AddClassDataWindow(self.builder, class_id)
+                self.dialog_window = AddClassDataWindow(self.builder, class_id, self)
             else:
-                self.dialog_window = AddClassDataPrimaryWindow(self.builder, class_id)
+                self.dialog_window = AddClassDataPrimaryWindow(self.builder, class_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -279,7 +279,7 @@ class AppWindow(Main):
 
     def venues_callback(self, venue_id, action):
         if action == "edit":
-            self.dialog_window = AddVenueWindow(self.builder, True, venue_id)
+            self.dialog_window = AddVenueWindow(self.builder, True, venue_id, self)
             self.dialog_window.saved.connect(self.refresh_data)
             self.dialog_window.show()
         elif action == "delete":
@@ -379,7 +379,7 @@ class AppWindow(Main):
     # ================================================================
 
     def modules_add(self):
-        self.dialog_window = AddModuleWindow(self.builder)
+        self.dialog_window = AddModuleWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -472,7 +472,7 @@ class AppWindow(Main):
     # ================================================================
 
     def subjects_add(self):
-        self.dialog_window = AddSubjectWindow(self.builder)
+        self.dialog_window = AddSubjectWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -541,7 +541,7 @@ class AppWindow(Main):
     # ================================================================
 
     def lecturers_add(self):
-        self.dialog_window = AddLecturerWindow(self.builder)
+        self.dialog_window = AddLecturerWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -578,7 +578,7 @@ class AppWindow(Main):
     # ================================================================
 
     def teachers_add(self):
-        self.dialog_window = AddTeacherWindow(self.builder)
+        self.dialog_window = AddTeacherWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -614,7 +614,7 @@ class AppWindow(Main):
     # ================================================================
 
     def classes_add(self):
-        self.dialog_window = AddClassWindow(self.builder)
+        self.dialog_window = AddClassWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -689,7 +689,7 @@ class AppWindow(Main):
     # ================================================================
 
     def courses_add(self):
-        self.dialog_window = AddCourseWindow(self.builder)
+        self.dialog_window = AddCourseWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -723,7 +723,7 @@ class AppWindow(Main):
     # ================================================================
 
     def venues_add(self):
-        self.dialog_window = AddVenueWindow(self.builder)
+        self.dialog_window = AddVenueWindow(self.builder, parent=self)
         self.dialog_window.saved.connect(self.refresh_data)
         self.dialog_window.show()
 
@@ -758,6 +758,7 @@ class AppWindow(Main):
 
 def close_project():
     app_window.close()
+    app_window.ui.stacked_container.setCurrentIndex(0)
     startup.populate_recent()
     startup.show()
 

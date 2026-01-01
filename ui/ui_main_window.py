@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowYCLmlH.ui'
+## Form generated from reading UI file 'main_windowYWAZbc.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -15,10 +15,12 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-    QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-    QPushButton, QSizePolicy, QSpacerItem, QStackedWidget,
-    QToolButton, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
+    QSpacerItem, QStackedWidget, QToolButton, QVBoxLayout,
+    QWidget)
+
+from widgets.custom_widgets import SearchableComboBox
 import icons_rc
 
 class Ui_MainWindow(object):
@@ -54,6 +56,7 @@ class Ui_MainWindow(object):
 "QWidget#main_container{\n"
 "	background: #EBECEF;\n"
 "	border-radius: 5px;\n"
+"	border: 1px solid #B1B1B1;\n"
 "}\n"
 "\n"
 "QWidget#menu_container{\n"
@@ -79,9 +82,9 @@ class Ui_MainWindow(object):
 "QLineEdit {\n"
 "	border: 1px solid #D3D4D6;\n"
 "	border-radius: 5px;\n"
-"	padding-left: 5px;\n"
-"	background: #FBF"
-                        "CFE;\n"
+"	padding-"
+                        "left: 5px;\n"
+"	background: #FBFCFE;\n"
 "}\n"
 "\n"
 "QPushButton#current_project {\n"
@@ -108,6 +111,11 @@ class Ui_MainWindow(object):
 "	background: #DBEAFE;\n"
 "}\n"
 "\n"
+"QToolTip{\n"
+"	background: #F3F4F6;\n"
+"	border: 1px solid #E3E4E6;\n"
+"}\n"
+"\n"
 "QScrollBar:horizontal {\n"
 "	border: none;\n"
 "	background: #141517;\n"
@@ -130,14 +138,14 @@ class Ui_MainWindow(object):
 "QScrollBar:vertical {\n"
 "	border: none;\n"
 "	background: #EBECEF;\n"
-"	width: 8px;\n"
+"	wi"
+                        "dth: 8px;\n"
 "	margin: 0px;\n"
 "	border-radius: 5px;\n"
 "}\n"
 "\n"
 "QScrollBar::handle:vertical {\n"
-"	background: "
-                        "#B1B1B1;\n"
+"	background: #B1B1B1;\n"
 "	min-height: 10px;\n"
 "	border-radius: 3px;\n"
 "}\n"
@@ -185,13 +193,13 @@ class Ui_MainWindow(object):
 "\n"
 "QSpinBox:up-arrow{\n"
 "	image: url(':/icons/icons/drop_up.svg');\n"
-"	height: 24px;\n"
+"	"
+                        "height: 24px;\n"
 "	width: 24px;\n"
 "}\n"
 "\n"
 "                            QTableWidget {\n"
-"                     "
-                        "           border: none;\n"
+"                                border: none;\n"
 "                            }\n"
 "                            QHeaderView::section {\n"
 "                                background-color: #EBECEF;\n"
@@ -209,10 +217,10 @@ class Ui_MainWindow(object):
 "                                border-right: 1px solid #D3D4D6;\n"
 "                                border-bottom: 1px solid #D3D4D6;\n"
 "                            }\n"
-"                            \n"
+""
+                        "                            \n"
 "                            QTableWidget::item {\n"
-"                           "
-                        "     border-bottom: 1px solid #E3E4E6;\n"
+"                                border-bottom: 1px solid #E3E4E6;\n"
 "                                padding: 3px;\n"
 "                            }")
         self.main_container = QWidget(MainWindow)
@@ -405,14 +413,26 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.subjects_btn)
 
+        self.blocks_btn = QPushButton(self.middle)
+        self.blocks_btn.setObjectName(u"blocks_btn")
+        self.blocks_btn.setMinimumSize(QSize(0, 40))
+        self.blocks_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.blocks_btn.setStyleSheet(u"")
+        icon8 = QIcon()
+        icon8.addFile(u":/icons/icons/blocks.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.blocks_btn.setIcon(icon8)
+        self.blocks_btn.setIconSize(QSize(20, 20))
+
+        self.verticalLayout_5.addWidget(self.blocks_btn)
+
         self.lecturers_btn = QPushButton(self.middle)
         self.lecturers_btn.setObjectName(u"lecturers_btn")
         self.lecturers_btn.setMinimumSize(QSize(0, 40))
         self.lecturers_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.lecturers_btn.setStyleSheet(u"")
-        icon8 = QIcon()
-        icon8.addFile(u":/icons/icons/teacher.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.lecturers_btn.setIcon(icon8)
+        icon9 = QIcon()
+        icon9.addFile(u":/icons/icons/teacher.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.lecturers_btn.setIcon(icon9)
         self.lecturers_btn.setIconSize(QSize(20, 20))
 
         self.verticalLayout_5.addWidget(self.lecturers_btn)
@@ -422,7 +442,7 @@ class Ui_MainWindow(object):
         self.teachers_btn.setMinimumSize(QSize(0, 40))
         self.teachers_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.teachers_btn.setStyleSheet(u"")
-        self.teachers_btn.setIcon(icon8)
+        self.teachers_btn.setIcon(icon9)
         self.teachers_btn.setIconSize(QSize(20, 20))
 
         self.verticalLayout_5.addWidget(self.teachers_btn)
@@ -452,9 +472,9 @@ class Ui_MainWindow(object):
         self.venues_btn.setMinimumSize(QSize(0, 40))
         self.venues_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.venues_btn.setStyleSheet(u"")
-        icon9 = QIcon()
-        icon9.addFile(u":/icons/icons/venues.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.venues_btn.setIcon(icon9)
+        icon10 = QIcon()
+        icon10.addFile(u":/icons/icons/venues.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.venues_btn.setIcon(icon10)
         self.venues_btn.setIconSize(QSize(20, 20))
 
         self.verticalLayout_5.addWidget(self.venues_btn)
@@ -490,9 +510,9 @@ class Ui_MainWindow(object):
         self.settings_btn.setMinimumSize(QSize(0, 40))
         self.settings_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.settings_btn.setStyleSheet(u"")
-        icon10 = QIcon()
-        icon10.addFile(u":/icons/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.settings_btn.setIcon(icon10)
+        icon11 = QIcon()
+        icon11.addFile(u":/icons/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.settings_btn.setIcon(icon11)
 
         self.verticalLayout_4.addWidget(self.settings_btn)
 
@@ -501,9 +521,9 @@ class Ui_MainWindow(object):
         self.close_project_btn.setMinimumSize(QSize(0, 40))
         self.close_project_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.close_project_btn.setStyleSheet(u"")
-        icon11 = QIcon()
-        icon11.addFile(u":/icons/icons/log-out.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.close_project_btn.setIcon(icon11)
+        icon12 = QIcon()
+        icon12.addFile(u":/icons/icons/log-out.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.close_project_btn.setIcon(icon12)
 
         self.verticalLayout_4.addWidget(self.close_project_btn)
 
@@ -555,50 +575,18 @@ class Ui_MainWindow(object):
         self.middle_container.setObjectName(u"middle_container")
         self.middle_container.setFrameShape(QFrame.Shape.StyledPanel)
         self.middle_container.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout = QGridLayout(self.middle_container)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.frame_5 = QFrame(self.middle_container)
-        self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout.addWidget(self.frame_5, 0, 0, 1, 1)
-
-        self.frame_8 = QFrame(self.middle_container)
-        self.frame_8.setObjectName(u"frame_8")
-        self.frame_8.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_8.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout.addWidget(self.frame_8, 0, 1, 1, 1)
-
-        self.frame_9 = QFrame(self.middle_container)
-        self.frame_9.setObjectName(u"frame_9")
-        self.frame_9.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout.addWidget(self.frame_9, 0, 2, 1, 1)
-
-        self.frame_10 = QFrame(self.middle_container)
-        self.frame_10.setObjectName(u"frame_10")
-        self.frame_10.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_10.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout.addWidget(self.frame_10, 1, 0, 1, 1)
-
-        self.frame_11 = QFrame(self.middle_container)
-        self.frame_11.setObjectName(u"frame_11")
-        self.frame_11.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_11.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout.addWidget(self.frame_11, 1, 1, 1, 1)
-
-        self.frame_12 = QFrame(self.middle_container)
-        self.frame_12.setObjectName(u"frame_12")
-        self.frame_12.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_12.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout.addWidget(self.frame_12, 1, 2, 1, 1)
-
+        self.pushButton_2 = QPushButton(self.middle_container)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setGeometry(QRect(490, 150, 131, 31))
+        font1 = QFont()
+        font1.setPointSize(9)
+        font1.setBold(False)
+        self.pushButton_2.setFont(font1)
+        self.pushButton_2.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.pushButton_2.setStyleSheet(u"padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;")
 
         self.verticalLayout_28.addWidget(self.middle_container)
 
@@ -614,9 +602,9 @@ class Ui_MainWindow(object):
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(400, 0))
         self.pushButton.setStyleSheet(u"text-align: left;")
-        icon12 = QIcon()
-        icon12.addFile(u":/icons/icons/info.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.pushButton.setIcon(icon12)
+        icon13 = QIcon()
+        icon13.addFile(u":/icons/icons/info.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.pushButton.setIcon(icon13)
 
         self.horizontalLayout_3.addWidget(self.pushButton)
 
@@ -632,7 +620,7 @@ class Ui_MainWindow(object):
         self.frame_7.setFrameShadow(QFrame.Shadow.Raised)
         self.courses_add_btn_2 = QPushButton(self.frame_7)
         self.courses_add_btn_2.setObjectName(u"courses_add_btn_2")
-        self.courses_add_btn_2.setGeometry(QRect(190, 10, 111, 30))
+        self.courses_add_btn_2.setGeometry(QRect(190, 10, 121, 30))
         self.courses_add_btn_2.setStyleSheet(u"padding: 5px;\n"
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
@@ -672,17 +660,17 @@ class Ui_MainWindow(object):
         self.title_container.setMaximumSize(QSize(16777215, 40))
         self.title_container.setFrameShape(QFrame.Shape.StyledPanel)
         self.title_container.setFrameShadow(QFrame.Shadow.Raised)
-        self.modules_course_filter = QComboBox(self.title_container)
+        self.modules_course_filter = SearchableComboBox(self.title_container)
         self.modules_course_filter.setObjectName(u"modules_course_filter")
         self.modules_course_filter.setGeometry(QRect(679, 5, 251, 30))
         self.modules_course_filter.setEditable(True)
         self.title = QLabel(self.title_container)
         self.title.setObjectName(u"title")
         self.title.setGeometry(QRect(10, 10, 251, 21))
-        font1 = QFont()
-        font1.setPointSize(10)
-        font1.setBold(True)
-        self.title.setFont(font1)
+        font2 = QFont()
+        font2.setPointSize(10)
+        font2.setBold(True)
+        self.title.setFont(font2)
 
         self.verticalLayout_10.addWidget(self.title_container)
 
@@ -705,9 +693,9 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        icon13 = QIcon()
-        icon13.addFile(u":/icons/icons/plus.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.modules_add_btn.setIcon(icon13)
+        icon14 = QIcon()
+        icon14.addFile(u":/icons/icons/plus.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.modules_add_btn.setIcon(icon14)
         self.modules_add_btn.setIconSize(QSize(14, 14))
         self.modules_search = QLineEdit(self.module_header_cnt)
         self.modules_search.setObjectName(u"modules_search")
@@ -756,14 +744,14 @@ class Ui_MainWindow(object):
         self.title_container_2.setMaximumSize(QSize(16777215, 40))
         self.title_container_2.setFrameShape(QFrame.Shape.StyledPanel)
         self.title_container_2.setFrameShadow(QFrame.Shadow.Raised)
-        self.subjects_class_filter = QComboBox(self.title_container_2)
+        self.subjects_class_filter = SearchableComboBox(self.title_container_2)
         self.subjects_class_filter.setObjectName(u"subjects_class_filter")
         self.subjects_class_filter.setGeometry(QRect(729, 5, 201, 30))
         self.subjects_class_filter.setEditable(True)
         self.title_2 = QLabel(self.title_container_2)
         self.title_2.setObjectName(u"title_2")
         self.title_2.setGeometry(QRect(10, 10, 251, 21))
-        self.title_2.setFont(font1)
+        self.title_2.setFont(font2)
 
         self.verticalLayout_11.addWidget(self.title_container_2)
 
@@ -786,7 +774,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.subjects_add_btn.setIcon(icon13)
+        self.subjects_add_btn.setIcon(icon14)
         self.subjects_add_btn.setIconSize(QSize(14, 14))
         self.subjects_search = QLineEdit(self.module_header_cnt_2)
         self.subjects_search.setObjectName(u"subjects_search")
@@ -819,6 +807,81 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.addWidget(self.container_3, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
         self.stacked_container.addWidget(self.subjects_window)
+        self.blocks_page = QWidget()
+        self.blocks_page.setObjectName(u"blocks_page")
+        self.verticalLayout_31 = QVBoxLayout(self.blocks_page)
+        self.verticalLayout_31.setObjectName(u"verticalLayout_31")
+        self.container_10 = QWidget(self.blocks_page)
+        self.container_10.setObjectName(u"container_10")
+        self.verticalLayout_29 = QVBoxLayout(self.container_10)
+        self.verticalLayout_29.setSpacing(0)
+        self.verticalLayout_29.setObjectName(u"verticalLayout_29")
+        self.verticalLayout_29.setContentsMargins(0, 0, 0, 0)
+        self.title_container_8 = QFrame(self.container_10)
+        self.title_container_8.setObjectName(u"title_container_8")
+        self.title_container_8.setMinimumSize(QSize(0, 40))
+        self.title_container_8.setMaximumSize(QSize(16777215, 40))
+        self.title_container_8.setFrameShape(QFrame.Shape.StyledPanel)
+        self.title_container_8.setFrameShadow(QFrame.Shadow.Raised)
+        self.title_8 = QLabel(self.title_container_8)
+        self.title_8.setObjectName(u"title_8")
+        self.title_8.setGeometry(QRect(10, 10, 251, 21))
+        self.title_8.setFont(font2)
+
+        self.verticalLayout_29.addWidget(self.title_container_8)
+
+        self.modules_cnt_8 = QFrame(self.container_10)
+        self.modules_cnt_8.setObjectName(u"modules_cnt_8")
+        self.modules_cnt_8.setFrameShape(QFrame.Shape.StyledPanel)
+        self.modules_cnt_8.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_30 = QVBoxLayout(self.modules_cnt_8)
+        self.verticalLayout_30.setObjectName(u"verticalLayout_30")
+        self.module_header_cnt_8 = QFrame(self.modules_cnt_8)
+        self.module_header_cnt_8.setObjectName(u"module_header_cnt_8")
+        self.module_header_cnt_8.setMinimumSize(QSize(0, 50))
+        self.module_header_cnt_8.setMaximumSize(QSize(16777215, 50))
+        self.module_header_cnt_8.setFrameShape(QFrame.Shape.StyledPanel)
+        self.module_header_cnt_8.setFrameShadow(QFrame.Shadow.Raised)
+        self.subjects_add_btn_2 = QPushButton(self.module_header_cnt_8)
+        self.subjects_add_btn_2.setObjectName(u"subjects_add_btn_2")
+        self.subjects_add_btn_2.setGeometry(QRect(0, 10, 111, 30))
+        self.subjects_add_btn_2.setStyleSheet(u"padding: 5px;\n"
+"background: #57954F;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;")
+        self.subjects_add_btn_2.setIcon(icon14)
+        self.subjects_add_btn_2.setIconSize(QSize(14, 14))
+        self.blocks_search = QLineEdit(self.module_header_cnt_8)
+        self.blocks_search.setObjectName(u"blocks_search")
+        self.blocks_search.setGeometry(QRect(719, 10, 201, 30))
+
+        self.verticalLayout_30.addWidget(self.module_header_cnt_8)
+
+        self.blocks_table_container = QFrame(self.modules_cnt_8)
+        self.blocks_table_container.setObjectName(u"blocks_table_container")
+        self.blocks_table_container.setMinimumSize(QSize(920, 405))
+        self.blocks_table_container.setMaximumSize(QSize(910, 16777215))
+        self.blocks_table_container.setStyleSheet(u"QWidget#blocks_table_container{\n"
+"background: #FBFCFE;\n"
+"border-radius: 5px;\n"
+"border: 1px solid #E3E4E6;\n"
+"}")
+        self.blocks_table_container.setFrameShape(QFrame.Shape.StyledPanel)
+        self.blocks_table_container.setFrameShadow(QFrame.Shadow.Raised)
+        self.subjects_table_layout_2 = QVBoxLayout(self.blocks_table_container)
+        self.subjects_table_layout_2.setSpacing(0)
+        self.subjects_table_layout_2.setObjectName(u"subjects_table_layout_2")
+        self.subjects_table_layout_2.setContentsMargins(0, 0, 0, 0)
+
+        self.verticalLayout_30.addWidget(self.blocks_table_container)
+
+
+        self.verticalLayout_29.addWidget(self.modules_cnt_8)
+
+
+        self.verticalLayout_31.addWidget(self.container_10)
+
+        self.stacked_container.addWidget(self.blocks_page)
         self.lecturers_window = QWidget()
         self.lecturers_window.setObjectName(u"lecturers_window")
         self.verticalLayout_14 = QVBoxLayout(self.lecturers_window)
@@ -838,7 +901,7 @@ class Ui_MainWindow(object):
         self.title_3 = QLabel(self.title_container_3)
         self.title_3.setObjectName(u"title_3")
         self.title_3.setGeometry(QRect(10, 10, 251, 21))
-        self.title_3.setFont(font1)
+        self.title_3.setFont(font2)
 
         self.verticalLayout_12.addWidget(self.title_container_3)
 
@@ -861,7 +924,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.lecturers_add_btn.setIcon(icon13)
+        self.lecturers_add_btn.setIcon(icon14)
         self.lecturers_add_btn.setIconSize(QSize(14, 14))
         self.lecturers_search = QLineEdit(self.module_header_cnt_3)
         self.lecturers_search.setObjectName(u"lecturers_search")
@@ -913,7 +976,7 @@ class Ui_MainWindow(object):
         self.title_4 = QLabel(self.title_container_4)
         self.title_4.setObjectName(u"title_4")
         self.title_4.setGeometry(QRect(10, 10, 251, 21))
-        self.title_4.setFont(font1)
+        self.title_4.setFont(font2)
 
         self.verticalLayout_15.addWidget(self.title_container_4)
 
@@ -936,7 +999,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.teachers_add_btn.setIcon(icon13)
+        self.teachers_add_btn.setIcon(icon14)
         self.teachers_add_btn.setIconSize(QSize(14, 14))
         self.teachers_search = QLineEdit(self.module_header_cnt_4)
         self.teachers_search.setObjectName(u"teachers_search")
@@ -988,7 +1051,7 @@ class Ui_MainWindow(object):
         self.title_6 = QLabel(self.title_container_6)
         self.title_6.setObjectName(u"title_6")
         self.title_6.setGeometry(QRect(10, 10, 251, 21))
-        self.title_6.setFont(font1)
+        self.title_6.setFont(font2)
 
         self.verticalLayout_21.addWidget(self.title_container_6)
 
@@ -1011,7 +1074,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.courses_add_btn.setIcon(icon13)
+        self.courses_add_btn.setIcon(icon14)
         self.courses_add_btn.setIconSize(QSize(14, 14))
         self.courses_search = QLineEdit(self.module_header_cnt_6)
         self.courses_search.setObjectName(u"courses_search")
@@ -1063,7 +1126,7 @@ class Ui_MainWindow(object):
         self.title_7 = QLabel(self.title_container_7)
         self.title_7.setObjectName(u"title_7")
         self.title_7.setGeometry(QRect(10, 10, 251, 21))
-        self.title_7.setFont(font1)
+        self.title_7.setFont(font2)
 
         self.verticalLayout_24.addWidget(self.title_container_7)
 
@@ -1086,7 +1149,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.classes_add_btn.setIcon(icon13)
+        self.classes_add_btn.setIcon(icon14)
         self.classes_add_btn.setIconSize(QSize(14, 14))
         self.classes_search = QLineEdit(self.module_header_cnt_7)
         self.classes_search.setObjectName(u"classes_search")
@@ -1138,7 +1201,7 @@ class Ui_MainWindow(object):
         self.title_5 = QLabel(self.title_container_5)
         self.title_5.setObjectName(u"title_5")
         self.title_5.setGeometry(QRect(10, 10, 251, 21))
-        self.title_5.setFont(font1)
+        self.title_5.setFont(font2)
 
         self.verticalLayout_18.addWidget(self.title_container_5)
 
@@ -1161,7 +1224,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.venues_add_btn.setIcon(icon13)
+        self.venues_add_btn.setIcon(icon14)
         self.venues_add_btn.setIconSize(QSize(14, 14))
         self.venues_search = QLineEdit(self.module_header_cnt_5)
         self.venues_search.setObjectName(u"venues_search")
@@ -1195,7 +1258,7 @@ class Ui_MainWindow(object):
 
         self.stacked_container.addWidget(self.venues_window)
 
-        self.verticalLayout_2.addWidget(self.stacked_container)
+        self.verticalLayout_2.addWidget(self.stacked_container, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
         self.footer = QFrame(self.widget)
         self.footer.setObjectName(u"footer")
@@ -1239,6 +1302,7 @@ class Ui_MainWindow(object):
         self.home_btn.setText(QCoreApplication.translate("MainWindow", u" Home", None))
         self.modules_btn.setText(QCoreApplication.translate("MainWindow", u"   Modules", None))
         self.subjects_btn.setText(QCoreApplication.translate("MainWindow", u"   Subjects", None))
+        self.blocks_btn.setText(QCoreApplication.translate("MainWindow", u"Blocks", None))
         self.lecturers_btn.setText(QCoreApplication.translate("MainWindow", u" Lecturers", None))
         self.teachers_btn.setText(QCoreApplication.translate("MainWindow", u" Teachers", None))
         self.courses_btn.setText(QCoreApplication.translate("MainWindow", u"Courses", None))
@@ -1247,6 +1311,7 @@ class Ui_MainWindow(object):
         self.settings_btn.setText(QCoreApplication.translate("MainWindow", u"  Settings", None))
         self.close_project_btn.setText(QCoreApplication.translate("MainWindow", u"  Close Project", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Smart Timetable Generator", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"View Timetable", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"There is nothing to generate from.", None))
         self.courses_add_btn_2.setText(QCoreApplication.translate("MainWindow", u"Generate", None))
         self.courses_add_btn_3.setText(QCoreApplication.translate("MainWindow", u"Generate Updates", None))
@@ -1260,6 +1325,9 @@ class Ui_MainWindow(object):
         self.title_2.setText(QCoreApplication.translate("MainWindow", u"Manage Subjects", None))
         self.subjects_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Subject", None))
         self.subjects_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Subject", None))
+        self.title_8.setText(QCoreApplication.translate("MainWindow", u"Manage Blocks", None))
+        self.subjects_add_btn_2.setText(QCoreApplication.translate("MainWindow", u"  Add Block", None))
+        self.blocks_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Block", None))
         self.title_3.setText(QCoreApplication.translate("MainWindow", u"Manage Lecturers", None))
         self.lecturers_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Lecturer", None))
         self.lecturers_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Lecturer", None))
