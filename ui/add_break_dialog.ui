@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddClass</class>
- <widget class="QDialog" name="AddClass">
+ <class>AddBreak</class>
+ <widget class="QDialog" name="AddBreak">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>489</height>
+    <width>465</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -135,11 +135,14 @@ QWidget#container {
         <widget class="QPushButton" name="close_btn">
          <property name="geometry">
           <rect>
-           <x>615</x>
+           <x>430</x>
            <y>0</y>
            <width>35</width>
            <height>30</height>
           </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="text">
           <string/>
@@ -175,34 +178,6 @@ QWidget#container {
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="label">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Shadow::Plain</enum>
-           </property>
-           <property name="text">
-            <string>Class Subject</string>
-           </property>
-           <property name="textFormat">
-            <enum>Qt::TextFormat::RichText</enum>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QFrame" name="frame">
            <property name="frameShape">
             <enum>QFrame::Shape::StyledPanel</enum>
@@ -210,11 +185,11 @@ QWidget#container {
            <property name="frameShadow">
             <enum>QFrame::Shadow::Plain</enum>
            </property>
-           <widget class="QPushButton" name="class_save">
+           <widget class="QPushButton" name="break_save">
             <property name="geometry">
              <rect>
-              <x>540</x>
-              <y>370</y>
+              <x>350</x>
+              <y>360</y>
               <width>81</width>
               <height>30</height>
              </rect>
@@ -232,70 +207,29 @@ border-radius: 3px;</string>
              <string>Save</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="slots_per_day">
+           <widget class="QTableWidget" name="breaks_table">
             <property name="geometry">
              <rect>
-              <x>170</x>
-              <y>175</y>
-              <width>101</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QTableWidget" name="class_subjects_table">
-            <property name="geometry">
-             <rect>
-              <x>320</x>
+              <x>50</x>
               <y>20</y>
-              <width>301</width>
-              <height>311</height>
+              <width>381</width>
+              <height>251</height>
              </rect>
             </property>
             <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>270</number>
+             <number>350</number>
             </attribute>
             <column>
              <property name="text">
-              <string>Subjects</string>
+              <string>Breaks</string>
              </property>
             </column>
            </widget>
-           <widget class="QLabel" name="title">
+           <widget class="QPushButton" name="break_add_btn">
             <property name="geometry">
              <rect>
-              <x>40</x>
-              <y>150</y>
-              <width>111</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Slots Per Cycle</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="class_add_subject_btn">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>240</y>
+              <x>210</x>
+              <y>360</y>
               <width>71</width>
               <height>30</height>
              </rect>
@@ -329,52 +263,11 @@ border-radius: 3px;</string>
              </size>
             </property>
            </widget>
-           <widget class="QLabel" name="title_2">
+           <widget class="QComboBox" name="break_slot_select">
             <property name="geometry">
              <rect>
-              <x>170</x>
-              <y>150</y>
-              <width>91</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Slots Per Day</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="slots_per_cycle">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>175</y>
-              <width>111</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="class_teacher_select">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>100</y>
+              <x>50</x>
+              <y>320</y>
               <width>231</width>
               <height>30</height>
              </rect>
@@ -386,14 +279,14 @@ border-radius: 3px;</string>
              </size>
             </property>
             <property name="placeholderText">
-             <string>Select Teacher</string>
+             <string>Select Period</string>
             </property>
            </widget>
-           <widget class="QComboBox" name="class_subject_select">
+           <widget class="QLineEdit" name="break_name">
             <property name="geometry">
              <rect>
-              <x>40</x>
-              <y>50</y>
+              <x>50</x>
+              <y>280</y>
               <width>231</width>
               <height>30</height>
              </rect>
@@ -405,20 +298,7 @@ border-radius: 3px;</string>
              </size>
             </property>
             <property name="placeholderText">
-             <string>Select Subject</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="class_name">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>20</y>
-              <width>241</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Class Name</string>
+             <string>Break name e.g (Lunch or Break, Study)</string>
             </property>
            </widget>
           </widget>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Projects</class>
+ <widget class="QDialog" name="Projects">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>376</width>
+    <height>489</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	background: transparent;
+	border: none;
+	color: #414141;
+}
+
+QComboBox{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	outline: none;
+	background: #FBFCFE;
+}
+
+QComboBox::drop-down{
+	background: transparent;
+}
+
+QComboBox::down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QSpinBox{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
+QSpinBox:down-button{
+	background: transparent;
+}
+
+QSpinBox:up-button{
+	background: transparent;
+}
+
+QSpinBox:down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QSpinBox:up-arrow{
+	image: url(':/icons/icons/drop_up.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QLineEdit{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
+QWidget#main_container {
+	background: #EBECEF;
+	border-radius: 5px;
+	border: 1px solid #B1B1B1;
+}
+
+QWidget#container {
+	background: #F3F4F6;
+}
+
+#close_btn:hover{
+	background: #DC2626;
+}
+
+#toolbar{
+	border-bottom: 2px solid #E3E4E6;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="main_container" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>1</number>
+      </property>
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="toolbar" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <widget class="QPushButton" name="close_btn">
+         <property name="geometry">
+          <rect>
+           <x>340</x>
+           <y>0</y>
+           <width>35</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>10</width>
+           <height>10</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>0</y>
+           <width>241</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Plain</enum>
+         </property>
+         <property name="text">
+          <string>Projects</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::TextFormat::RichText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="container" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QFrame" name="frame">
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Plain</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QTableWidget" name="projects_table">
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
+              </property>
+              <property name="showGrid">
+               <bool>false</bool>
+              </property>
+              <attribute name="horizontalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>350</number>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string/>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../assets/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

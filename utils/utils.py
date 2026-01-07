@@ -24,38 +24,45 @@ class Utils:
         return projects
 
     @staticmethod
-    def randomize_slots(slots_: list, block_size_, strict: bool = False):
+    def randomize_slots(slots_: list, block_size_, strict: bool = False, block: bool = False):
 
         if len(slots_) < block_size_:
             return []
-        elif len(slots_) == block_size_:
-            return slots_
 
         try:
-            iter_count = math.ceil(len(slots_) / block_size_)
-            remaining_slots = len(slots_)
             random_slots = []
-            extra_slots = []
-
-            for _ in range(iter_count):
+            extra_slots = [sl for sl in slots_]
+            slots = slots_
+            while len(slots) > 0:
                 slot = []
-                for _ in range(min(block_size_, remaining_slots)):
-                    slot.append(slots_[len(slots_) - remaining_slots])
-                    remaining_slots -= 1
-                if [str(sl) for sl in range(int(slot[0]), int(slot[0]) + len(slot))] == slot and len(slot) == block_size_:
+                remaining = block_size_
+                while remaining > 0:
+                    for slot_item in slots:
+                        if len(slot) > 0 and int(slot_item)- 1 != int(slot[-1]):
+                            break
+                        slot.append(slot_item)
+                        remaining -= 1
+                        if remaining == 0:
+                            break
+                    if remaining != 0:
+                        break
+                if not block:
+                    for item in slot:
+                        slots.remove(item)
+                else:
+                    slots.remove(slots[0])
+                if len(slot) == block_size_:
                     random_slots.append(slot)
-                elif [str(sl) for sl in range(int(slot[0]), int(slot[0]) + len(slot))] == slot:
-                    extra_slots.append(slot)
 
             random.shuffle(random_slots)
-            random_slots = [sl for sls in random_slots for sl in sls]
-
+            random_slots = [sl for slot in random_slots for sl in slot]
             if not strict:
+                extra_slots = [sl for sl in extra_slots if sl not in random_slots]
                 random.shuffle(extra_slots)
                 extra_slots = [sl for sls in extra_slots for sl in sls]
                 random_slots.extend(extra_slots)
             return random_slots
-        except Exception as e:
+        except Exception:
             return []
 
     @staticmethod
@@ -93,15 +100,16 @@ class Utils:
         pass
 
     @staticmethod
-    def save_file(file_path, parent):
+    def save_file(file_path, parent=None, dest_path=None):
 
-        dest_path, _ = QFileDialog.getSaveFileName(parent, "Save as", os.path.basename(file_path), "All Files (*)")
+        if dest_path is None:
+            dest_path, _ = QFileDialog.getSaveFileName(parent, "Save as", os.path.basename(file_path), "All Files (*)")
 
         if file_path:
             try:
                 if os.path.isdir(file_path):
                     if os.path.exists(dest_path):
-                        QMessageBox.warning(parent, "Already exists", f"{dest_path} already exists")
+                        QMessageBox.warning(parent, "Already exists", f"This project file already exists")
                         return False
                     shutil.copytree(file_path, dest_path)
                 else:

@@ -1,22 +1,210 @@
-from PySide6.QtWidgets import (QMainWindow, QFileDialog, QMessageBox,
+from PySide6.QtWidgets import (QMainWindow, QMessageBox,
                                QGraphicsDropShadowEffect, QPushButton,
-                               QMenu, QWidget)
+                               QMenu, QWidget, QDialog)
+from utils.builders import PrimaryBuilder, SecondaryBuilder, TertiaryBuilder
 from PySide6.QtGui import QGuiApplication, QColor, QIcon
 from PySide6.QtCore import Qt, Signal, QSize
-from ui import ui_startup, ui_boarding, ui_main_window
+from ui import ui_startup, ui_boarding, ui_main_window, ui_viewer, ui_export_project_dialog
 from utils import Types, Settings
-from widgets import RecentItem
+from utils.logger_config import logger
+from typing import Optional, Union
+from widgets import RecentItem, TimeTable
 import functools
 
 
 class Viewer(QWidget):
-    def __init__(self, data: str = None):
+    def __init__(self):
         super().__init__()
-        if data:
-            self.view(data)
+        self.ui = ui_viewer.Ui_ViewerWindow()
+        self.ui.setupUi(self)
+        self.builder: Optional[PrimaryBuilder, SecondaryBuilder, TertiaryBuilder] = None
+        self.tab_view = self.ui.tab_view
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.filter = self.ui.filter
 
-    def view(self, data: str):
+        self.ui.close_btn.clicked.connect(self.close)
+        self.ui.minimize_btn.clicked.connect(self.showMinimized)
+        self.ui.maximize_btn.clicked.connect(self.showMaximized)
+
+    def showMaximized(self, /):
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            super().showMaximized()
+
+    def clear(self):
+        self.filter.currentTextChanged.disconnect()
+        self.tab_view.clear()
+
+    def close(self, /):
+        self.clear()
+        super().close()
+
+    def view(self, builder):
+        self.builder = builder
+        if self.builder.timetable_get():
+            self.load()
         self.show()
+
+    def load(self):
+        try:
+            self.tab_view.clear()
+            self.filter.clear()
+            timetable_data = self.builder.timetable_get()
+            filter_data = []
+
+            for day in timetable_data:
+                timetable = TimeTable(self.builder.timetable_get_slots_per_day(), self.builder.timetable_slots())
+                self.tab_view.addTab(timetable, (f"Day {day}" if day not in self.builder.timetable_days() else
+                                                 self.builder.timetable_days()[day]))
+                for i, slot in enumerate(timetable_data[day]):
+                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot][Types.EVENTS]:
+                                if timetable_data[day][slot][Types.EVENTS][event][Types.SUBJECT][0] == "b":
+                                    block = self.builder.block_get(timetable_data[day][slot][Types.EVENTS]
+                                                                   [event][Types.SUBJECT])
+                                    subjects = ((f"({self.builder.subject_get(subject).name}: "
+                                                 f"{self.builder.teacher_get(block.subjects[subject]
+                                                                             [Types.TEACHER]).name}: "
+                                                 f"{self.builder.venue_get(block.subjects[subject]
+                                                                           [Types.VENUE]).name})")
+                                                for subject in block.subjects)
+                                    subjects = ", ".join(subjects)
+                                    filter_data.append(self.builder.class_get(event).name)
+                                    timetable.add_item(i, self.builder.class_get(event).name, block.name, subjects)
+                                else:
+                                    timetable.add_item(i, self.builder.class_get(event).name,
+                                                       self.builder.subject_get(timetable_data
+                                                                                [day][slot][Types.EVENTS][event]
+                                                                                [Types.SUBJECT]).name,
+                                                       self.builder.teacher_get(timetable_data
+                                                                                [day][slot][Types.EVENTS][event]
+                                                                                [Types.TEACHER]).name)
+                                    filter_data.append(self.builder.class_get(event).name)
+                        else:
+                            timetable.add_item(i, timetable_data[day][slot], "", "")
+                    else:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot]:
+                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
+                                    timetable.add_item(i, self.builder.class_get(event).name,
+                                                       self.builder.subject_get(timetable_data
+                                                                                [day][slot][event]
+                                                                                [Types.SUBJECT]).name, "")
+                                    filter_data.append(self.builder.class_get(event).name)
+
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                    venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
+                                    courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
+                                    timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
+                                    filter_data.append(self.builder.module_get(event).name)
+                        else:
+                            timetable.add_item(i, timetable_data[day][slot], "", "")
+
+            filter_data = {filter_item for filter_item in filter_data}
+            self.filter.addItem("All")
+            for filter_item in filter_data:
+                self.filter.addItem(filter_item)
+            self.filter.setCurrentText("All")
+            self.filter.currentTextChanged.connect(self.load_filtered)
+        except Exception as e:
+            logger.critical(str(e))
+
+    def load_filtered(self):
+
+        if self.filter.currentText() == "All":
+            self.filter.currentTextChanged.disconnect()
+            self.load()
+            return
+
+        try:
+            self.tab_view.clear()
+            timetable_data = self.builder.timetable_get()
+
+            for day in timetable_data:
+                timetable = TimeTable(self.builder.timetable_get_slots_per_day(), self.builder.timetable_slots())
+                self.tab_view.addTab(timetable,
+                                     f"Day {day}" if day not in self.builder.timetable_days() else self.builder.
+                                     timetable_days()[day])
+                for i, slot in enumerate(timetable_data[day]):
+                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
+                        for event in timetable_data[day][slot][Types.EVENTS]:
+                            if isinstance(timetable_data[day][slot][Types.EVENTS], dict):
+                                if self.builder.class_get(event).name == self.filter.currentText():
+                                    if timetable_data[day][slot][Types.EVENTS][event][Types.SUBJECT][0] == "b":
+                                        block = self.builder.block_get(timetable_data[day][slot][Types.EVENTS]
+                                                                       [event][Types.SUBJECT])
+                                        subjects = (f"({self.builder.subject_get(subject).name}: "
+                                                    f"{self.builder.teacher_get(block.subjects[subject][Types.TEACHER]).name})"
+                                                    for subject in block.subjects)
+                                        subjects = ", ".join(subjects)
+                                        timetable.add_item(i, self.builder.class_get(event).name, block.name, subjects)
+                                    else:
+                                        timetable.add_item(i, self.builder.class_get(event).name,
+                                                           self.builder.subject_get(timetable_data
+                                                                                    [day][slot][Types.EVENTS][event]
+                                                                                    [Types.SUBJECT]).name,
+                                                           self.builder.teacher_get(timetable_data
+                                                                                    [day][slot][Types.EVENTS][event]
+                                                                                    [Types.TEACHER]).name)
+                            else:
+                                timetable.add_item(i, timetable_data[day][slot][Types.EVENTS], "", "")
+                    else:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot]:
+                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
+                                    if self.builder.class_get(event).name == self.filter.currentText():
+                                        timetable.add_item(i, self.builder.class_get(event).name,
+                                                           self.builder.subject_get(timetable_data
+                                                                                    [day][slot][event]
+                                                                                    [Types.SUBJECT]).name, "")
+
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                    if self.builder.module_get(event).name == self.filter.currentText():
+                                        venue = self.builder.venue_get(
+                                            timetable_data[day][slot][event][Types.VENUE]).name
+                                        courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
+                                        timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
+                        else:
+                            timetable.add_item(i, timetable_data[day][slot], "", "")
+        except Exception as e:
+            logger.critical(str(e))
+
+
+class Export(QDialog):
+    def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder, TertiaryBuilder]):
+        super().__init__()
+        self.ui = ui_export_project_dialog.Ui_Export()
+        self.ui.setupUi(self)
+
+        self.builder = builder
+
+        self.ui.close_btn.clicked.connect(self.close)
+        self.ui.cancel_btn.clicked.connect(self.close)
+        self.filter = self.ui.timetable_filter
+        self.ui.timetable_export.clicked.connect(self.export)
+        self.populate()
+
+        self.horizontal_header = []
+        self.vertical_header = []
+
+    def populate(self):
+        for slot in range(self.builder.timetable_get_slots_per_day()):
+            timetable_slots = self.builder.timetable_slots()
+            slot = str(slot + 1)
+            slot_item = slot if slot not in timetable_slots else timetable_slots[slot]
+            self.horizontal_header.append(slot_item)
+
+        for day in range(self.builder.timetable_get_days_per_cycle()):
+            timetable_days = self.builder.timetable_days()
+            day = str(day + 1)
+            day_item = day if day not in timetable_days else timetable_days[day]
+            self.vertical_header.append(day_item)
+
+    def export(self):
+        pass
 
 
 class Main(QMainWindow):
@@ -70,6 +258,9 @@ class Main(QMainWindow):
             self.venues_btn: {"icons": [u":/icons/icons/venues.svg", u":/icons/icons/venues-white.svg"],
                               "page": 9}
         }
+        self.display_cards = [self.ui.courses_card, self.ui.venues_card, self.ui.subjects_card,
+                              self.ui.modules_card, self.ui.classes_card, self.ui.lecturers_card,
+                              self.ui.teachers_card, self.ui.blocks_card]
 
         self.settings_btn = self.ui.settings_btn
         self.close_project_btn = self.ui.close_project_btn
@@ -104,6 +295,13 @@ class Main(QMainWindow):
         self.view_btn.setMenu(self.view_menu)
 
         self.timetable_menu = QMenu()
+
+        self.slots_table = self.ui.slot_edit_table
+        self.days_table = self.ui.day_edit_table
+        self.slots_table.setColumnWidth(0, 20)
+        self.slots_table.setColumnWidth(1, 160)
+        self.days_table.setColumnWidth(0, 20)
+        self.days_table.setColumnWidth(1, 160)
 
         self.setup_menu()
 
@@ -154,18 +352,26 @@ class Main(QMainWindow):
         menu = self.ui.menu_container
         menu.setMinimumWidth(170 if menu.minimumWidth() == 42 else 42)
 
-    def show_hide_menu_buttons(self, buttons: list):
+    def hide_menu_buttons(self, buttons: list):
         for button in self.menu_btns:
             if button not in buttons:
                 button.show()
             else:
                 button.hide()
 
+    def hide_dash_cards(self, cards: list):
+        for card in self.display_cards:
+            if card not in cards:
+                card.show()
+            else:
+                card.hide()
+
     def setup_menu(self):
         for button in self.menu_btns:
             activate_func = functools.partial(self.activate_btn, button)
             button.clicked.connect(activate_func)
         self.menu_btn.clicked.connect(self.toggle_menu)
+        self.home_btn.click()
 
     def build_menu(self, institution_type: str):
         self.edit_menu.clear()
@@ -173,23 +379,33 @@ class Main(QMainWindow):
         self.file_menu.clear()
         self.tools_menu.clear()
 
-        self.edit_menu.addAction("Add Venue")
-
         if institution_type == Types.INSTITUTION_PRIMARY:
             buttons = [self.teachers_btn, self.lecturers_btn,
                        self.modules_btn, self.courses_btn,
                        self.blocks_btn]
-            self.show_hide_menu_buttons(buttons)
+            self.hide_menu_buttons(buttons)
+            cards = [self.ui.modules_card, self.ui.lecturers_card,
+                     self.ui.teachers_card, self.ui.blocks_card, self.ui.courses_card]
+            self.hide_dash_cards(cards)
+            self.ui.add_break_btn.show()
 
         elif institution_type == Types.INSTITUTION_SECONDARY:
             buttons = [self.lecturers_btn, self.modules_btn,
                        self.courses_btn]
-            self.show_hide_menu_buttons(buttons)
+            self.hide_menu_buttons(buttons)
+            cards = [self.ui.courses_card, self.ui.modules_card,
+                     self.ui.lecturers_card]
+            self.hide_dash_cards(cards)
+            self.ui.add_break_btn.show()
 
         elif institution_type == Types.INSTITUTION_COLLEGE:
             buttons = [self.teachers_btn, self.subjects_btn,
                        self.classes_btn, self.blocks_btn]
-            self.show_hide_menu_buttons(buttons)
+            self.hide_menu_buttons(buttons)
+            cards = [self.ui.subjects_card, self.ui.classes_card,
+                     self.ui.teachers_card, self.ui.blocks_card]
+            self.hide_dash_cards(cards)
+            self.ui.add_break_btn.hide()
 
     def set_saved(self, status: bool):
         self.save_indicator.setVisible(not status)
@@ -360,7 +576,6 @@ class StartUp(QMainWindow):
         self.web_btn.clicked.connect(self.visit_web)
         self.search_txt.textChanged.connect(self.search_recent)
         self.create_project_btn.clicked.connect(self.boarding.show)
-        self.import_project_btn.clicked.connect(self.import_project)
         self.recent_refresh_btn.clicked.connect(self.populate_recent)
         self.recent_clear_btn.clicked.connect(self.recent_clear)
 
@@ -373,15 +588,18 @@ class StartUp(QMainWindow):
         pass
 
     def populate_recent(self):
-        self.clear_recent_layout()
-        recent = Settings().get_recent_files()
+        try:
+            self.clear_recent_layout()
+            recent = Settings().get_recent_files()
 
-        if not len(recent) > 0:
-            self.ui.recent_status_txt.show()
-        else:
-            self.ui.recent_status_txt.hide()
-            for name, path in recent:
-                self.show_recent(name, path)
+            if not len(recent) > 0:
+                self.ui.recent_status_txt.show()
+            else:
+                self.ui.recent_status_txt.hide()
+                for name, path in recent:
+                    self.show_recent(name, path)
+        except Exception as e:
+            logger.critical(str(e))
 
     def manage_recent(self, name: str, action: str):
         ...
@@ -418,9 +636,3 @@ class StartUp(QMainWindow):
     def recent_clear(self):
         Settings().clear_recent()
         self.populate_recent()
-
-    def import_project(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file", "",
-                                              "Timetable (*tbl)")
-        if file:
-            self.project_open.emit(file)

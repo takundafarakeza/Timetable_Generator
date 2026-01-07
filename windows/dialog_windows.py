@@ -2,17 +2,66 @@ from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QDoubleValidator
 from typing import Union
-from widgets import RemovableTableItem, MessageBox
+from widgets import RemovableTableItem, MessageBox, ProjectItem
 from functools import partial
 from utils.builders import PrimaryBuilder, SecondaryBuilder, TertiaryBuilder
-from utils import Types
+from utils import Types, Utils
 from utils.logger_config import logger
 from ui import (ui_add_module_dialog, ui_add_class_dialog,
                 ui_add_venue_dialog, ui_add_course_dialog, ui_add_subject_dialog,
                 ui_add_teacher_dialog, ui_add_lecturer_dialog,
                 ui_add_module_data_dialog, ui_add_class_data_dialog,
                 ui_add_class_primary_data_dialog, ui_add_block_dialog,
-                ui_add_block_data_dialog)
+                ui_add_block_data_dialog, ui_add_break_dialog,
+                ui_open_project)
+import os
+
+
+class ProjectsWindow(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.project = None
+        self.ui = ui_open_project.Ui_Projects()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        self.table = self.ui.projects_table
+        self.ui.close_btn.clicked.connect(self.close)
+        self.populate()
+
+    def populate(self):
+        path = Utils.get_timetables_path()
+        files = os.listdir(path)
+        files = [(file.replace(".tbl", ""), os.path.join(path, file)) for file in files
+                 if os.path.isfile(os.path.join(path, file)) and
+                 file.endswith(".tbl")]
+        self.table.clearContents()
+        self.table.setRowCount(0)
+
+        for project in files:
+            row = self.table.rowCount()
+            self.table.insertRow(row)
+            self.table.setRowHeight(row, 35)
+            project_item = ProjectItem(self, project[0], project[1], self.callback)
+            self.table.setCellWidget(row, 0, project_item)
+
+    def callback(self, path, action):
+        if action == "del":
+            os.remove(path)
+            self.populate()
+        elif action == "open":
+            self.project = path
+            self.accept()
+
+    @staticmethod
+    def get_project(parent=None):
+        dialog = ProjectsWindow(parent)
+        result = dialog.exec()
+        if result == QDialog.DialogCode.Accepted:
+            return dialog.project
+        return None
 
 
 class AddModuleWindow(QDialog):
@@ -790,6 +839,98 @@ class AddClassDataPrimaryWindow(QDialog):
             MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
 
+class AddBreakWindow(QDialog):
+
+    def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder], parent=None):
+        super().__init__(parent=parent)
+        self.ui = ui_add_break_dialog.Ui_AddBreak()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        self.builder = builder
+
+        self.breaks_data_table = self.ui.breaks_table
+        self.break_slot_select = self.ui.break_slot_select
+        self.break_name = self.ui.break_name
+
+        self.ui.break_save.clicked.connect(self.close)
+        self.ui.close_btn.clicked.connect(self.close)
+        self.ui.break_add_btn.clicked.connect(self.add_break)
+        self.breaks_data_table.setShowGrid(False)
+
+        self.populate()
+        self.slot_select_populate()
+
+    def clear(self):
+        self.break_slot_select.clear()
+        self.breaks_data_table.clearContents()
+        self.break_name.clear()
+
+    def close(self, /):
+        self.clear()
+        super().close()
+
+    def add_break(self):
+        break_name = self.break_name.text()
+        break_slot = self.break_slot_select.currentText()
+
+        if not break_slot:
+            MessageBox(self).warning("Period Error", "Please select a  valid time period!")
+            return
+        elif self.builder.timetable_break_slot_taken(break_slot):
+            MessageBox(self).warning("Period Taken", "This period selected is already used!")
+            return
+        elif not break_name:
+            MessageBox(self).warning("Incomplete input", "Please enter the break name!")
+            return
+
+        try:
+            self.builder.timetable_add_break(break_name, break_slot)
+            self.populate()
+            self.break_name.clear()
+            self.slot_select_populate()
+        except Exception as e:
+            print(str(e))
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def slot_select_populate(self):
+        slots = self.builder.timetable_get_slots_per_day()
+        self.break_slot_select.clear()
+
+        for slot in range(1, slots + 1):
+            self.break_slot_select.addItem(str(slot))
+
+    def populate(self):
+
+        breaks = self.builder.timetable_get_breaks()
+        self.breaks_data_table.clearContents()
+        self.breaks_data_table.setRowCount(0)
+
+        for break_ in breaks:
+            row = self.breaks_data_table.rowCount()
+            self.breaks_data_table.insertRow(row)
+            self.breaks_data_table.setRowHeight(row, 50)
+            item = RemovableTableItem()
+            item.set_header(break_)
+            break_slots = [str(slot) for slot in breaks[break_]]
+            text = ", ".join(break_slots)
+            item.set_text("Periods: " + text)
+            remove_func = partial(self.delete_break, break_)
+            item.remove_btn.clicked.connect(remove_func)
+            self.breaks_data_table.setCellWidget(row, 0, item)
+
+    def delete_break(self, break_name: str):
+        try:
+            self.builder.timetable_remove_break(break_name)
+            self.populate()
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+
 class AddBlockWindow(QDialog):
     saved = Signal(str)
 
@@ -833,17 +974,21 @@ class AddBlockWindow(QDialog):
 
             if not self.edit:
                 try:
-                    self.builder.add_block(block_name, {}, [], block_size)
-                    self.saved.emit(Types.BLOCKS)
-                    self.close()
+                    if self.builder.get_possible_blocks(block_name, {}, [], block_size):
+                        self.builder.add_block(block_name, {}, [], block_size)
+                        self.saved.emit(Types.BLOCKS)
+                        self.close()
+                    else:
+                        MessageBox(self).warning("Error", "A block of that size has no remaining slots to be"
+                                                          " added!")
                 except Exception as e:
                     logger.critical(str(e))
                     MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
-                    self.builder.class_change_data(self.class_id, Types.NAME, class_name)
-                    self.builder.class_change_data(self.class_id, Types.VENUE, class_venue)
-                    self.saved.emit(Types.CLASSES)
+                    self.builder.block_change_name(self.block_id, block_name)
+                    self.builder.block_change_size(self.block_id, block_size)
+                    self.saved.emit(Types.BLOCKS)
                     self.close()
                 except Exception as e:
                     logger.critical(str(e))
@@ -851,12 +996,214 @@ class AddBlockWindow(QDialog):
         else:
             MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
 
+
+class AddBlockDataWindow(QDialog):
+    saved = Signal(str)
+
+    def __init__(self, builder: SecondaryBuilder, block_id: str, parent=None):
+        super().__init__(parent=parent)
+        self.ui = ui_add_block_data_dialog.Ui_AddBlock()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        self.builder = builder
+        self.block_id = block_id
+        self.ui.block_name.setText(self.builder.block_get(self.block_id).name)
+
+        self.subjects_table = self.ui.subjects_table
+        self.classes_table = self.ui.classes_table
+        self.subject_select = self.ui.subject_select
+        self.teacher_select = self.ui.teacher_select
+        self.venue_select = self.ui.venue_select
+        self.class_select = self.ui.class_select
+
+        self.subject_select.lineEdit().setPlaceholderText("Subject name")
+        self.teacher_select.lineEdit().setPlaceholderText("Teacher name")
+        self.venue_select.lineEdit().setPlaceholderText("Subject venue")
+        self.class_select.lineEdit().setPlaceholderText("Class name")
+
+        self.ui.block_save.clicked.connect(self.close)
+        self.ui.close_btn.clicked.connect(self.close)
+        self.ui.subject_add_btn.clicked.connect(self.add_subject)
+        self.ui.class_add_btn.clicked.connect(self.add_class)
+        self.subjects_table.setShowGrid(False)
+        self.classes_table.setShowGrid(False)
+
+        self.populate()
+        self.teachers_select_populate()
+        self.subjects_select_populate()
+        self.class_select_populate()
+        self.venue_select_populate()
+
+    def clear(self):
+        self.subject_select.clear()
+        self.teacher_select.clear()
+        self.class_select.clear()
+        self.venue_select.clear()
+
+    def close(self, /):
+        self.clear()
+        super().close()
+
+    def add_subject(self):
+
+        if not (self.subject_select.currentText() and
+                self.teacher_select.currentText() and
+                self.venue_select.currentText()):
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
+            return
+
+        subject = self.subject_select.currentData()
+        teacher = self.teacher_select.currentData()
+        venue = self.venue_select.currentData()
+
+        if not subject:
+            MessageBox(self).warning("Not Found", "The selected subject is not found!")
+            return
+
+        if not teacher:
+            MessageBox(self).warning("Not Found", "The selected teacher is not found!")
+            return
+
+        if not venue:
+            MessageBox(self).warning("Not Found", "The selected venue is not found!")
+            return
+
+        block_subjects = self.builder.block_get(self.block_id).subjects
+        block_teachers = [block_subjects[subject][Types.TEACHER] for subject in block_subjects]
+        block_venues = [block_subjects[subject][Types.VENUE] for subject in block_subjects]
+
+        if subject in block_subjects:
+            MessageBox(self).warning("Already Exits", "This subject is already added!")
+            return
+        elif teacher in block_teachers:
+            MessageBox(self).warning("Already Exits", "This teacher is already added!")
+            return
+        if venue in block_venues:
+            MessageBox(self).warning("Already Exits", "This venue is already added!")
+            return
+        else:
+            try:
+                self.builder.block_add_subject(self.block_id, subject, teacher, venue)
+                self.saved.emit(Types.BLOCKS)
+                self.populate()
+                self.clear()
+                self.teachers_select_populate()
+                self.subjects_select_populate()
+                self.venue_select_populate()
+                self.class_select_populate()
+            except Exception as e:
+                logger.critical(str(e))
+                MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def add_class(self):
+
+        if not self.class_select.currentText():
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
+            return
+
+        class_ = self.class_select.currentData()
+
+        if not class_:
+            MessageBox(self).warning("Not Found", "The selected class is not found!")
+            return
+
+        block_classes = self.builder.block_get(self.block_id).classes
+
+        if class_ in block_classes:
+            MessageBox(self).warning("Already Exits", "This class is already added!")
+            return
+        else:
+            try:
+                self.builder.block_add_class(self.block_id, class_)
+                self.saved.emit(Types.BLOCKS)
+                self.populate()
+                self.class_select_populate()
+            except Exception as e:
+                logger.critical(str(e))
+                MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def teachers_select_populate(self):
+        teachers = self.builder.teacher_get_all()
+        self.teacher_select.clear()
+
+        for teacher in teachers:
+            self.teacher_select.addItem(teacher.name, userData=teacher.id)
+
+    def subjects_select_populate(self):
+        subjects = self.builder.subject_get_all()
+        self.subject_select.clear()
+
+        for subject in subjects:
+            self.subject_select.addItem(subject.name, userData=subject.id)
+
+    def class_select_populate(self):
+        classes = self.builder.class_get_all()
+        self.class_select.clear()
+
+        for class_ in classes:
+            self.class_select.addItem(class_.name, userData=class_.id)
+
     def venue_select_populate(self):
         venues = self.builder.venue_get_all()
-        self.class_venue.clear()
+        self.venue_select.clear()
 
         for venue in venues:
-            self.class_venue.addItem(venue.name, userData=venue.id)
+            self.venue_select.addItem(venue.name, userData=venue.id)
+
+    def populate(self):
+        subjects = self.builder.block_get(self.block_id).subjects
+        classes = self.builder.block_get(self.block_id).classes
+
+        self.subjects_table.clearContents()
+        self.subjects_table.setRowCount(0)
+        self.classes_table.clearContents()
+        self.classes_table.setRowCount(0)
+
+        subjects = [(subject, self.builder.subject_get(subject).name,
+                     self.builder.teacher_get(subjects[subject][Types.TEACHER]).name,
+                     self.builder.venue_get(subjects[subject][Types.VENUE]).name)
+                    for subject in subjects]
+
+        for subject in subjects:
+            row = self.subjects_table.rowCount()
+            self.subjects_table.insertRow(row)
+            self.subjects_table.setRowHeight(row, 50)
+            item = RemovableTableItem()
+            item.set_header(subject[1])
+            text = f"Teacher: {subject[2]} ~ " + f"Venue: {subject[3]}"
+            item.set_text(text)
+            remove_func = partial(self.delete_subject, self.block_id, subject[0])
+            item.remove_btn.clicked.connect(remove_func)
+            self.subjects_table.setCellWidget(row, 0, item)
+
+        for class_ in classes:
+            row = self.classes_table.rowCount()
+            self.classes_table.insertRow(row)
+            self.classes_table.setRowHeight(row, 50)
+            item = RemovableTableItem()
+            item.set_header(self.builder.class_get(class_).name)
+            remove_func = partial(self.delete_class, self.block_id, class_)
+            item.remove_btn.clicked.connect(remove_func)
+            self.classes_table.setCellWidget(row, 0, item)
+
+    def delete_subject(self, block_id, subject_id):
+        try:
+            self.builder.block_remove_subject(block_id, subject_id)
+            self.populate()
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def delete_class(self, block_id, class_id):
+        try:
+            self.builder.block_remove_class(block_id, class_id)
+            self.populate()
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
 
 class AddVenueWindow(QDialog):

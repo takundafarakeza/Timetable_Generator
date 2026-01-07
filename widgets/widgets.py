@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (QFrame, QPushButton, QLabel,
                                QHBoxLayout, QWidget, QDialog,
-                               QTableWidget, QVBoxLayout)
+                               QTableWidget, QVBoxLayout, QTableWidgetItem)
 from PySide6.QtGui import QIcon, QPixmap, QCursor, QFont, QColor, QPainter
 from PySide6.QtCore import QSize, Qt, QRect, QTimer
 from utils import Utils
@@ -72,6 +72,87 @@ class RecentItem(ButtonFrameSilent):
         self.horizontalLayout.addWidget(self.delete_btn)
 
 
+class ProjectItem(ButtonFrameSilent):
+
+    def __init__(self, parent=None, name="Timetables",
+                 path=def_path, callback=None):
+        super().__init__(parent)
+        self.project_path = path
+        self.setObjectName(u"recent_item")
+        self.setMinimumSize(QSize(0, 30))
+        self.setMaximumSize(QSize(16777215, 30))
+        self.setStyleSheet(u"QFrame {\n"
+                           "border-bottom: 1px solid #e3e4e6;\n"
+                           "}\n"
+                           "\n"
+                           "QLabel, QPushButton{\n"
+                           "	border: none;\n"
+                           "}")
+        self.setFrameShape(QFrame.Shape.StyledPanel)
+        self.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout = QHBoxLayout(self)
+        self.horizontalLayout.setSpacing(10)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.icon = QLabel(self)
+        self.icon.setObjectName(u"icon")
+        self.icon.setMaximumSize(QSize(20, 21))
+        self.icon.setTextFormat(Qt.TextFormat.AutoText)
+        self.icon.setPixmap(QPixmap(u":/icons/images/icon.png"))
+        self.icon.setScaledContents(True)
+        self.horizontalLayout.addWidget(self.icon)
+
+        self.file_name = QLabel(name)
+        self.horizontalLayout.addWidget(self.file_name)
+
+        self.delete_btn = QPushButton(self)
+        self.delete_btn.setObjectName(u"delete_btn")
+        self.delete_btn.setMinimumSize(QSize(20, 20))
+        self.delete_btn.setMaximumSize(QSize(20, 20))
+        delete_func = partial(callback, self.project_path, "del")
+        self.delete_btn.clicked.connect(delete_func)
+        open_func = partial(callback, self.project_path, "open")
+        self.clicked.connect(open_func)
+        icon = QIcon()
+        icon.addFile(u":/icons/icons/delete.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.delete_btn.setIcon(icon)
+        self.horizontalLayout.addWidget(self.delete_btn)
+
+
+class Event(QFrame):
+    def __init__(self, header: str, data_1: str, data_2: str = None,
+                 color: str = "#414141"):
+        super().__init__()
+        self.setObjectName(u"event")
+        self.setGeometry(QRect(140, 120, 180, 50))
+        self.setMinimumSize(QSize(180, 50))
+        self.setStyleSheet(f"background: {color};\n"
+                           "color: #fff;\n"
+                           "border-radius: 5px;")
+        self.setFrameShape(QFrame.Shape.StyledPanel)
+        self.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout = QVBoxLayout(self)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(5, 2, 2, 2)
+        self.header = QLabel(header)
+        self.header.setObjectName(u"label")
+        font = QFont()
+        font.setBold(True)
+        self.header.setFont(font)
+        self.verticalLayout.addWidget(self.header)
+
+        self.text_1 = QLabel(data_1)
+        font1 = QFont()
+        font1.setPointSize(8)
+        self.text_1.setFont(font1)
+        self.verticalLayout.addWidget(self.text_1)
+
+        self.text_2 = QLabel(data_2)
+        self.text_2.setFont(font1)
+        self.verticalLayout.addWidget(self.text_2)
+
+
 class IOSWhiteSpinner(QWidget):
     def __init__(self, w_size=100, dot_size=10, speed=80, parent=None):
         super().__init__(parent)
@@ -98,7 +179,7 @@ class IOSWhiteSpinner(QWidget):
             fade = (i - self.angle_index) % num_dots
             alpha = int(40 + (215 * (num_dots - fade) / num_dots))
 
-            color = QColor(255, 255, 255)  # white
+            color = QColor(65, 65, 65)
             color.setAlpha(alpha)
 
             painter.setBrush(color)
@@ -120,20 +201,22 @@ class LoadingDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
-        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setModal(True)
         self.setMinimumWidth(350)
         self.setMinimumHeight(100)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.setStyleSheet(u"color: #ffffff; background: transparent;")
+        self.setStyleSheet(u"color: #414141; background: transparent;")
 
         dialog_layout = QHBoxLayout(self)
         dialog_layout.setContentsMargins(0, 0, 0, 0)
         self.widget = QWidget()
         self.widget.setObjectName(u"loading_dialog_container")
         self.widget.setStyleSheet(u"QWidget#loading_dialog_container {"
-                                  u"background: #313131; "
-                                  u"border-radius: 10px; "
-                                  u"border: 2px solid #414141;"
+                                  u"background: #EBECEF; "
+                                  u"border-radius: 5px; "
+                                  u"border: 1px solid #B2B2B2;"
                                   u"}")
         dialog_layout.addWidget(self.widget)
         layout = QHBoxLayout(self.widget)
@@ -148,6 +231,67 @@ class LoadingDialog(QDialog):
         self.loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.spinner, alignment=Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.loading_label)
+
+    def showEvent(self, event):
+        self.spinner.timer.start()
+        super().showEvent(event)
+
+    def closeEvent(self, event):
+        self.spinner.timer.stop()
+        super().closeEvent(event)
+
+
+class GenerationDialog(QDialog):
+    def __init__(self, parent=None, text: str = "Generating Timetable"):
+        super().__init__(parent)
+
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setModal(True)
+        self.setMinimumWidth(350)
+        self.setMinimumHeight(100)
+
+        self.setStyleSheet(u"color: #414141; background: #E3E4E6;")
+
+        dialog_layout = QHBoxLayout(self)
+        dialog_layout.setContentsMargins(0, 0, 0, 0)
+        self.widget = QWidget()
+        self.widget.setObjectName(u"loading_dialog_container")
+        self.widget.setStyleSheet(u"QWidget#loading_dialog_container {"
+                                  u"background: #E3E4E6; "
+                                  u"border-radius: 5px; "
+                                  u"border: 1px solid #B2B2B2;"
+                                  u"}")
+        dialog_layout.addWidget(self.widget)
+        layout = QHBoxLayout(self.widget)
+        layout.setContentsMargins(20, 20, 20, 20)
+
+        self.spinner = IOSWhiteSpinner(w_size=50, dot_size=7, speed=70)
+
+        widget = QWidget()
+        text_layout = QVBoxLayout(widget)
+        text_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.loading_label = QLabel(text)
+        self.loading_label.setMinimumWidth(220)
+        font = QFont()
+        font.setPointSize(9)
+        self.loading_label.setFont(font)
+        self.loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.status_label = QLabel("Preparing...")
+        self.status_label.setStyleSheet("color: #818181;")
+        self.status_label.setMinimumWidth(220)
+
+        layout.addWidget(self.spinner, alignment=Qt.AlignmentFlag.AlignCenter)
+        text_layout.addWidget(self.loading_label)
+        text_layout.addWidget(self.status_label)
+        layout.addWidget(widget)
+
+    def update_status(self, status: str):
+        self.status_label.setText(status)
 
     def showEvent(self, event):
         self.spinner.timer.start()
@@ -212,7 +356,7 @@ class ModulesTable(QTableWidget):
                        "#cb4550", "#de8a40", "#4456b0"]
 
         self.setHorizontalHeaderLabels(["", "Module", "Lecturer", "Courses",
-                                        "Venues", "Time Slots", "Actions"])
+                                        "Venues", "Periods", "Actions"])
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
         self.setShowGrid(False)
@@ -294,7 +438,7 @@ class ModulesTable(QTableWidget):
         venues = QLabel(f"{venues}")
         self.setCellWidget(row, 4, venues)
 
-        time_slots = QLabel(f"Slots: {time_slots}\nDaily: {slots_per_day}")
+        time_slots = QLabel(f"Periods: {time_slots}\nPer day: {slots_per_day}")
         self.setCellWidget(row, 5, time_slots)
 
         action_widget = QWidget()
@@ -332,6 +476,125 @@ class ModulesTable(QTableWidget):
             btn.setStyleSheet("padding: 2px;")
             action_layout.addWidget(btn)
         self.setCellWidget(row, 6, action_widget)
+
+    def _handle_action(self, _id, action):
+        if self.parent_callback:
+            self.parent_callback(_id, action)
+
+
+class BlocksTable(QTableWidget):
+    def __init__(self):
+        super().__init__(0, 6)
+        self.colors = ["#4785cf", "#63b542", "#d3cb4a",
+                       "#cb4550", "#de8a40", "#4456b0"]
+
+        self.setHorizontalHeaderLabels(["", "Block", "Subjects", "Classes", "Periods", "Actions"])
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.setShowGrid(False)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.parent_callback = None
+
+        self.setColumnWidth(0, 15)
+        self.setColumnWidth(1, 160)
+        self.setColumnWidth(2, 220)
+        self.setColumnWidth(3, 220)
+        self.setColumnWidth(4, 100)
+        self.setColumnWidth(5, 140)
+
+        self.setStyleSheet("""
+                            QTableWidget {
+                                border: none;
+                            }
+                            QHeaderView::section {
+                                background-color: #EBECEF;
+                                padding: 3px;
+                                border: none;
+                                font-weight: bold;
+                            }
+                            
+                            QHeaderView::section:horizontal {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+                            
+                            QHeaderView::section:vertical {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+                            
+                            QTableWidget::item {
+                                border-bottom: 1px solid #E3E4E6;
+                                padding: 3px;
+                            }
+                        """)
+
+    def set_action_handler(self, handler):
+        self.parent_callback = handler
+
+    def add_item(self, block_id, block_name, subjects, classes, block_size):
+        row = self.rowCount()
+        color = self.colors[Utils.scale_down(6, row) - 1]
+        self.insertRow(row)
+        self.setRowHeight(row, 50)
+
+        color_container = QWidget()
+        layout = QVBoxLayout(color_container)
+        color_item = QWidget()
+        color_item.setMaximumSize(QSize(10, 10))
+        color_item.setMinimumSize(QSize(10, 10))
+        color_item.setStyleSheet(f"background: {color};\n"
+                                 "border-radius: 5px;\n")
+        layout.addWidget(color_item)
+        self.setCellWidget(row, 0, color_container)
+
+        name = QLabel(f"<font color='#414141'><b>{block_name}</b></font>")
+        self.setCellWidget(row, 1, name)
+
+        subjects = QLabel(f"{subjects}")
+        self.setCellWidget(row, 2, subjects)
+
+        classes = QLabel(f"{classes}")
+        self.setCellWidget(row, 3, classes)
+
+        block_size = QLabel(f"{block_size}")
+        self.setCellWidget(row, 4, block_size)
+
+        action_widget = QWidget()
+        action_layout = QHBoxLayout(action_widget)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+
+        block_edit_btn = QPushButton()
+        edit_icon = QIcon()
+        edit_icon.addFile(u":/icons/icons/pencil.svg")
+        block_edit_btn.setIcon(edit_icon)
+        block_edit_btn.setToolTip("Edit")
+        block_edit_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        block_edit_btn.setFlat(True)
+        block_edit_btn.clicked.connect(partial(self._handle_action, block_id, "edit"))
+
+        block_add_data_btn = QPushButton()
+        add_data_icon = QIcon()
+        add_data_icon.addFile(u":/icons/icons/courses-add.svg")
+        block_add_data_btn.setIcon(add_data_icon)
+        block_add_data_btn.setToolTip("Add Courses and Venues")
+        block_add_data_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        block_add_data_btn.setFlat(True)
+        block_add_data_btn.clicked.connect(partial(self._handle_action, block_id, "add_data"))
+
+        block_delete_btn = QPushButton()
+        delete_icon = QIcon()
+        delete_icon.addFile(u":/icons/icons/trash-2.svg")
+        block_delete_btn.setIcon(delete_icon)
+        block_delete_btn.setToolTip("Delete")
+        block_delete_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        block_delete_btn.setFlat(True)
+        block_delete_btn.clicked.connect(partial(self._handle_action, block_id, "delete"))
+
+        for btn in [block_edit_btn, block_add_data_btn, block_delete_btn]:
+            btn.setStyleSheet("padding: 2px;")
+            action_layout.addWidget(btn)
+        self.setCellWidget(row, 5, action_widget)
 
     def _handle_action(self, _id, action):
         if self.parent_callback:
@@ -959,3 +1222,72 @@ class VenuesTable(QTableWidget):
     def _handle_action(self, _id, action):
         if self.parent_callback:
             self.parent_callback(_id, action)
+
+
+class TimeTable(QTableWidget):
+    def __init__(self, slots: int, timetable_slots: dict):
+        super().__init__(0, 1)
+        self.colors = ["#4785cf", "#63b542", "#d3cb4a",
+                       "#cb4550", "#de8a40", "#4456b0"]
+
+        self.setHorizontalHeaderLabels(["Slot"])
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.setShowGrid(False)
+        self.setColumnWidth(0, 80)
+        self.verticalHeader().setVisible(False)
+
+        for slot in range(slots):
+            self.insertRow(slot)
+            self.setRowHeight(slot, 55)
+
+            slot_container = QWidget()
+            layout = QVBoxLayout(slot_container)
+            slot_item = QLabel(str(slot + 1) if str(slot + 1) not in timetable_slots else
+                               timetable_slots[str(slot + 1)])
+            slot_item.setMaximumSize(QSize(75, 25))
+            slot_item.setMinimumSize(QSize(75, 25))
+            layout.addWidget(slot_item)
+            self.setCellWidget(slot, 0, slot_container)
+
+        self.row_item_count = {row: 0 for row in range(slots)}
+
+        self.setStyleSheet("""
+                            QTableWidget {
+                                border: none;
+                            }
+                            QHeaderView::section {
+                                background-color: #EBECEF;
+                                padding: 3px;
+                                height 25px;
+                                border: none;
+                                font-weight: bold;
+                            }
+
+                            QHeaderView::section:horizontal {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QHeaderView::section:vertical {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QTableWidget::item {
+                                border-bottom: 1px solid #E3E4E6;
+                                padding: 3px;
+                            }
+                        """)
+
+    def add_item(self, row, name, data_1: str, data_2: str = None):
+        self.row_item_count[row] += 1
+        count = self.row_item_count[row]
+        if count >= self.columnCount():
+            self.insertColumn(count)
+            self.setColumnWidth(count, 190)
+            self.setHorizontalHeaderItem(count, QTableWidgetItem(""))
+        color = self.colors[Utils.scale_down(6, count) - 1]
+
+        event = Event(name, data_1, data_2, color)
+        self.setCellWidget(row, count, event)

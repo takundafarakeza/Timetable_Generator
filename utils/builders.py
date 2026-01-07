@@ -1,11 +1,12 @@
-from PySide6.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject, QThread
 from . import Types, Formats
 from .logger_config import logger
 from .data import (Class, Venue, Subject, Teacher, Lecturer, Course,
                    TimeTableInitData, TimetableTempDataPrimary, Module,
                    TimetableTempDataSecondary, TimetableTempDataTertiary,
-                   Block)
+                   Block, Timetable)
 from .generators import PrimarySchool, SecondarySchool, TertiarySchool
+from widgets import GenerationDialog, MessageBox
 import json
 
 
@@ -35,6 +36,28 @@ class PrimaryBuilder(QObject):
         self.non_generated_changes: bool = False
         self._patches: dict = {}
 
+        self.builder_parent = None
+        self.generator_thread = None
+        self.generator = None
+        self.generator_dialog = GenerationDialog(self.builder_parent)
+
+    def update_generator_status(self, status, text):
+        if status == 3:
+            self.generator_dialog.update_status(text)
+        if status == 2:
+            self.generator_dialog.update_status(text)
+            self.generator_dialog.close()
+            MessageBox(self.builder_parent).warning("Generation Problem", text)
+        elif status == 0 or status == 1:
+            MessageBox(self.builder_parent).information("Generation Successful", text)
+            self.generator_dialog.close()
+
+    def update_generated_timetable(self, timetable: Timetable):
+        self._time_table_data[Types.TIMETABLE] = timetable.timetable
+        self.timetable_save()
+        self._patches = {}
+        self.set_generated()
+
     def set_saved(self):
         self.unsaved_changes: bool = False
         self.saved.emit(True)
@@ -60,6 +83,10 @@ class PrimaryBuilder(QObject):
     def get_file(self):
         return self.save_path
 
+    def reset_timetable(self):
+        self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
+        self.set_unsaved()
+
     def reload(self):
         file = open(self.save_path)
         time_table_data = json.loads(file.read())
@@ -77,7 +104,9 @@ class PrimaryBuilder(QObject):
         self._time_table_data[Types.TIME_SLOT_LENGTH] = data.time_slot_length
         self._time_table_data[Types.DAYS_PER_CYCLE] = data.days_per_cycle
         self._time_table_data[Types.SLOTS_PER_DAY] = data.slots_per_day
-        self._time_table_data[Types.BREAKING_SLOTS] = data.break_slots
+        self._time_table_data[Types.BREAKING_SLOTS] = {}
+        self._time_table_data[Types.SLOTS] = {}
+        self._time_table_data[Types.DAYS] = {}
 
         self._time_table_data[Types.CLASSES] = {}
         self._time_table_data[Types.SUBJECTS] = {}
@@ -88,7 +117,6 @@ class PrimaryBuilder(QObject):
             Types.SUBJECTS: 0,
             Types.VENUES: 0
         }
-        self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
 
     def timetable_init_timetable(self):
         try:
@@ -109,6 +137,7 @@ class PrimaryBuilder(QObject):
     def timetable_change_header(self, header: str, value):
         self._time_table_data[header] = value
         self.set_unsaved()
+        self.set_not_generated()
 
     def timetable_save(self):
         data = json.dumps(self._time_table_data)
@@ -185,6 +214,43 @@ class PrimaryBuilder(QObject):
     def timetable_get_time_slot_length(self):
         return self._time_table_data[Types.TIME_SLOT_LENGTH]
 
+    def timetable_name_slot(self, slot_number: str, slot_name: str):
+        self._time_table_data[Types.SLOTS][slot_number] = slot_name
+        self.set_unsaved()
+
+    def timetable_name_day(self, day_number: str, day_name: str):
+        self._time_table_data[Types.DAYS][day_number] = day_name
+        self.set_unsaved()
+
+    def timetable_slots(self):
+        return self._time_table_data[Types.SLOTS]
+
+    def timetable_days(self):
+        return self._time_table_data[Types.DAYS]
+
+    def timetable_add_break(self, break_name: str, slot: str):
+        if break_name not in self._time_table_data[Types.BREAKING_SLOTS]:
+            self._time_table_data[Types.BREAKING_SLOTS][break_name] = [slot]
+        else:
+            self._time_table_data[Types.BREAKING_SLOTS][break_name].append(slot)
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def timetable_break_slot_taken(self, slot: str):
+        for break_ in self._time_table_data[Types.BREAKING_SLOTS]:
+            if slot in self._time_table_data[Types.BREAKING_SLOTS][break_]:
+                return True
+        return False
+
+    def timetable_remove_break(self, break_name: str):
+        if break_name in self._time_table_data[Types.BREAKING_SLOTS]:
+            del self._time_table_data[Types.BREAKING_SLOTS][break_name]
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def timetable_get_breaks(self):
+        return self._time_table_data[Types.BREAKING_SLOTS]
+
     # =============================== GENERATOR FUNCTIONS ============================= #
 
     def generate(self):
@@ -194,11 +260,17 @@ class PrimaryBuilder(QObject):
                                         self._time_table_data[Types.DAYS_PER_CYCLE],
                                         self._time_table_data[Types.BREAKING_SLOTS],
                                         self._time_table_data[Types.TIMETABLE])
-        generator = PrimarySchool(data)
-        self._time_table_data[Types.TIMETABLE] = generator.generate()
-        self.timetable_save()
-        self._patches = {}
-        self.set_generated()
+        self.generator_thread = QThread()
+        self.generator = PrimarySchool(data)
+        self.generator.moveToThread(self.generator_thread)
+        self.generator_thread.started.connect(self.generator.generate)
+        self.generator.complete.connect(self.update_generated_timetable)
+        self.generator.status.connect(self.update_generator_status)
+        self.generator.finished.connect(self.generator_thread.quit)
+        self.generator.finished.connect(self.generator.deleteLater)
+        self.generator_thread.finished.connect(self.generator_thread.deleteLater)
+        self.generator_dialog.show()
+        self.generator_thread.start()
 
     def generate_patches(self):
         data = TimetableTempDataPrimary(self._patches,
@@ -206,11 +278,17 @@ class PrimaryBuilder(QObject):
                                         self._time_table_data[Types.DAYS_PER_CYCLE],
                                         self._time_table_data[Types.BREAKING_SLOTS],
                                         self._time_table_data[Types.TIMETABLE])
-        generator = PrimarySchool(data)
-        self._time_table_data[Types.TIMETABLE] = generator.generate()
-        self.timetable_save()
-        self._patches = {}
-        self.set_generated()
+        self.generator_thread = QThread()
+        self.generator = PrimarySchool(data)
+        self.generator.moveToThread(self.generator_thread)
+        self.generator_thread.started.connect(self.generator.generate)
+        self.generator.complete.connect(self.update_generated_timetable)
+        self.generator.status.connect(self.update_generator_status)
+        self.generator.finished.connect(self.generator_thread.quit)
+        self.generator.finished.connect(self.generator.deleteLater)
+        self.generator_thread.finished.connect(self.generator_thread.deleteLater)
+        self.generator_dialog.show()
+        self.generator_thread.start()
 
     def get_possible_slots(self, class_id: str, subject_venue: str,
                            time_slots: int, time_slots_daily: int):
@@ -249,7 +327,6 @@ class PrimaryBuilder(QObject):
     def class_remove(self, class_id: str):
         del self._time_table_data[Types.CLASSES][class_id]
         self.set_unsaved()
-        self.set_not_generated()
         self.timetable_remove_class(class_id)
 
     def class_remove_data(self, class_id: str, dtype: str):
@@ -276,7 +353,6 @@ class PrimaryBuilder(QObject):
             logger.warning(str(e))
 
         self.set_unsaved()
-        self.set_not_generated()
         self.timetable_remove_patch(class_id, subject_id)
         self.timetable_remove_class_subject(class_id, subject_id)
 
@@ -290,6 +366,9 @@ class PrimaryBuilder(QObject):
     def class_get(self, class_id):
         class_data = self._time_table_data[Types.CLASSES][class_id]
         return Class(class_id, class_data[Types.NAME], class_data[Types.VENUE], class_data[Types.SUBJECTS])
+
+    def class_count(self):
+        return len(self._time_table_data[Types.CLASSES])
 
     # =================================== VENUES  ================================ #
 
@@ -324,7 +403,6 @@ class PrimaryBuilder(QObject):
 
         del self._time_table_data[Types.VENUES][venue_id]
         self.set_unsaved()
-        self.set_not_generated()
 
     def venue_change_data(self, venue_id: str, dtype: str, value):
         self._time_table_data[Types.VENUES][venue_id][dtype] = value
@@ -341,6 +419,9 @@ class PrimaryBuilder(QObject):
         venue_data = self._time_table_data[Types.VENUES][venue_id]
         return Venue(venue_id, venue_data["name"], venue_data["location"],
                      venue_data["location_description"])
+
+    def venue_count(self):
+        return len(self._time_table_data[Types.VENUES]) - 1
 
     # ======================================== SUBJECTS =================================== #
 
@@ -370,7 +451,6 @@ class PrimaryBuilder(QObject):
         self.timetable_remove_subject(subject_id)
         del self._time_table_data[Types.SUBJECTS][subject_id]
         self.set_unsaved()
-        self.set_not_generated()
 
     def subject_change_data(self, subject_id: str, dtype: str, value):
         self._time_table_data[Types.SUBJECTS][subject_id][dtype] = value
@@ -402,6 +482,9 @@ class PrimaryBuilder(QObject):
                    if subject_id in classes_data[class_][Types.SUBJECTS]]
         return classes
 
+    def subject_count(self):
+        return len(self._time_table_data[Types.SUBJECTS])
+
 
 class SecondaryBuilder(QObject):
     generated = Signal(bool)
@@ -429,6 +512,28 @@ class SecondaryBuilder(QObject):
         self.non_generated_changes = False
         self._patches = {}
 
+        self.builder_parent = None
+        self.generator_thread = None
+        self.generator = None
+        self.generator_dialog = GenerationDialog(self.builder_parent)
+
+    def update_generator_status(self, status, text):
+        if status == 3:
+            self.generator_dialog.update_status(text)
+        if status == 2:
+            self.generator_dialog.update_status(text)
+            self.generator_dialog.close()
+            MessageBox(self.builder_parent).warning("Generation Problem", text)
+        elif status == 0 or status == 1:
+            MessageBox(self.builder_parent).information("Generation Successful", text)
+            self.generator_dialog.close()
+
+    def update_generated_timetable(self, timetable: Timetable):
+        self._time_table_data[Types.TIMETABLE] = timetable.timetable
+        self.timetable_save()
+        self._patches = {}
+        self.set_generated()
+
     def set_saved(self):
         self.unsaved_changes: bool = False
         self.saved.emit(True)
@@ -454,6 +559,10 @@ class SecondaryBuilder(QObject):
     def get_file(self):
         return self.save_path
 
+    def reset_timetable(self):
+        self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
+        self.set_unsaved()
+
     def reload(self):
         file = open(self.save_path)
         time_table_data = json.loads(file.read())
@@ -471,6 +580,9 @@ class SecondaryBuilder(QObject):
         self._time_table_data[Types.TIME_SLOT_LENGTH] = data.time_slot_length
         self._time_table_data[Types.DAYS_PER_CYCLE] = data.days_per_cycle
         self._time_table_data[Types.SLOTS_PER_DAY] = data.slots_per_day
+        self._time_table_data[Types.SLOTS] = {}
+        self._time_table_data[Types.DAYS] = {}
+
         self._time_table_data[Types.SEQUENCE] = {
             Types.CLASSES: 0,
             Types.SUBJECTS: 0,
@@ -478,9 +590,9 @@ class SecondaryBuilder(QObject):
             Types.TEACHERS: 0,
             Types.BLOCKS: "b0"
         }
-        self._time_table_data[Types.BREAKING_SLOTS] = data.break_slots
+        self._time_table_data[Types.BREAKING_SLOTS] = {}
 
-        self._time_table_data[Types.BLOCK_SLOTS] = {}
+        self._time_table_data[Types.BLOCKS] = {}
         self._time_table_data[Types.CLASSES] = {}
         self._time_table_data[Types.SUBJECTS] = {}
         self._time_table_data[Types.VENUES] = {"unavailable": {"name": "Unavailable", "location": [0, 0],
@@ -511,6 +623,7 @@ class SecondaryBuilder(QObject):
     def timetable_change_header(self, header: str, value):
         self._time_table_data[header] = value
         self.set_unsaved()
+        self.set_not_generated()
 
     def timetable_save(self):
         data = json.dumps(self._time_table_data)
@@ -649,11 +762,13 @@ class SecondaryBuilder(QObject):
     def timetable_remove_class(self, class_):
         time_table = self._time_table_data[Types.TIMETABLE]
         removables = [[day, slot, class_id] for day in time_table
-                      for slot in time_table[day] for class_id in time_table[day][slot]
+                      for slot in time_table[day] if isinstance(time_table[day][slot], dict)
+                      for class_id in time_table[day][slot][Types.DATA][Types.CLASSES]
                       if class_id == class_]
         for r in removables:
             day, slot, class_id = r
-            del time_table[day][slot][class_id]
+            del time_table[day][slot][Types.EVENTS][class_id]
+            time_table[day][slot][Types.DATA][Types.CLASSES].remove(class_id)
         self.set_unsaved()
 
     """ ========== TIMETABLE READ =========="""
@@ -679,6 +794,43 @@ class SecondaryBuilder(QObject):
     def timetable_get_time_slot_length(self):
         return self._time_table_data[Types.TIME_SLOT_LENGTH]
 
+    def timetable_name_slot(self, slot_number: str, slot_name: str):
+        self._time_table_data[Types.SLOTS][slot_number] = slot_name
+        self.set_unsaved()
+
+    def timetable_name_day(self, day_number: str, day_name: str):
+        self._time_table_data[Types.DAYS][day_number] = day_name
+        self.set_unsaved()
+
+    def timetable_slots(self):
+        return self._time_table_data[Types.SLOTS]
+
+    def timetable_days(self):
+        return self._time_table_data[Types.DAYS]
+
+    def timetable_add_break(self, break_name: str, slot: str):
+        if break_name not in self._time_table_data[Types.BREAKING_SLOTS]:
+            self._time_table_data[Types.BREAKING_SLOTS][break_name] = [slot]
+        else:
+            self._time_table_data[Types.BREAKING_SLOTS][break_name].append(slot)
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def timetable_break_slot_taken(self, slot: str):
+        for break_ in self._time_table_data[Types.BREAKING_SLOTS]:
+            if slot in self._time_table_data[Types.BREAKING_SLOTS][break_]:
+                return True
+        return False
+
+    def timetable_remove_break(self, break_name: str):
+        if break_name in self._time_table_data[Types.BREAKING_SLOTS]:
+            del self._time_table_data[Types.BREAKING_SLOTS][break_name]
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def timetable_get_breaks(self):
+        return self._time_table_data[Types.BREAKING_SLOTS]
+
     # =============================== GENERATOR FUNCTIONS ============================= #
 
     def generate(self):
@@ -688,13 +840,19 @@ class SecondaryBuilder(QObject):
                                           self._time_table_data[Types.TEACHERS],
                                           self._time_table_data[Types.DAYS_PER_CYCLE],
                                           self._time_table_data[Types.BREAKING_SLOTS],
-                                          self._time_table_data[Types.BLOCK_SLOTS],
+                                          self._time_table_data[Types.BLOCKS],
                                           self._time_table_data[Types.TIMETABLE])
-        generator = SecondarySchool(data)
-        self._time_table_data[Types.TIMETABLE] = generator.generate()
-        self.timetable_save()
-        self._patches = {}
-        self.set_generated()
+        self.generator_thread = QThread()
+        self.generator = SecondarySchool(data)
+        self.generator.moveToThread(self.generator_thread)
+        self.generator_thread.started.connect(self.generator.generate)
+        self.generator.complete.connect(self.update_generated_timetable)
+        self.generator.status.connect(self.update_generator_status)
+        self.generator.finished.connect(self.generator_thread.quit)
+        self.generator.finished.connect(self.generator.deleteLater)
+        self.generator_thread.finished.connect(self.generator_thread.deleteLater)
+        self.generator_dialog.show()
+        self.generator_thread.start()
 
     def generate_patches(self):
         data = TimetableTempDataSecondary(self._patches,
@@ -703,11 +861,30 @@ class SecondaryBuilder(QObject):
                                           self._time_table_data[Types.DAYS_PER_CYCLE],
                                           self._time_table_data[Types.BREAKING_SLOTS], {},
                                           self._time_table_data[Types.TIMETABLE])
+        self.generator_thread = QThread()
+        self.generator = SecondarySchool(data)
+        self.generator.moveToThread(self.generator_thread)
+        self.generator_thread.started.connect(self.generator.generate)
+        self.generator.complete.connect(self.update_generated_timetable)
+        self.generator.status.connect(self.update_generator_status)
+        self.generator.finished.connect(self.generator_thread.quit)
+        self.generator.finished.connect(self.generator.deleteLater)
+        self.generator_thread.finished.connect(self.generator_thread.deleteLater)
+        self.generator_dialog.show()
+        self.generator_thread.start()
+
+    def get_possible_blocks(self, block_name: str, subjects: dict, classes: list, length: int):
+        new_block = Formats.format_block_secondary(block_name, subjects, classes, length)
+        self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
+        data = TimetableTempDataSecondary(self._time_table_data[Types.CLASSES],
+                                          self._time_table_data[Types.SUBJECTS],
+                                          self._time_table_data[Types.TEACHERS],
+                                          self._time_table_data[Types.DAYS_PER_CYCLE],
+                                          self._time_table_data[Types.BREAKING_SLOTS],
+                                          self._time_table_data[Types.BLOCKS],
+                                          self._time_table_data[Types.TIMETABLE])
         generator = SecondarySchool(data)
-        self._time_table_data[Types.TIMETABLE] = generator.generate()
-        self.timetable_save()
-        self._patches = {}
-        self.set_generated()
+        return generator.possible_block_slots(new_block)
 
     def get_possible_slots(self, class_id: str, subject_venue: str,
                            time_slots: int, time_slots_daily: int,
@@ -749,7 +926,6 @@ class SecondaryBuilder(QObject):
     def class_remove(self, class_id: str):
         del self._time_table_data[Types.CLASSES][class_id]
         self.set_unsaved()
-        self.set_not_generated()
         self.timetable_remove_class(class_id)
 
     def class_remove_data(self, class_id: str, dtype: str):
@@ -807,7 +983,6 @@ class SecondaryBuilder(QObject):
             logger.warning(str(e))
 
         self.set_unsaved()
-        self.set_not_generated()
         self.timetable_remove_patch(class_id, subject_id)
         self.timetable_remove_class_subject(class_id, subject_id)
 
@@ -822,7 +997,6 @@ class SecondaryBuilder(QObject):
             logger.warning(str(e))
 
         self.set_unsaved()
-        self.set_not_generated()
         self.timetable_remove_class_subject_teacher(class_id, teacher_id)
 
     def class_get_all(self):
@@ -835,6 +1009,9 @@ class SecondaryBuilder(QObject):
     def class_get(self, class_id):
         class_data = self._time_table_data[Types.CLASSES][class_id]
         return Class(class_id, class_data[Types.NAME], class_data[Types.VENUE], class_data[Types.SUBJECTS])
+
+    def class_count(self):
+        return len(self._time_table_data[Types.CLASSES])
 
     # =================================== VENUES  ================================ #
 
@@ -867,6 +1044,13 @@ class SecondaryBuilder(QObject):
             if venue_id == subjects[subject][Types.SUBJECT_PRIMARY_VENUE]:
                 self.subject_remove_data(subject, Types.SUBJECT_PRIMARY_VENUE)
 
+        blocks = self._time_table_data[Types.BLOCKS]
+        for block in blocks:
+            subjects = blocks[block][Types.SUBJECTS]
+            for subject in subjects:
+                if subjects[subject][Types.VENUE] == venue_id:
+                    subjects[subject][Types.VENUE] = Types.UNAVAILABLE
+
         del self._time_table_data[Types.VENUES][venue_id]
         self.set_unsaved()
         self.set_not_generated()
@@ -886,6 +1070,9 @@ class SecondaryBuilder(QObject):
         venue_data = self._time_table_data[Types.VENUES][venue_id]
         return Venue(venue_id, venue_data["name"], venue_data["location"],
                      venue_data["location_description"])
+
+    def venue_count(self):
+        return len(self._time_table_data[Types.VENUES]) - 1
 
     # ======================================== SUBJECTS =================================== #
 
@@ -914,7 +1101,6 @@ class SecondaryBuilder(QObject):
         self.timetable_remove_subject(subject_id)
         del self._time_table_data[Types.SUBJECTS][subject_id]
         self.set_unsaved()
-        self.set_not_generated()
 
     def subject_change_data(self, subject_id: str, dtype: str, value):
         self._time_table_data[Types.SUBJECTS][subject_id][dtype] = value
@@ -945,6 +1131,9 @@ class SecondaryBuilder(QObject):
                    if subject_id in classes_data[class_][Types.SUBJECTS]]
         return classes
 
+    def subject_count(self):
+        return len(self._time_table_data[Types.SUBJECTS])
+
     # ======================================== SUBJECTS =================================== #
 
     def add_teacher(self, name: str):
@@ -970,10 +1159,16 @@ class SecondaryBuilder(QObject):
                 if teacher_id == classes[class_][Types.SUBJECTS][subject_id][Types.TEACHER]:
                     self.class_remove_subject_teacher(class_, teacher_id)
 
+        blocks = self._time_table_data[Types.BLOCKS]
+        for block in blocks:
+            subjects = blocks[block][Types.SUBJECTS]
+            for subject in subjects:
+                if subjects[subject][Types.TEACHER] == teacher_id:
+                    subjects[subject][Types.TEACHER] = Types.UNAVAILABLE
+
         self.timetable_remove_teacher(teacher_id)
         del self._time_table_data[Types.TEACHERS][teacher_id]
         self.set_unsaved()
-        self.set_not_generated()
 
     def teacher_change_name(self, teacher_id: str, new_name: str):
         self._time_table_data[Types.TEACHERS][teacher_id][Types.NAME] = new_name
@@ -989,6 +1184,9 @@ class SecondaryBuilder(QObject):
         teacher_data = self._time_table_data[Types.TEACHERS][teacher_id]
         return Teacher(teacher_id, teacher_data[Types.NAME])
 
+    def teacher_count(self):
+        return len(self._time_table_data[Types.TEACHERS]) - 1
+
     # ============================ BLOCKS =================================
 
     def add_block(self, block_name: str, subjects: dict, classes: list, length: int):
@@ -996,9 +1194,8 @@ class SecondaryBuilder(QObject):
         self._time_table_data[Types.BLOCKS][block_id] = (
             Formats.format_block_secondary(block_name, subjects, classes, length)
         )
-        self._time_table_data[Types.SEQUENCE][Types.BLOCKS] = int(block_id[1:])
+        self._time_table_data[Types.SEQUENCE][Types.BLOCKS] = block_id
         self.set_unsaved()
-        self.set_not_generated()
 
     def block_remove(self, block_id):
         del self._time_table_data[Types.BLOCKS][block_id]
@@ -1014,6 +1211,27 @@ class SecondaryBuilder(QObject):
         self.set_unsaved()
         self.set_not_generated()
 
+    def block_add_class(self, block_id, class_id):
+        self._time_table_data[Types.BLOCKS][block_id][Types.CLASSES].append(class_id)
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def block_remove_class(self, block_id, class_id):
+        self._time_table_data[Types.BLOCKS][block_id][Types.CLASSES].remove(class_id)
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def block_add_subject(self, block_id, subject: str, teacher: str, venue: str):
+        subjects = self._time_table_data[Types.BLOCKS][block_id][Types.SUBJECTS]
+        subjects[subject] = {Types.TEACHER: teacher, Types.VENUE: venue}
+        self.set_unsaved()
+        self.set_not_generated()
+
+    def block_remove_subject(self, block_id, subject: str):
+        del self._time_table_data[Types.BLOCKS][block_id][Types.SUBJECTS][subject]
+        self.set_unsaved()
+        self.set_not_generated()
+
     def block_get_all(self):
         blocks_data = self._time_table_data[Types.BLOCKS]
         blocks = [Block(block, blocks_data[block][Types.NAME], blocks_data[block][Types.SUBJECTS],
@@ -1025,6 +1243,9 @@ class SecondaryBuilder(QObject):
         block_data = self._time_table_data[Types.BLOCKS][block_id]
         return Block(block_id, block_data[Types.NAME], block_data[Types.SUBJECTS],
                      block_data[Types.CLASSES], block_data["time_slots"])
+
+    def block_count(self):
+        return len(self._time_table_data[Types.BLOCKS])
 
 
 class TertiaryBuilder(QObject):
@@ -1053,6 +1274,28 @@ class TertiaryBuilder(QObject):
         self.non_generated_changes = False
         self._patches = {}
 
+        self.builder_parent = None
+        self.generator_thread = None
+        self.generator = None
+        self.generator_dialog = GenerationDialog(self.builder_parent)
+
+    def update_generator_status(self, status, text):
+        if status == 1:
+            self.generator_dialog.update_status(text)
+        elif status == 2:
+            self.generator_dialog.update_status(text)
+            self.generator_dialog.close()
+            MessageBox(self.builder_parent).warning("Generation Problem", text)
+        elif status == 0:
+            MessageBox(self.builder_parent).information("Generation Successful", text)
+            self.generator_dialog.close()
+
+    def update_generated_timetable(self, timetable: Timetable):
+        self._time_table_data[Types.TIMETABLE] = timetable.timetable
+        self.timetable_save()
+        self._patches = {}
+        self.set_generated()
+
     def set_saved(self):
         self.unsaved_changes: bool = False
         self.saved.emit(True)
@@ -1078,6 +1321,10 @@ class TertiaryBuilder(QObject):
     def get_file(self):
         return self.save_path
 
+    def reset_timetable(self):
+        self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
+        self.set_unsaved()
+
     def reload(self):
         file = open(self.save_path)
         time_table_data = json.loads(file.read())
@@ -1088,6 +1335,12 @@ class TertiaryBuilder(QObject):
             self.timetable_init_headers(self._init_data)
         self.set_saved()
 
+    """
+    ________________________________________________________________________
+    TIMETABLE
+    ________________________________________________________________________
+    """
+
     def timetable_init_headers(self, data: TimeTableInitData):
         self._time_table_data[Types.TIMETABLE_NAME] = data.timetable_name
         self._time_table_data[Types.INSTITUTION_TYPE] = data.institution_type
@@ -1095,6 +1348,9 @@ class TertiaryBuilder(QObject):
         self._time_table_data[Types.TIME_SLOT_LENGTH] = data.time_slot_length
         self._time_table_data[Types.DAYS_PER_CYCLE] = data.days_per_cycle
         self._time_table_data[Types.SLOTS_PER_DAY] = data.slots_per_day
+        self._time_table_data[Types.SLOTS] = {}
+        self._time_table_data[Types.DAYS] = {}
+
         self._time_table_data[Types.SEQUENCE] = {
             Types.COURSES: 0,
             Types.MODULES: 0,
@@ -1102,7 +1358,6 @@ class TertiaryBuilder(QObject):
             Types.LECTURERS: 0,
             Types.BLOCKS: 0
         }
-        self._time_table_data[Types.BREAKING_SLOTS] = data.break_slots
 
         self._time_table_data[Types.COURSES] = {}
         self._time_table_data[Types.MODULES] = {}
@@ -1130,6 +1385,7 @@ class TertiaryBuilder(QObject):
     def timetable_change_header(self, header: str, value):
         self._time_table_data[header] = value
         self.set_unsaved()
+        self.set_not_generated()
 
     def timetable_reset(self):
         self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
@@ -1225,13 +1481,13 @@ class TertiaryBuilder(QObject):
 
     def timetable_remove_course(self, course_id):
         time_table = self._time_table_data[Types.TIMETABLE]
-        removables = [[day, slot, module_id] for day in time_table
+        removables = [[day, slot, module_id, course] for day in time_table
                       for slot in time_table[day] for module_id in time_table[day][slot]
                       for course in time_table[day][slot][module_id][Types.COURSES]
                       if self.course_get(course_id).short_name == course.split("-")[0]]
         for r in removables:
-            day, slot, module_id = r
-            time_table[day][slot][module_id][Types.COURSES].remove(course_id)
+            day, slot, module_id, course_pref = r
+            time_table[day][slot][module_id][Types.COURSES].remove(course_pref)
         self.set_unsaved()
 
     """ ========== TIMETABLE READ =========="""
@@ -1257,6 +1513,20 @@ class TertiaryBuilder(QObject):
     def timetable_get_time_slot_length(self):
         return self._time_table_data[Types.TIME_SLOT_LENGTH]
 
+    def timetable_name_slot(self, slot_number: str, slot_name: str):
+        self._time_table_data[Types.SLOTS][slot_number] = slot_name
+        self.set_unsaved()
+
+    def timetable_name_day(self, day_number: str, day_name: str):
+        self._time_table_data[Types.DAYS][day_number] = day_name
+        self.set_unsaved()
+
+    def timetable_slots(self):
+        return self._time_table_data[Types.SLOTS]
+
+    def timetable_days(self):
+        return self._time_table_data[Types.DAYS]
+
     # =============================== GENERATOR FUNCTIONS ============================= #
 
     def generate(self):
@@ -1267,11 +1537,17 @@ class TertiaryBuilder(QObject):
                                          self._time_table_data[Types.SLOTS_PER_DAY],
                                          self._time_table_data[Types.BREAKING_SLOTS],
                                          self._time_table_data[Types.TIMETABLE])
-        generator = TertiarySchool(data)
-        self._time_table_data[Types.TIMETABLE] = generator.generate()
-        self.timetable_save()
-        self._patches = {}
-        self.set_generated()
+        self.generator_thread = QThread()
+        self.generator = TertiarySchool(data)
+        self.generator.moveToThread(self.generator_thread)
+        self.generator_thread.started.connect(self.generator.generate)
+        self.generator.complete.connect(self.update_generated_timetable)
+        self.generator.status.connect(self.update_generator_status)
+        self.generator.finished.connect(self.generator_thread.quit)
+        self.generator.finished.connect(self.generator.deleteLater)
+        self.generator_thread.finished.connect(self.generator_thread.deleteLater)
+        self.generator_dialog.show()
+        self.generator_thread.start()
 
     def generate_patches(self):
         pass
@@ -1312,9 +1588,9 @@ class TertiaryBuilder(QObject):
         self.set_unsaved()
 
     def course_remove(self, course_id: str):
-        del self._time_table_data[Types.COURSES][course_id]
         self.modules_remove_course(course_id)
         self.timetable_remove_course(course_id)
+        del self._time_table_data[Types.COURSES][course_id]
         self.set_unsaved()
         self.set_not_generated()
 
@@ -1335,6 +1611,9 @@ class TertiaryBuilder(QObject):
     def course_get(self, course_id):
         course_data = self._time_table_data[Types.COURSES][course_id]
         return Course(course_id, course_data[Types.NAME], course_data[Types.SHORT_NAME])
+
+    def course_count(self):
+        return len(self._time_table_data[Types.COURSES])
 
     # =================================== VENUES  ================================ #
 
@@ -1380,6 +1659,9 @@ class TertiaryBuilder(QObject):
         venue_data = self._time_table_data[Types.VENUES][venue_id]
         return Venue(venue_id, venue_data["name"], venue_data["location"],
                      venue_data["location_description"])
+
+    def venue_count(self):
+        return len(self._time_table_data[Types.VENUES]) - 1
 
     # ======================================== MODULES =================================== #
 
@@ -1470,9 +1752,11 @@ class TertiaryBuilder(QObject):
     def modules_remove_course(self, course_id: str):
         try:
             modules = self._time_table_data[Types.MODULES]
-            for module in modules:
-                if course_id in module[Types.COURSES]:
-                    del self._time_table_data[Types.MODULES][module][Types.COURSES][course_id]
+            removables = [module for module in modules
+                          for course in modules[module][Types.COURSES]
+                          if course == course_id]
+            for module in removables:
+                del self._time_table_data[Types.MODULES][module][Types.COURSES][course_id]
         except Exception as e:
             logger.warning(str(e))
 
@@ -1515,6 +1799,9 @@ class TertiaryBuilder(QObject):
                       module_data["time_slots"],
                       module_data["slots_per_day"])
 
+    def module_count(self):
+        return len(self._time_table_data[Types.MODULES])
+
     # ======================================== MODULES =================================== #
 
     def add_lecturer(self, name: str):
@@ -1555,3 +1842,6 @@ class TertiaryBuilder(QObject):
     def lecturer_get(self, lecturer_id: str):
         lecturer_data = self._time_table_data[Types.LECTURERS][lecturer_id]
         return Lecturer(lecturer_id, lecturer_data[Types.NAME])
+
+    def lecturer_count(self):
+        return len(self._time_table_data[Types.LECTURERS]) - 1

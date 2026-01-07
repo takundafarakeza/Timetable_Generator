@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddClass</class>
- <widget class="QDialog" name="AddClass">
+ <class>AddBlock</class>
+ <widget class="QDialog" name="AddBlock">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>489</height>
+    <width>291</width>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -135,9 +135,9 @@ QWidget#container {
         <widget class="QPushButton" name="close_btn">
          <property name="geometry">
           <rect>
-           <x>615</x>
+           <x>260</x>
            <y>0</y>
-           <width>35</width>
+           <width>33</width>
            <height>30</height>
           </rect>
          </property>
@@ -192,7 +192,7 @@ QWidget#container {
             <enum>QFrame::Shadow::Plain</enum>
            </property>
            <property name="text">
-            <string>Class Subject</string>
+            <string>Block</string>
            </property>
            <property name="textFormat">
             <enum>Qt::TextFormat::RichText</enum>
@@ -210,11 +210,71 @@ QWidget#container {
            <property name="frameShadow">
             <enum>QFrame::Shadow::Plain</enum>
            </property>
-           <widget class="QPushButton" name="class_save">
+           <widget class="QLineEdit" name="block_name">
             <property name="geometry">
              <rect>
-              <x>540</x>
-              <y>370</y>
+              <x>30</x>
+              <y>30</y>
+              <width>231</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Block name</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="block_size">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>110</y>
+              <width>111</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+           </widget>
+           <widget class="QLabel" name="title_2">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>80</y>
+              <width>121</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(129, 129, 129);</string>
+            </property>
+            <property name="text">
+             <string>Block size in slots</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="block_save">
+            <property name="geometry">
+             <rect>
+              <x>180</x>
+              <y>170</y>
               <width>81</width>
               <height>30</height>
              </rect>
@@ -230,195 +290,6 @@ border-radius: 3px;</string>
             </property>
             <property name="text">
              <string>Save</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="slots_per_day">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>175</y>
-              <width>101</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QTableWidget" name="class_subjects_table">
-            <property name="geometry">
-             <rect>
-              <x>320</x>
-              <y>20</y>
-              <width>301</width>
-              <height>311</height>
-             </rect>
-            </property>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>270</number>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>Subjects</string>
-             </property>
-            </column>
-           </widget>
-           <widget class="QLabel" name="title">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>150</y>
-              <width>111</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Slots Per Cycle</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="class_add_subject_btn">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>240</y>
-              <width>71</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::FocusPolicy::StrongFocus</enum>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LayoutDirection::LeftToRight</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">padding: 5px;
-background: #2F69B2;
-color: #F3F4F6;
-border-radius: 3px;</string>
-            </property>
-            <property name="text">
-             <string> Add</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../assets/icons.qrc">
-              <normaloff>:/icons/icons/plus.svg</normaloff>:/icons/icons/plus.svg</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>12</width>
-              <height>12</height>
-             </size>
-            </property>
-           </widget>
-           <widget class="QLabel" name="title_2">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>150</y>
-              <width>91</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Slots Per Day</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="slots_per_cycle">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>175</y>
-              <width>111</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="class_teacher_select">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>100</y>
-              <width>231</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Select Teacher</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="class_subject_select">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>50</y>
-              <width>231</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Select Subject</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="class_name">
-            <property name="geometry">
-             <rect>
-              <x>40</x>
-              <y>20</y>
-              <width>241</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Class Name</string>
             </property>
            </widget>
           </widget>

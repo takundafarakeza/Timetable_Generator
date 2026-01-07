@@ -72,7 +72,11 @@ class TimeTableInitData:
     time_slot_length: int
     days_per_cycle: int
     slots_per_day: int
-    break_slots: list
+
+
+@dataclass
+class Timetable:
+    timetable: dict
 
 
 @dataclass

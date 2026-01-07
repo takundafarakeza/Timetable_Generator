@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ViewerWindow</class>
+ <widget class="QWidget" name="ViewerWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>968</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	background: transparent;
+	border: none;
+	color: #414141;
+}
+
+QPushButton#close_btn{
+	border-radius: 0px;
+}
+
+QPushButton#minimize_btn{
+	border-radius: 0px;
+}
+
+QPushButton#close_btn:hover{
+	background: #D62626;
+}
+
+QComboBox{
+	border: 1px solid #D3D4D6;
+	background: #FBFCFE;
+	padding-left:5px;
+	border-radius: 5px;
+}
+
+QWidget#main_container{
+	background: #EBECEF;
+	border-radius: 5px;
+	border: 1px solid #B1B1B1;
+}
+
+QWidget#menu_container{
+	background: #EBECEF;
+	border-right: 2px solid #E3E4E6;
+}
+
+QFrame#footer{
+	background: #EBECEF;
+	border-top: 2px solid #E3E4E6;
+}
+
+QWidget#container{
+	background: #F3F4F6;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+QWidget#toolbar{
+	border-bottom: 2px solid #E3E4E6;
+}
+
+QLineEdit {
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
+QPushButton#current_project {
+	border: 1px solid #D3D4D6;
+	background: #F3F4F6;
+	padding-left:5px;
+	border-radius: 5px;
+}
+
+QFrame#search_container {
+	border: 1px solid #D3D4D6;
+	border-radius: 10px;
+}
+
+QLabel#recent_status_txt{
+	color: #818181;
+}
+
+QPushButton{
+	border-radius: 5px;
+}
+
+QPushButton:hover{
+	background: #DBEAFE;
+}
+
+QToolTip{
+	background: #F3F4F6;
+	border: 1px solid #E3E4E6;
+}
+
+QScrollBar:horizontal {
+	border: none;
+	background: #EBECEF;
+	height: 8px;
+	margin: 0px;
+	border-radius: 5px;
+}
+
+QScrollBar::handle:horizontal {
+	background: #B1B1B1;
+	min-width: 10px;
+	border-radius: 3px;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+	background-color: #EBECEF;
+}
+
+QScrollBar:vertical {
+	border: none;
+	background: #EBECEF;
+	width: 8px;
+	margin: 0px;
+	border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+	background: #B1B1B1;
+	min-height: 10px;
+	border-radius: 3px;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+	background-color: #EBECEF;
+}
+
+QToolButton::menu-indicator{
+	image: none;
+	width: 0px;
+}
+
+QComboBox::drop-down{
+	background: transparent;
+}
+
+QComboBox::down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QSpinBox{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
+QSpinBox:down-button{
+	background: transparent;
+}
+
+QSpinBox:up-button{
+	background: transparent;
+}
+
+QSpinBox:down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QSpinBox:up-arrow{
+	image: url(':/icons/icons/drop_up.svg');
+	height: 24px;
+	width: 24px;
+}
+
+                            QTableWidget {
+                                border: none;
+                            }
+                            QHeaderView::section {
+                                background-color: #EBECEF;
+                                padding: 3px;
+                                border: none;
+                                font-weight: bold;
+                            }
+                            
+                            QHeaderView::section:horizontal {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+                            
+                            QHeaderView::section:vertical {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+                            
+                            QTableWidget::item {
+                                border-bottom: 1px solid #E3E4E6;
+                                padding: 3px;
+                            }</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="main_container" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>1</number>
+      </property>
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="toolbar" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="window_icon">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../assets/icons.qrc">
+             <normaloff>:/icons/images/icon.png</normaloff>:/icons/images/icon.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <widget class="QComboBox" name="filter">
+            <property name="geometry">
+             <rect>
+              <x>8</x>
+              <y>5</y>
+              <width>181</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="currentText">
+             <string/>
+            </property>
+            <property name="currentIndex">
+             <number>-1</number>
+            </property>
+            <property name="placeholderText">
+             <string/>
+            </property>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_3">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>120</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <widget class="QPushButton" name="close_btn">
+            <property name="geometry">
+             <rect>
+              <x>80</x>
+              <y>0</y>
+              <width>40</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::ClickFocus</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>10</width>
+              <height>10</height>
+             </size>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="minimize_btn">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>40</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="maximize_btn">
+            <property name="geometry">
+             <rect>
+              <x>40</x>
+              <y>0</y>
+              <width>40</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="QIcon::ThemeIcon::MediaPlaybackStop"/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>14</width>
+              <height>14</height>
+             </size>
+            </property>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="container" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTabWidget" name="tab_view">
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../assets/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

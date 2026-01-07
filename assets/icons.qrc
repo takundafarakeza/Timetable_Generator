@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/blocks_icon.svg</file>
+    <file>icons/lecturer.svg</file>
     <file>icons/venue-add.svg</file>
     <file>icons/blocks-white.svg</file>
     <file>icons/blocks.svg</file>

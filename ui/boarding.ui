@@ -180,7 +180,7 @@ QSpinBox:up-arrow{
       <item>
        <widget class="QStackedWidget" name="container">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="board_page_1">
          <widget class="QLabel" name="title">
@@ -927,7 +927,7 @@ padding-left: 5px;</string>
            <string notr="true">color: rgb(129, 129, 129);</string>
           </property>
           <property name="text">
-           <string>Slots per day</string>
+           <string>Periods per day</string>
           </property>
          </widget>
          <widget class="QSpinBox" name="slot_length_txt">
@@ -970,7 +970,7 @@ padding-left: 5px;</string>
            <string notr="true">color: rgb(129, 129, 129);</string>
           </property>
           <property name="text">
-           <string>Slot length (minutes)</string>
+           <string>Period length (minutes)</string>
           </property>
          </widget>
         </widget>

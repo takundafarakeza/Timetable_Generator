@@ -12,6 +12,8 @@ class Types:
     SLOTS_PER_DAY = "slots_per_day"
     BREAKING_SLOTS = "break_slots"
     BLOCK_SLOTS = "block_slots"
+    SLOTS = "slots"
+    DAYS = "days"
 
     SUBJECTS = "subjects"
     SUBJECT = "subject"
