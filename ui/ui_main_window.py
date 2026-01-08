@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowoGwhCl.ui'
+## Form generated from reading UI file 'main_windowxLFdNp.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -494,8 +494,8 @@ class Ui_MainWindow(object):
 
         self.bottom = QFrame(self.menu_container)
         self.bottom.setObjectName(u"bottom")
-        self.bottom.setMinimumSize(QSize(160, 80))
-        self.bottom.setMaximumSize(QSize(160, 80))
+        self.bottom.setMinimumSize(QSize(160, 40))
+        self.bottom.setMaximumSize(QSize(160, 40))
         self.bottom.setStyleSheet(u"QFrame#bottom{\n"
 "	border: 2px solid #E3E4E6;\n"
 "}\n"
@@ -2016,7 +2016,7 @@ class Ui_MainWindow(object):
         self.add_break_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Add timetable Break, Lunch or Study.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.add_break_btn.setText(QCoreApplication.translate("MainWindow", u"Add Break", None))
-        self.dash_timetable_status.setText(QCoreApplication.translate("MainWindow", u"There is nothing to generate from.", None))
+        self.dash_timetable_status.setText(QCoreApplication.translate("MainWindow", u"Ready to generate", None))
         self.modules_course_filter.setCurrentText("")
         self.modules_course_filter.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Filter Courses", None))
         self.title.setText(QCoreApplication.translate("MainWindow", u"Manage Modules", None))

@@ -75,10 +75,10 @@ class PrimaryBuilder(QObject):
         self.generated.emit(False)
 
     def is_saved(self) -> bool:
-        return self.unsaved_changes
+        return not self.unsaved_changes
 
     def is_generated(self) -> bool:
-        return self.non_generated_changes
+        return not self.non_generated_changes
 
     def get_file(self):
         return self.save_path
@@ -551,10 +551,10 @@ class SecondaryBuilder(QObject):
         self.generated.emit(False)
 
     def is_saved(self) -> bool:
-        return self.unsaved_changes
+        return not self.unsaved_changes
 
     def is_generated(self) -> bool:
-        return self.non_generated_changes
+        return not self.non_generated_changes
 
     def get_file(self):
         return self.save_path
@@ -1313,10 +1313,10 @@ class TertiaryBuilder(QObject):
         self.generated.emit(False)
 
     def is_saved(self) -> bool:
-        return self.unsaved_changes
+        return not self.unsaved_changes
 
     def is_generated(self) -> bool:
-        return self.non_generated_changes
+        return not self.non_generated_changes
 
     def get_file(self):
         return self.save_path

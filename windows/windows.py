@@ -510,7 +510,6 @@ class Main(QMainWindow):
         self.generate_indicator = self.ui.generate_indicator
         self.current_project = self.ui.current_project
 
-        self.close_btn.clicked.connect(self.close)
         self.minimize_btn.clicked.connect(self.showMinimized)
         self.maximize_btn.clicked.connect(self.showMaximized)
 

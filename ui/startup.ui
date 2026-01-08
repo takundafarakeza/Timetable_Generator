@@ -882,7 +882,7 @@ border-top-right-radius: 5px;</string>
          <widget class="QPushButton" name="online_btn">
           <property name="geometry">
            <rect>
-            <x>170</x>
+            <x>60</x>
             <y>420</y>
             <width>75</width>
             <height>31</height>
@@ -935,6 +935,7 @@ border-top-right-radius: 5px;</string>
            <bool>true</bool>
           </property>
          </widget>
+         <zorder>prefs_btn</zorder>
          <zorder>label</zorder>
          <zorder>create_new_project_btn</zorder>
          <zorder>open_project_btn</zorder>
@@ -944,7 +945,6 @@ border-top-right-radius: 5px;</string>
          <zorder>projects_search_txt</zorder>
          <zorder>search_icon</zorder>
          <zorder>search_container</zorder>
-         <zorder>prefs_btn</zorder>
          <zorder>online_btn</zorder>
          <zorder>quit_btn</zorder>
         </widget>

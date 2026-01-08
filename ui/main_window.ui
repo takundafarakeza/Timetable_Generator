@@ -994,13 +994,13 @@ color: #F3F4F6;</string>
             <property name="minimumSize">
              <size>
               <width>160</width>
-              <height>80</height>
+              <height>40</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>160</width>
-              <height>80</height>
+              <height>40</height>
              </size>
             </property>
             <property name="styleSheet">
@@ -2857,7 +2857,7 @@ border-radius: 3px;}</string>
                        <string notr="true">text-align: left;</string>
                       </property>
                       <property name="text">
-                       <string>There is nothing to generate from.</string>
+                       <string>Ready to generate</string>
                       </property>
                       <property name="icon">
                        <iconset resource="../assets/icons.qrc">

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'startupOYxXiw.ui'
+## Form generated from reading UI file 'startupMaTrrU.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -385,7 +385,7 @@ class Ui_StartUp(object):
         self.prefs_btn.setIcon(icon9)
         self.online_btn = QPushButton(self.central_container)
         self.online_btn.setObjectName(u"online_btn")
-        self.online_btn.setGeometry(QRect(170, 420, 75, 31))
+        self.online_btn.setGeometry(QRect(60, 420, 75, 31))
         icon10 = QIcon()
         icon10.addFile(u":/icons/icons/globe.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.online_btn.setIcon(icon10)
@@ -401,6 +401,7 @@ class Ui_StartUp(object):
         self.label.setGeometry(QRect(0, 0, 838, 491))
         self.label.setPixmap(QPixmap(u":/icons/images/shadow.svg"))
         self.label.setScaledContents(True)
+        self.prefs_btn.raise_()
         self.label.raise_()
         self.create_new_project_btn.raise_()
         self.open_project_btn.raise_()
@@ -410,7 +411,6 @@ class Ui_StartUp(object):
         self.projects_search_txt.raise_()
         self.search_icon.raise_()
         self.search_container.raise_()
-        self.prefs_btn.raise_()
         self.online_btn.raise_()
         self.quit_btn.raise_()
 

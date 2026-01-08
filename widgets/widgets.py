@@ -6,7 +6,7 @@ from PySide6.QtCore import QSize, Qt, QRect, QTimer
 from utils import Utils
 from functools import partial
 from .custom_widgets import ButtonFrameSilent
-from ui import ui_message_box
+from ui import ui_message_box, ui_exit_confirm
 import os.path
 import math
 
@@ -347,6 +347,37 @@ class MessageBox(QDialog):
         self.setWindowTitle(title)
         self.text.setText(text)
         self.show()
+
+
+class ExitConfirm(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self.ui = ui_exit_confirm.Ui_Dialog()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setModal(True)
+        self.setStyleSheet("background: #E3E4E6;")
+
+        self.cancel_btn = self.ui.cancel_btn
+        self.ok_btn = self.ui.ok_btn
+        self.icon = self.ui.icon
+        self.text = self.ui.text
+
+        self.cancel_btn.clicked.connect(self.reject)
+        self.ok_btn.clicked.connect(self.accept)
+        self.cancel_btn.setDefault(True)
+        self.ok_btn.setAutoDefault(False)
+        self.setWindowTitle("Close")
+
+    @staticmethod
+    def confirm(parent):
+        dialog = ExitConfirm(parent)
+        result = dialog.exec()
+        if result == QDialog.DialogCode.Accepted:
+            return True
+        return False
 
 
 class ModulesTable(QTableWidget):

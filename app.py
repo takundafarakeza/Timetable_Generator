@@ -8,7 +8,7 @@ from utils.logger_config import logger
 from windows import Main, StartUp, Viewer, Export
 from widgets import (ModulesTable, SubjectsTable, BlocksTable,
                      TeachersTable, LecturersTable, ClassesTable,
-                     CoursesTable, VenuesTable, LoadingDialog)
+                     CoursesTable, VenuesTable, LoadingDialog, ExitConfirm)
 from windows.dialog_windows import (AddModuleWindow, AddModuleDataWindow, AddSubjectWindow,
                                     AddLecturerWindow, AddTeacherWindow, AddCourseWindow,
                                     AddClassWindow, AddClassDataWindow, AddClassDataPrimaryWindow,
@@ -183,10 +183,12 @@ class AppWindow(Main):
         self.ui.subjects_class_filter.lineEdit().setPlaceholderText("Filter by class")
         self.set_generated(True)
         self.set_saved(True)
+        self.settings_btn.hide()
 
         self._init_signals()
 
     def _init_signals(self):
+        self.close_btn.clicked.connect(self.close_app)
         startup.project_open.connect(self.open_project)
         startup.project_create.connect(self.create_project)
         self.close_project_btn.clicked.connect(close_project)
@@ -243,6 +245,14 @@ class AppWindow(Main):
         self.classes_table.clearContents()
         self.courses_table.clearContents()
         self.venues_table.clearContents()
+
+    def close_app(self):
+        proceed = True
+        if not self.builder.is_saved():
+            proceed = ExitConfirm.confirm(self)
+        if proceed:
+            self.close()
+            app.quit()
 
     def build_menu(self, institution_type):
         super().build_menu(institution_type)
@@ -1097,17 +1107,22 @@ class AppWindow(Main):
 
 
 def close_project():
-    loading_dialog = LoadingDialog(app_window)
-    loading_dialog.show()
-    app.processEvents()
-    try:
-        app_window.close()
-        app_window.clear()
-        loading_dialog.close()
-        startup.populate_recent()
-        startup.show()
-    except Exception as e:
-        logger.critical(str(e))
+    proceed = True
+    if not app_window.builder.is_saved():
+        proceed = ExitConfirm.confirm(app_window)
+
+    if proceed:
+        loading_dialog = LoadingDialog(app_window)
+        loading_dialog.show()
+        app.processEvents()
+        try:
+            app_window.close()
+            app_window.clear()
+            loading_dialog.close()
+            startup.populate_recent()
+            startup.show()
+        except Exception as e:
+            logger.critical(str(e))
 
 
 if __name__ == "__main__":
