@@ -162,6 +162,9 @@ QSpinBox:up-arrow{
            <height>24</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -180,7 +183,7 @@ QSpinBox:up-arrow{
       <item>
        <widget class="QStackedWidget" name="container">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="board_page_1">
          <widget class="QLabel" name="title">

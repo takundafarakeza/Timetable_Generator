@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_class_primary_data_dialogRFabcB.ui'
+## Form generated from reading UI file 'add_class_primary_data_dialogDbaqUk.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -118,6 +118,7 @@ class Ui_AddClass(object):
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
         self.close_btn.setGeometry(QRect(585, 0, 33, 30))
+        self.close_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))
@@ -227,11 +228,11 @@ class Ui_AddClass(object):
         self.close_btn.setText("")
         self.label.setText(QCoreApplication.translate("AddClass", u"Class Subjects", None))
         self.class_save.setText(QCoreApplication.translate("AddClass", u"Save", None))
-        self.title.setText(QCoreApplication.translate("AddClass", u"Slots Per Cycle", None))
+        self.title.setText(QCoreApplication.translate("AddClass", u"Periods Per Cycle", None))
         self.class_subject_select.setPlaceholderText(QCoreApplication.translate("AddClass", u"Select Subject", None))
         ___qtablewidgetitem = self.class_subjects_table.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("AddClass", u"Subject", None));
-        self.title_2.setText(QCoreApplication.translate("AddClass", u"Slots Per Day", None))
+        self.title_2.setText(QCoreApplication.translate("AddClass", u"Periods Per Day", None))
         self.class_add_subject_btn.setText(QCoreApplication.translate("AddClass", u" Add", None))
         self.class_name.setText(QCoreApplication.translate("AddClass", u"Class Name", None))
     # retranslateUi

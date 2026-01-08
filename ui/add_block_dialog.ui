@@ -141,6 +141,9 @@ QWidget#container {
            <height>30</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -267,7 +270,7 @@ QWidget#container {
              <string notr="true">color: rgb(129, 129, 129);</string>
             </property>
             <property name="text">
-             <string>Block size in slots</string>
+             <string>Block size in periods</string>
             </property>
            </widget>
            <widget class="QPushButton" name="block_save">

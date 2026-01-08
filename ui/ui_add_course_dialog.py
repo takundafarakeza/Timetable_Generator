@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_course_dialogModzcC.ui'
+## Form generated from reading UI file 'add_course_dialogIiNWYw.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -117,6 +117,7 @@ class Ui_AddCourse(object):
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
         self.close_btn.setGeometry(QRect(270, 0, 35, 30))
+        self.close_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))

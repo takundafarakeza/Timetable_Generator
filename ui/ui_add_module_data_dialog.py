@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_data_dialogxfZCgv.ui'
+## Form generated from reading UI file 'add_module_data_dialogjWrEJY.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -126,6 +126,7 @@ class Ui_AddModule(object):
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
         self.close_btn.setMinimumSize(QSize(35, 30))
+        self.close_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))

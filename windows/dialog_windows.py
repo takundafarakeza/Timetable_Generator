@@ -748,8 +748,9 @@ class AddClassDataPrimaryWindow(QDialog):
         self.ui = ui_add_class_primary_data_dialog.Ui_AddClass()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
-        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setModal(True)
 
         self.builder = builder
         self.class_id = class_id

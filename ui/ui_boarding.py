@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'boardingpaDFGc.ui'
+## Form generated from reading UI file 'boardingcXPHob.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -121,6 +121,7 @@ class Ui_Boarding(object):
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
         self.close_btn.setGeometry(QRect(330, 0, 30, 24))
+        self.close_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))
@@ -452,7 +453,7 @@ class Ui_Boarding(object):
         self.intitution_name_txt.setPlaceholderText(QCoreApplication.translate("Boarding", u"Institution name", None))
         self.timetable_name_txt.setPlaceholderText(QCoreApplication.translate("Boarding", u"Project name", None))
         self.sub_title_2.setText(QCoreApplication.translate("Boarding", u"Days per cycle", None))
-        self.sub_title_3.setText(QCoreApplication.translate("Boarding", u"Slots per day", None))
-        self.sub_title_4.setText(QCoreApplication.translate("Boarding", u"Slot length (minutes)", None))
+        self.sub_title_3.setText(QCoreApplication.translate("Boarding", u"Periods per day", None))
+        self.sub_title_4.setText(QCoreApplication.translate("Boarding", u"Period length (minutes)", None))
     # retranslateUi
 

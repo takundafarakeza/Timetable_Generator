@@ -141,6 +141,9 @@ QWidget#container {
            <height>30</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -310,7 +313,7 @@ QWidget#container {
              <rect>
               <x>30</x>
               <y>180</y>
-              <width>91</width>
+              <width>101</width>
               <height>20</height>
              </rect>
             </property>
@@ -324,7 +327,7 @@ QWidget#container {
              <string notr="true">color: rgb(129, 129, 129);</string>
             </property>
             <property name="text">
-             <string>Slots Per Cycle</string>
+             <string>Periods Per Cycle</string>
             </property>
            </widget>
            <widget class="QLabel" name="title_2">
@@ -332,7 +335,7 @@ QWidget#container {
              <rect>
               <x>140</x>
               <y>180</y>
-              <width>81</width>
+              <width>101</width>
               <height>20</height>
              </rect>
             </property>
@@ -346,7 +349,7 @@ QWidget#container {
              <string notr="true">color: rgb(129, 129, 129);</string>
             </property>
             <property name="text">
-             <string>Slots Per Day</string>
+             <string>Periods Per Day</string>
             </property>
            </widget>
            <widget class="QPushButton" name="module_save">

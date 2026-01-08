@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_dialogXKCVlc.ui'
+## Form generated from reading UI file 'add_module_dialogVYduhN.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -117,6 +117,7 @@ class Ui_AddModule(object):
         self.close_btn = QPushButton(self.toolbar)
         self.close_btn.setObjectName(u"close_btn")
         self.close_btn.setGeometry(QRect(260, 0, 33, 30))
+        self.close_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon)
         self.close_btn.setIconSize(QSize(10, 10))
@@ -170,7 +171,7 @@ class Ui_AddModule(object):
         self.slots_per_day.setMinimum(0)
         self.title = QLabel(self.frame)
         self.title.setObjectName(u"title")
-        self.title.setGeometry(QRect(30, 180, 91, 20))
+        self.title.setGeometry(QRect(30, 180, 101, 20))
         font1 = QFont()
         font1.setPointSize(8)
         font1.setBold(False)
@@ -178,7 +179,7 @@ class Ui_AddModule(object):
         self.title.setStyleSheet(u"color: rgb(129, 129, 129);")
         self.title_2 = QLabel(self.frame)
         self.title_2.setObjectName(u"title_2")
-        self.title_2.setGeometry(QRect(140, 180, 81, 20))
+        self.title_2.setGeometry(QRect(140, 180, 101, 20))
         self.title_2.setFont(font1)
         self.title_2.setStyleSheet(u"color: rgb(129, 129, 129);")
         self.module_save = QPushButton(self.frame)
@@ -211,8 +212,8 @@ class Ui_AddModule(object):
         self.module_name.setPlaceholderText(QCoreApplication.translate("AddModule", u"Module name", None))
         self.module_code.setPlaceholderText(QCoreApplication.translate("AddModule", u"Module code", None))
         self.module_lecturer.setPlaceholderText(QCoreApplication.translate("AddModule", u"Lecturer", None))
-        self.title.setText(QCoreApplication.translate("AddModule", u"Slots Per Cycle", None))
-        self.title_2.setText(QCoreApplication.translate("AddModule", u"Slots Per Day", None))
+        self.title.setText(QCoreApplication.translate("AddModule", u"Periods Per Cycle", None))
+        self.title_2.setText(QCoreApplication.translate("AddModule", u"Periods Per Day", None))
         self.module_save.setText(QCoreApplication.translate("AddModule", u"Save", None))
     # retranslateUi
 

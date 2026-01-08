@@ -1,10 +1,11 @@
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QLineEdit
+from PySide6.QtGui import QIcon
 from utils.builders import PrimaryBuilder, SecondaryBuilder, TertiaryBuilder
 from utils.data import TimeTableInitData
 from utils import Types
 from utils import Utils, Settings
 from utils.logger_config import logger
-from windows import Main, StartUp, Viewer
+from windows import Main, StartUp, Viewer, Export
 from widgets import (ModulesTable, SubjectsTable, BlocksTable,
                      TeachersTable, LecturersTable, ClassesTable,
                      CoursesTable, VenuesTable, LoadingDialog)
@@ -233,6 +234,7 @@ class AppWindow(Main):
     def clear(self):
         self.ui.current_project.setText("")
         self.signal_clear()
+        self.dialog_window = None
         self.modules_table.clearContents()
         self.subjects_table.clearContents()
         self.blocks_table.clearContents()
@@ -252,6 +254,7 @@ class AppWindow(Main):
         self.file_menu.addAction("New Project", self.new_project)
         self.file_menu.addAction("Save", self.builder.timetable_save)
         self.file_menu.addAction("Save As", self.save_as)
+        self.file_menu.addAction("Export", self.export)
         self.file_menu.addAction("Exit", self.close)
 
         self.timetable_menu.addAction("Clear timetable", self.timetable_clear)
@@ -413,6 +416,10 @@ class AppWindow(Main):
     def save(self):
         self.builder.timetable_save()
         self.set_saved(True)
+
+    def export(self):
+        self.dialog_window = Export(self.builder, self)
+        self.dialog_window.show()
 
     def undo(self):
         loading_dialog = LoadingDialog(app_window)
@@ -1109,7 +1116,7 @@ if __name__ == "__main__":
     settings = Settings()
     startup = StartUpWindow()
     app_window = AppWindow()
-
     startup.show()
 
+    app.setWindowIcon(QIcon("icon.ico"))
     sys.exit(app.exec())
