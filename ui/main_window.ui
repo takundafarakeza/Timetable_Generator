@@ -1188,8 +1188,17 @@ QFrame#bottom QPushButton{
                     <enum>QFrame::Shadow::Raised</enum>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <property name="spacing">
+                     <number>30</number>
+                    </property>
                     <item>
                      <widget class="QFrame" name="frame_8">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::Shape::StyledPanel</enum>
                       </property>
@@ -2455,7 +2464,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>50</height>
+                           <height>35</height>
                           </size>
                          </property>
                          <property name="maximumSize">
@@ -2473,9 +2482,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
                          <widget class="QPushButton" name="timetable_generate_btn">
                           <property name="geometry">
                            <rect>
-                            <x>140</x>
+                            <x>90</x>
                             <y>5</y>
-                            <width>121</width>
+                            <width>100</width>
                             <height>30</height>
                            </rect>
                           </property>
@@ -2501,9 +2510,9 @@ border-radius: 3px;}</string>
                          <widget class="QPushButton" name="timetable_generate_updates_btn">
                           <property name="geometry">
                            <rect>
-                            <x>280</x>
+                            <x>200</x>
                             <y>5</y>
-                            <width>131</width>
+                            <width>80</width>
                             <height>30</height>
                            </rect>
                           </property>
@@ -2517,7 +2526,7 @@ color: #F3F4F6;
 border-radius: 3px;}</string>
                           </property>
                           <property name="text">
-                           <string>Generate Updates</string>
+                           <string>Update</string>
                           </property>
                           <property name="iconSize">
                            <size>
@@ -2529,9 +2538,9 @@ border-radius: 3px;}</string>
                          <widget class="QPushButton" name="timetable_view_btn">
                           <property name="geometry">
                            <rect>
-                            <x>10</x>
+                            <x>0</x>
                             <y>5</y>
-                            <width>111</width>
+                            <width>81</width>
                             <height>31</height>
                            </rect>
                           </property>
@@ -2554,7 +2563,7 @@ color: #F3F4F6;
 border-radius: 3px;}</string>
                           </property>
                           <property name="text">
-                           <string>View Timetable</string>
+                           <string>View</string>
                           </property>
                          </widget>
                         </widget>
@@ -2615,7 +2624,7 @@ border-radius: 3px;}</string>
                         <widget class="QFrame" name="cfg_cnt">
                          <property name="maximumSize">
                           <size>
-                           <width>457</width>
+                           <width>570</width>
                            <height>16777215</height>
                           </size>
                          </property>
@@ -2707,7 +2716,7 @@ border-radius: 3px;}</string>
                            <rect>
                             <x>20</x>
                             <y>10</y>
-                            <width>201</width>
+                            <width>250</width>
                             <height>311</height>
                            </rect>
                           </property>
@@ -2724,7 +2733,7 @@ border-radius: 3px;}</string>
                            <bool>true</bool>
                           </attribute>
                           <attribute name="horizontalHeaderDefaultSectionSize">
-                           <number>95</number>
+                           <number>115</number>
                           </attribute>
                           <attribute name="verticalHeaderVisible">
                            <bool>false</bool>
@@ -2743,9 +2752,9 @@ border-radius: 3px;}</string>
                          <widget class="QTableWidget" name="day_edit_table">
                           <property name="geometry">
                            <rect>
-                            <x>230</x>
+                            <x>300</x>
                             <y>10</y>
-                            <width>201</width>
+                            <width>250</width>
                             <height>311</height>
                            </rect>
                           </property>
@@ -2762,7 +2771,7 @@ border-radius: 3px;}</string>
                            <bool>true</bool>
                           </attribute>
                           <attribute name="horizontalHeaderDefaultSectionSize">
-                           <number>95</number>
+                           <number>115</number>
                           </attribute>
                           <attribute name="verticalHeaderVisible">
                            <bool>false</bool>
@@ -2781,9 +2790,9 @@ border-radius: 3px;}</string>
                          <widget class="QPushButton" name="add_break_btn">
                           <property name="geometry">
                            <rect>
-                            <x>320</x>
+                            <x>400</x>
                             <y>370</y>
-                            <width>101</width>
+                            <width>141</width>
                             <height>30</height>
                            </rect>
                           </property>
@@ -2797,7 +2806,7 @@ color: #F3F4F6;
 border-radius: 3px;}</string>
                           </property>
                           <property name="text">
-                           <string>Add Break</string>
+                           <string>  Add School Break</string>
                           </property>
                           <property name="icon">
                            <iconset resource="../assets/icons.qrc">

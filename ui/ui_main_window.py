@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowxLFdNp.ui'
+## Form generated from reading UI file 'main_windowuplXXH.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -583,9 +583,11 @@ class Ui_MainWindow(object):
         self.middle_container.setFrameShape(QFrame.Shape.StyledPanel)
         self.middle_container.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_5 = QHBoxLayout(self.middle_container)
+        self.horizontalLayout_5.setSpacing(30)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.frame_8 = QFrame(self.middle_container)
         self.frame_8.setObjectName(u"frame_8")
+        self.frame_8.setMaximumSize(QSize(300, 16777215))
         self.frame_8.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_8.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_33 = QVBoxLayout(self.frame_8)
@@ -991,13 +993,13 @@ class Ui_MainWindow(object):
 
         self.frame_9 = QFrame(self.frame_8)
         self.frame_9.setObjectName(u"frame_9")
-        self.frame_9.setMinimumSize(QSize(0, 50))
+        self.frame_9.setMinimumSize(QSize(0, 35))
         self.frame_9.setMaximumSize(QSize(16777215, 50))
         self.frame_9.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
         self.timetable_generate_btn = QPushButton(self.frame_9)
         self.timetable_generate_btn.setObjectName(u"timetable_generate_btn")
-        self.timetable_generate_btn.setGeometry(QRect(140, 5, 121, 30))
+        self.timetable_generate_btn.setGeometry(QRect(90, 5, 100, 30))
         self.timetable_generate_btn.setStyleSheet(u"#timetable_generate_btn{padding: 5px;\n"
 "background: #2F69B2;\n"
 "color: #F3F4F6;\n"
@@ -1005,7 +1007,7 @@ class Ui_MainWindow(object):
         self.timetable_generate_btn.setIconSize(QSize(14, 14))
         self.timetable_generate_updates_btn = QPushButton(self.frame_9)
         self.timetable_generate_updates_btn.setObjectName(u"timetable_generate_updates_btn")
-        self.timetable_generate_updates_btn.setGeometry(QRect(280, 5, 131, 30))
+        self.timetable_generate_updates_btn.setGeometry(QRect(200, 5, 80, 30))
         self.timetable_generate_updates_btn.setStyleSheet(u"#timetable_generate_updates_btn{padding: 5px;\n"
 "background: #2F69B2;\n"
 "color: #F3F4F6;\n"
@@ -1013,7 +1015,7 @@ class Ui_MainWindow(object):
         self.timetable_generate_updates_btn.setIconSize(QSize(14, 14))
         self.timetable_view_btn = QPushButton(self.frame_9)
         self.timetable_view_btn.setObjectName(u"timetable_view_btn")
-        self.timetable_view_btn.setGeometry(QRect(10, 5, 111, 31))
+        self.timetable_view_btn.setGeometry(QRect(0, 5, 81, 31))
         font4 = QFont()
         font4.setPointSize(9)
         font4.setBold(False)
@@ -1048,7 +1050,7 @@ class Ui_MainWindow(object):
 
         self.cfg_cnt = QFrame(self.frame_5)
         self.cfg_cnt.setObjectName(u"cfg_cnt")
-        self.cfg_cnt.setMaximumSize(QSize(457, 16777215))
+        self.cfg_cnt.setMaximumSize(QSize(570, 16777215))
         self.cfg_cnt.setStyleSheet(u"QFrame#cfg_cnt{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 5px;\n"
@@ -1082,12 +1084,12 @@ class Ui_MainWindow(object):
         __qtablewidgetitem1 = QTableWidgetItem()
         self.slot_edit_table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         self.slot_edit_table.setObjectName(u"slot_edit_table")
-        self.slot_edit_table.setGeometry(QRect(20, 10, 201, 311))
+        self.slot_edit_table.setGeometry(QRect(20, 10, 250, 311))
         self.slot_edit_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed)
         self.slot_edit_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.slot_edit_table.setShowGrid(False)
         self.slot_edit_table.horizontalHeader().setVisible(True)
-        self.slot_edit_table.horizontalHeader().setDefaultSectionSize(95)
+        self.slot_edit_table.horizontalHeader().setDefaultSectionSize(115)
         self.slot_edit_table.verticalHeader().setVisible(False)
         self.day_edit_table = QTableWidget(self.cfg_cnt)
         if (self.day_edit_table.columnCount() < 2):
@@ -1097,16 +1099,16 @@ class Ui_MainWindow(object):
         __qtablewidgetitem3 = QTableWidgetItem()
         self.day_edit_table.setHorizontalHeaderItem(1, __qtablewidgetitem3)
         self.day_edit_table.setObjectName(u"day_edit_table")
-        self.day_edit_table.setGeometry(QRect(230, 10, 201, 311))
+        self.day_edit_table.setGeometry(QRect(300, 10, 250, 311))
         self.day_edit_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed)
         self.day_edit_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.day_edit_table.setShowGrid(False)
         self.day_edit_table.horizontalHeader().setVisible(True)
-        self.day_edit_table.horizontalHeader().setDefaultSectionSize(95)
+        self.day_edit_table.horizontalHeader().setDefaultSectionSize(115)
         self.day_edit_table.verticalHeader().setVisible(False)
         self.add_break_btn = QPushButton(self.cfg_cnt)
         self.add_break_btn.setObjectName(u"add_break_btn")
-        self.add_break_btn.setGeometry(QRect(320, 370, 101, 30))
+        self.add_break_btn.setGeometry(QRect(400, 370, 141, 30))
         self.add_break_btn.setStyleSheet(u"#add_break_btn{padding: 5px;\n"
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
@@ -1996,11 +1998,11 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.timetable_generate_updates_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Generate only the changes made to the school data without changing the existing timetable.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.timetable_generate_updates_btn.setText(QCoreApplication.translate("MainWindow", u"Generate Updates", None))
+        self.timetable_generate_updates_btn.setText(QCoreApplication.translate("MainWindow", u"Update", None))
 #if QT_CONFIG(tooltip)
         self.timetable_view_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>View the existing timetable.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.timetable_view_btn.setText(QCoreApplication.translate("MainWindow", u"View Timetable", None))
+        self.timetable_view_btn.setText(QCoreApplication.translate("MainWindow", u"View", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Configure", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Days per cycle", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Periods per day", None))
@@ -2015,7 +2017,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.add_break_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Add timetable Break, Lunch or Study.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.add_break_btn.setText(QCoreApplication.translate("MainWindow", u"Add Break", None))
+        self.add_break_btn.setText(QCoreApplication.translate("MainWindow", u"  Add School Break", None))
         self.dash_timetable_status.setText(QCoreApplication.translate("MainWindow", u"Ready to generate", None))
         self.modules_course_filter.setCurrentText("")
         self.modules_course_filter.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Filter Courses", None))
