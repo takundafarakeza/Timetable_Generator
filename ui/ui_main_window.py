@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowuplXXH.ui'
+## Form generated from reading UI file 'main_windowwelhRV.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -997,25 +997,13 @@ class Ui_MainWindow(object):
         self.frame_9.setMaximumSize(QSize(16777215, 50))
         self.frame_9.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
-        self.timetable_generate_btn = QPushButton(self.frame_9)
-        self.timetable_generate_btn.setObjectName(u"timetable_generate_btn")
-        self.timetable_generate_btn.setGeometry(QRect(90, 5, 100, 30))
-        self.timetable_generate_btn.setStyleSheet(u"#timetable_generate_btn{padding: 5px;\n"
-"background: #2F69B2;\n"
-"color: #F3F4F6;\n"
-"border-radius: 3px;}")
-        self.timetable_generate_btn.setIconSize(QSize(14, 14))
-        self.timetable_generate_updates_btn = QPushButton(self.frame_9)
-        self.timetable_generate_updates_btn.setObjectName(u"timetable_generate_updates_btn")
-        self.timetable_generate_updates_btn.setGeometry(QRect(200, 5, 80, 30))
-        self.timetable_generate_updates_btn.setStyleSheet(u"#timetable_generate_updates_btn{padding: 5px;\n"
-"background: #2F69B2;\n"
-"color: #F3F4F6;\n"
-"border-radius: 3px;}")
-        self.timetable_generate_updates_btn.setIconSize(QSize(14, 14))
+        self.horizontalLayout_6 = QHBoxLayout(self.frame_9)
+        self.horizontalLayout_6.setSpacing(10)
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.timetable_view_btn = QPushButton(self.frame_9)
         self.timetable_view_btn.setObjectName(u"timetable_view_btn")
-        self.timetable_view_btn.setGeometry(QRect(0, 5, 81, 31))
+        self.timetable_view_btn.setMinimumSize(QSize(0, 30))
         font4 = QFont()
         font4.setPointSize(9)
         font4.setBold(False)
@@ -1025,6 +1013,31 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;}")
+
+        self.horizontalLayout_6.addWidget(self.timetable_view_btn)
+
+        self.timetable_generate_btn = QPushButton(self.frame_9)
+        self.timetable_generate_btn.setObjectName(u"timetable_generate_btn")
+        self.timetable_generate_btn.setMinimumSize(QSize(0, 30))
+        self.timetable_generate_btn.setStyleSheet(u"#timetable_generate_btn{padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;}")
+        self.timetable_generate_btn.setIconSize(QSize(14, 14))
+
+        self.horizontalLayout_6.addWidget(self.timetable_generate_btn)
+
+        self.timetable_generate_updates_btn = QPushButton(self.frame_9)
+        self.timetable_generate_updates_btn.setObjectName(u"timetable_generate_updates_btn")
+        self.timetable_generate_updates_btn.setMinimumSize(QSize(0, 30))
+        self.timetable_generate_updates_btn.setStyleSheet(u"#timetable_generate_updates_btn{padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;}")
+        self.timetable_generate_updates_btn.setIconSize(QSize(14, 14))
+
+        self.horizontalLayout_6.addWidget(self.timetable_generate_updates_btn)
+
 
         self.verticalLayout_33.addWidget(self.frame_9)
 
@@ -1060,21 +1073,21 @@ class Ui_MainWindow(object):
         self.cfg_cnt.setFrameShadow(QFrame.Shadow.Raised)
         self.cfg_days_per_cycle = QSpinBox(self.cfg_cnt)
         self.cfg_days_per_cycle.setObjectName(u"cfg_days_per_cycle")
-        self.cfg_days_per_cycle.setGeometry(QRect(20, 370, 121, 30))
+        self.cfg_days_per_cycle.setGeometry(QRect(110, 370, 81, 30))
         self.cfg_daily_slots = QSpinBox(self.cfg_cnt)
         self.cfg_daily_slots.setObjectName(u"cfg_daily_slots")
-        self.cfg_daily_slots.setGeometry(QRect(180, 370, 121, 30))
-        self.label_3 = QLabel(self.cfg_cnt)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setGeometry(QRect(20, 345, 101, 20))
-        self.label_3.setMaximumSize(QSize(16777215, 20))
-        self.label_3.setStyleSheet(u"color: rgb(129, 129, 129);")
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.cfg_daily_slots.setGeometry(QRect(300, 370, 91, 30))
+        self.dp_txt = QLabel(self.cfg_cnt)
+        self.dp_txt.setObjectName(u"dp_txt")
+        self.dp_txt.setGeometry(QRect(20, 375, 81, 20))
+        self.dp_txt.setMaximumSize(QSize(16777215, 20))
+        self.dp_txt.setStyleSheet(u"")
+        self.dp_txt.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.label_4 = QLabel(self.cfg_cnt)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setGeometry(QRect(180, 345, 101, 20))
+        self.label_4.setGeometry(QRect(210, 375, 91, 20))
         self.label_4.setMaximumSize(QSize(16777215, 20))
-        self.label_4.setStyleSheet(u"color: rgb(129, 129, 129);")
+        self.label_4.setStyleSheet(u"")
         self.label_4.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.slot_edit_table = QTableWidget(self.cfg_cnt)
         if (self.slot_edit_table.columnCount() < 2):
@@ -1108,7 +1121,7 @@ class Ui_MainWindow(object):
         self.day_edit_table.verticalHeader().setVisible(False)
         self.add_break_btn = QPushButton(self.cfg_cnt)
         self.add_break_btn.setObjectName(u"add_break_btn")
-        self.add_break_btn.setGeometry(QRect(400, 370, 141, 30))
+        self.add_break_btn.setGeometry(QRect(410, 370, 131, 30))
         self.add_break_btn.setStyleSheet(u"#add_break_btn{padding: 5px;\n"
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
@@ -1992,6 +2005,10 @@ class Ui_MainWindow(object):
         self.coner_shadow_12.setText("")
         self.icon_12.setText("")
 #if QT_CONFIG(tooltip)
+        self.timetable_view_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>View the existing timetable.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.timetable_view_btn.setText(QCoreApplication.translate("MainWindow", u"View", None))
+#if QT_CONFIG(tooltip)
         self.timetable_generate_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Generate or regenerate the entire timetable.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.timetable_generate_btn.setText(QCoreApplication.translate("MainWindow", u"Generate", None))
@@ -1999,13 +2016,9 @@ class Ui_MainWindow(object):
         self.timetable_generate_updates_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Generate only the changes made to the school data without changing the existing timetable.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.timetable_generate_updates_btn.setText(QCoreApplication.translate("MainWindow", u"Update", None))
-#if QT_CONFIG(tooltip)
-        self.timetable_view_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>View the existing timetable.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.timetable_view_btn.setText(QCoreApplication.translate("MainWindow", u"View", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Configure", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Days per cycle", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Periods per day", None))
+        self.dp_txt.setText(QCoreApplication.translate("MainWindow", u"Days per cycle: ", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Periods per day:", None))
         ___qtablewidgetitem = self.slot_edit_table.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Slot", None));
         ___qtablewidgetitem1 = self.slot_edit_table.horizontalHeaderItem(1)

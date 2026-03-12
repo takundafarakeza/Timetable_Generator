@@ -324,6 +324,8 @@ class Export(QDialog):
             )
             if file_path:
                 work_book.save(file_path)
+                MessageBox(self).information("Success", f"Exported to: {file_path}")
+                self.close()
 
         except Exception as e:
             logger.critical(str(e))
@@ -429,6 +431,8 @@ class Export(QDialog):
             )
             if file_path:
                 work_book.save(file_path)
+                MessageBox(self).information("Success", f"Exported to: {file_path}")
+                self.close()
 
         except Exception as e:
             logger.critical(str(e))
