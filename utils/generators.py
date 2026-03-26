@@ -386,7 +386,7 @@ class TertiarySchool(QObject):
             module_demand[mid] = total
 
         print(module_demand)
-        # return
+        return
         x = {}
 
         for m_id, m in modules.items():

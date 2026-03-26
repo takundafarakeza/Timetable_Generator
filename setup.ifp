@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<InstallForgeProject>
+  <Metadata productVersion="1.6.1" projectFileVersion="2.0"/>
+  <ProductInformation>
+    <Name>Timetable Generator</Name>
+    <Version>1.0.0</Version>
+    <CompanyName>Smart Timetable</CompanyName>
+    <WebURI>https://</WebURI>
+  </ProductInformation>
+  <InstallerConfiguration>
+    <Prerequisites>
+      <OperatingSystem check="true">
+        <WindowsXP>false</WindowsXP>
+        <WindowsServer2003>false</WindowsServer2003>
+        <WindowsVista>false</WindowsVista>
+        <WindowsServer2008>false</WindowsServer2008>
+        <Windows7>true</Windows7>
+        <Windows8>false</Windows8>
+        <Windows10>true</Windows10>
+        <WindowsServer2016>false</WindowsServer2016>
+        <WindowsServer2019>true</WindowsServer2019>
+        <WindowsServer2022>true</WindowsServer2022>
+        <Windows11>true</Windows11>
+        <WindowsServer2025>false</WindowsServer2025>
+      </OperatingSystem>
+    </Prerequisites>
+    <UserInterface>
+      <WizardImage filePath="&lt;main&gt;"/>
+      <HeaderImage filePath="&lt;main&gt;"/>
+      <Label isEnabled="true"/>
+      <VisualStyle isEnabled="true"/>
+    </UserInterface>
+    <InstallationFiles defaultInstallationPath="&lt;ProgramFiles&gt;\&lt;Company&gt;\&lt;AppName&gt;\" isDefaultInstallationPathAlterable ="true">
+      <InstallationFile size="105.8 KB" type="ico">C:\Projects\Python\Timetable_Generator\dist\timetable_generator\icon.ico</InstallationFile>
+      <InstallationFile size="9.3 MB" type="exe">C:\Projects\Python\Timetable_Generator\dist\timetable_generator\timetable_generator.exe</InstallationFile>
+      <InstallationFile size="N/A" type="[Folder]">C:\Projects\Python\Timetable_Generator\dist\timetable_generator\_internal\</InstallationFile>
+      <InstallationFile size="N/A" type="[Folder]">C:\Projects\Python\Timetable_Generator\dist\timetable_generator\assets\</InstallationFile>
+    </InstallationFiles>
+    <Languages>
+      <Language>Deutsch</Language>
+      <Language>English</Language>
+      <Language>Español</Language>
+      <Language>Polski</Language>
+      <Language>Türkçe</Language>
+      <Language>Vietnamese</Language>
+    </Languages>
+    <Variables/>
+    <Commands/>
+    <Registry/>
+    <Shortcuts defaultPath="&lt;Company&gt;\&lt;AppName&gt;\" isDefaultPathAlterable="false" isCreateStartmenuShortcutsForAllUsers="false" isCreateDesktopShortcutsForAllUsers="false">
+      <Shortcut destination="Desktop" name="Timetable Generator" targetFile="&lt;InstallPath&gt;\timetable_generator.exe" commandLineArguments="" iconFilePath="" iconIndex="0"/>
+      <Shortcut destination="Startmenu" name="Timetable Generator" targetFile="&lt;InstallPath&gt;\timetable_generator.exe" commandLineArguments="" iconFilePath="" iconIndex="0"/>
+    </Shortcuts>
+    <Serials isDialogEnabled="true" count="1" mask ="#####-#####-#####-#####">
+      <Serial>XW16F-PQRWK-8OFOJ-G2E8Y</Serial>
+    </Serials>
+    <SplashScreen isDialogEnabled="false" delayTime="2">
+      <Image filePath=""/>
+      <Sound isEnabled="false" filePath=""/>
+    </SplashScreen>
+    <License isDialogEnabled="true">
+      <Data>e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcbm91aWNvbXBhdFxkZWZsYW5nMTAzM3tcZm9udHRibHtcZjBcZnN3aXNzXGZwcnEyXGZjaGFyc2V0MCBDYWxpYnJpO317XGYxXGZuaWwgQXJpYWw7fX0NCntcY29sb3J0YmwgO1xyZWQwXGdyZWVuMFxibHVlMDt9DQp7XCpcZ2VuZXJhdG9yIFJpY2hlZDIwIDEwLjAuMTkwNDF9XHZpZXdraW5kNFx1YzEgDQpccGFyZFx3aWRjdGxwYXJcc2ExNjBcc2wyNTJcc2xtdWx0MVxjZjFcYlxmMFxmczI4IEVORCBVU0VSIExJQ0VOU0UgQUdSRUVNRU5UIChFVUxBKVxwYXINClxiMFxmczI0XGxpbmUgTGFzdCB1cGRhdGVkOiAwOC8wMS8yMDI2XHBhcg0KXGxpbmUgVGhpcyBFbmQgVXNlciBMaWNlbnNlIEFncmVlbWVudCAoXGxkYmxxdW90ZSBBZ3JlZW1lbnRccmRibHF1b3RlICkgaXMgYSBsZWdhbCBhZ3JlZW1lbnQgYmV0d2VlbiB5b3UgKFxsZGJscXVvdGUgVXNlclxyZGJscXVvdGUgKSBhbmQgdGhlIHNvZnR3YXJlIGRldmVsb3BlciAoXGxkYmxxdW90ZSBEZXZlbG9wZXJccmRibHF1b3RlICkgZm9yIHRoZSB1c2Ugb2YgdGhlIHNvZnR3YXJlIGFwcGxpY2F0aW9uIFxsZGJscXVvdGUgVGltZXRhYmxlIEdlbmVyYXRvclxyZGJscXVvdGUgLlxwYXINClxsaW5lIEJ5IGluc3RhbGxpbmcsIGNvcHlpbmcsIG9yIHVzaW5nIHRoZSBTb2Z0d2FyZSwgeW91IGFncmVlIHRvIGJlIGJvdW5kIGJ5IHRoZSB0ZXJtcyBvZiB0aGlzIEFncmVlbWVudC4gSWYgeW91IGRvIG5vdCBhZ3JlZSwgZG8gbm90IGluc3RhbGwgb3IgdXNlIHRoZSBTb2Z0d2FyZS5ccGFyDQpcbGluZVxiIDEuIExpY2Vuc2UgR3JhbnRcYjBcbGluZSBUaGUgRGV2ZWxvcGVyIGdyYW50cyB5b3UgYSBub24tZXhjbHVzaXZlLCBub24tdHJhbnNmZXJhYmxlLCByZXZvY2FibGUgbGljZW5zZSB0byBpbnN0YWxsIGFuZCB1c2UgdGhlIFNvZnR3YXJlIG9uIG9uZSBvciBtb3JlIGNvbXB1dGVycyBmb3IgcGVyc29uYWwsIGVkdWNhdGlvbmFsLCBvciBpbnN0aXR1dGlvbmFsIHVzZS5ccGFyDQoNClxwYXJkXHdpZGN0bHBhclxsaTcyMFxzYTE2MFxzbDI1MlxzbG11bHQxXGxpbmUgWW91IG1heTpcbGluZSAgICAtIEluc3RhbGwgYW5kIHVzZSB0aGUgU29mdHdhcmUgZm9yIGl0cyBpbnRlbmRlZCBwdXJwb3NlXGxpbmUgICAgLSBDcmVhdGUgYW5kIGV4cG9ydCB0aW1ldGFibGUgZGF0YSAoZS5nLiwgRXhjZWwgZmlsZXMpXGxpbmUgICAgLSBVc2UgdGhlIFNvZnR3YXJlIG9mZmxpbmVccGFyDQpZb3UgbWF5IE5PVDpcbGluZSAgICAtIFNlbGwsIHN1YmxpY2Vuc2UsIHJlbnQsIG9yIGxlYXNlIHRoZSBTb2Z0d2FyZVxsaW5lICAgIC0gUmV2ZXJzZSBlbmdpbmVlciwgZGVjb21waWxlLCBvciBkaXNhc3NlbWJsZSB0aGUgU29mdHdhcmVcbGluZSAgICAtIFJlbW92ZSBvciBhbHRlciBjb3B5cmlnaHQgbm90aWNlc1xsaW5lICAgIC0gUmVkaXN0cmlidXRlIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHBlcm1pc3Npb25ccGFyDQoNClxwYXJkXHdpZGN0bHBhclxzYTE2MFxzbDI1MlxzbG11bHQxXGxpbmVcYiAyLiBPd25lcnNoaXBcYjBcbGluZSBUaGUgU29mdHdhcmUgaXMgbGljZW5zZWQsIG5vdCBzb2xkLlxsaW5lIEFsbCByaWdodHMsIHRpdGxlLCBhbmQgaW50ZXJlc3QgaW4gdGhlIFNvZnR3YXJlIHJlbWFpbiB0aGUgcHJvcGVydHkgb2YgdGhlIERldmVsb3Blci5ccGFyDQpcbGluZVxiIDMuIFVzZXIgRGF0YVxiMFxsaW5lIFRoZSBTb2Z0d2FyZSBzdG9yZXMgZGF0YSBsb2NhbGx5IG9uIHlvdXIgY29tcHV0ZXIuXGxpbmUgVGhlIERldmVsb3BlciBkb2VzIG5vdCBjb2xsZWN0IG9yIHRyYW5zbWl0IHVzZXIgZGF0YSB1bmxlc3MgZXhwbGljaXRseSBzdGF0ZWQuXGxpbmUgWW91IGFyZSByZXNwb25zaWJsZSBmb3IgYmFja2luZyB1cCB5b3VyIGRhdGEuXGxpbmUgVGhlIERldmVsb3BlciBpcyBub3QgcmVzcG9uc2libGUgZm9yIGRhdGEgbG9zcyBkdWUgdG8gaGFyZHdhcmUgZmFpbHVyZSwgdXNlciBlcnJvciwgb3Igc3lzdGVtIGlzc3Vlcy5ccGFyDQpcbGluZVxiIDQuIE5vIFdhcnJhbnR5XGIwXGxpbmUgVGhlIFNvZnR3YXJlIGlzIHByb3ZpZGVkIFxsZGJscXVvdGUgQVMgSVNccmRibHF1b3RlICwgd2l0aG91dCB3YXJyYW50eSBvZiBhbnkga2luZCwgZXhwcmVzcyBvciBpbXBsaWVkLCBpbmNsdWRpbmcgYnV0IG5vdCBsaW1pdGVkIHRvOlxsaW5lICAgIC0gRml0bmVzcyBmb3IgYSBwYXJ0aWN1bGFyIHB1cnBvc2VcbGluZSAgICAtIEFjY3VyYWN5IG9mIGdlbmVyYXRlZCB0aW1ldGFibGVzXGxpbmUgICAgLSBVbmludGVycnVwdGVkIG9yIGVycm9yLWZyZWUgb3BlcmF0aW9uXGxpbmUgICAgLSBVc2UgdGhlIFNvZnR3YXJlIGF0IHlvdXIgb3duIHJpc2suXHBhcg0KXGxpbmVcYiA1LiBMaW1pdGF0aW9uIG9mIExpYWJpbGl0eVxiMFxsaW5lIEluIG5vIGV2ZW50IHNoYWxsIHRoZSBEZXZlbG9wZXIgYmUgbGlhYmxlIGZvcjpcbGluZSAgICAtIExvc3Mgb2YgZGF0YVxsaW5lICAgIC0gTG9zcyBvZiBwcm9maXRzIG9yIGJ1c2luZXNzIGludGVycnVwdGlvblxsaW5lICAgIC0gQW55IGluZGlyZWN0LCBpbmNpZGVudGFsLCBvciBjb25zZXF1ZW50aWFsIGRhbWFnZXNcbGluZSAgICAtIEV2ZW4gaWYgdGhlIERldmVsb3BlciBoYXMgYmVlbiBhZHZpc2VkIG9mIHRoZSBwb3NzaWJpbGl0eSBvZiBzdWNoIGRhbWFnZXMuXHBhcg0KXGJcbGluZSA2LiBVcGRhdGVzIGFuZCBDaGFuZ2VzXGIwXGxpbmUgVGhlIERldmVsb3BlciBtYXk6XGxpbmUgICAgLSBNb2RpZnksIHVwZGF0ZSwgb3IgZGlzY29udGludWUgdGhlIFNvZnR3YXJlIGF0IGFueSB0aW1lXGxpbmUgICAgLSBDaGFuZ2UgZmVhdHVyZXMgd2l0aG91dCBvYmxpZ2F0aW9uXGxpbmUgICAgLSBUaGlzIEFncmVlbWVudCBhcHBsaWVzIHRvIGFsbCB1cGRhdGVzIHVubGVzcyBzdGF0ZWQgb3RoZXJ3aXNlLlxwYXINClxsaW5lXGIgNy4gVGVybWluYXRpb25cYjBcbGluZSBUaGlzIEFncmVlbWVudCBpcyBlZmZlY3RpdmUgdW50aWwgdGVybWluYXRlZC5cbGluZSBJdCB3aWxsIHRlcm1pbmF0ZSBhdXRvbWF0aWNhbGx5IGlmIHlvdSB2aW9sYXRlIGFueSB0ZXJtIG9mIHRoaXMgQWdyZWVtZW50LlxsaW5lIFVwb24gdGVybWluYXRpb24sIHlvdSBtdXN0IHN0b3AgdXNpbmcgYW5kIHVuaW5zdGFsbCB0aGUgU29mdHdhcmUuXHBhcg0KXGxpbmVcYiA4LiBHb3Zlcm5pbmcgTGF3XGIwXGxpbmUgVGhpcyBBZ3JlZW1lbnQgc2hhbGwgYmUgZ292ZXJuZWQgYnkgYW5kIGludGVycHJldGVkIGFjY29yZGluZyB0byB0aGUgbGF3cyBvZiB0aGUgYXBwbGljYWJsZSBqdXJpc2RpY3Rpb24gd2hlcmUgdGhlIFNvZnR3YXJlIGlzIGRpc3RyaWJ1dGVkLlxwYXINClxsaW5lXGIgOS4gRW50aXJlIEFncmVlbWVudFxiMFxsaW5lIFRoaXMgQWdyZWVtZW50IGNvbnN0aXR1dGVzIHRoZSBlbnRpcmUgYWdyZWVtZW50IGJldHdlZW4geW91IGFuZCB0aGUgRGV2ZWxvcGVyIHJlZ2FyZGluZyB0aGUgU29mdHdhcmUgYW5kIHN1cGVyc2VkZXMgYWxsIHByaW9yIGFncmVlbWVudHMuXHBhcg0KXGJcaVxsaW5lIEJ5IGNsaWNraW5nIFxsZGJscXVvdGUgSSBBZ3JlZVxyZGJscXVvdGUgIG9yIGluc3RhbGxpbmcgdGhlIFNvZnR3YXJlLCB5b3UgYWNrbm93bGVkZ2UgdGhhdCB5b3UgaGF2ZSByZWFkLCB1bmRlcnN0b29kLCBhbmQgYWdyZWVkIHRvIHRoaXMgQWdyZWVtZW50LlxjZjBccGFyDQoNClxwYXJkXGIwXGkwXGYxXGZzMjBccGFyDQp9DQoA</Data>
+    </License>
+    <Finish isRebootMachineEnabled="false">
+      <Program executableFilePath="&lt;InstallPath&gt;\" isLaunchEnabled="false" arguments=""/>
+    </Finish>
+  </InstallerConfiguration>
+  <UninstallerConfiguration isPackaged="true">
+    <UninstallerExecutableFileName>Uninstall</UninstallerExecutableFileName>
+    <OpenWebURIAfterUninstallation isEnabled="false">https://</OpenWebURIAfterUninstallation>
+    <CustomDisplayIcon isEnabled="false" iconFilePath="&lt;InstallPath&gt;\"/>
+  </UninstallerConfiguration>
+  <VisualUpdateConfiguration isPackaged="false">
+    <ProductName>&lt;AppName&gt;</ProductName>
+    <ProductVersion>&lt;AppVersion&gt;</ProductVersion>
+    <Language>0</Language>
+    <UpdateScriptURIs>
+      <MainURI>http://</MainURI>
+      <FirstMirrorURI>http://</FirstMirrorURI>
+      <SecondMirrorURI>http://</SecondMirrorURI>
+    </UpdateScriptURIs>
+    <updateExecutableFileName>Update</updateExecutableFileName>
+    <proEditionLicenseKey/>
+    <Program executableFilePath="" isLaunchEnabled="false" isTerminationEnabled="false"/>
+  </VisualUpdateConfiguration>
+  <BuildConfiguration>
+    <SetupFilePath>C:\Projects\Python\Timetable_Generator\dist\timetable_generator\setup.exe</SetupFilePath>
+    <SetupIconPath>C:\Projects\Python\Timetable_Generator\dist\timetable_generator\icon.ico</SetupIconPath>
+    <UninstallerIconPath>C:\Projects\Python\Timetable_Generator\dist\timetable_generator\icon.ico</UninstallerIconPath>
+    <Compression method="0" level="1"/>
+    <CodeSigning isEnabled="false" signToolCommandLine="/n &quot;Subject&quot; /tr http://timestamp.digicert.com /td sha256 /fd sha256 &quot;&lt;ExecutableFilePath&gt;&quot;"/>
+  </BuildConfiguration>
+</InstallForgeProject>
