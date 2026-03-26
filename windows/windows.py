@@ -97,7 +97,7 @@ class Viewer(QWidget):
                                                                                 [Types.SUBJECT]).name, "")
                                     filter_data.append((event, self.builder.class_get(event).name))
 
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
                                     venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
                                     courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
                                     timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
@@ -164,7 +164,7 @@ class Viewer(QWidget):
                                                                                     [day][slot][event]
                                                                                     [Types.SUBJECT]).name, "")
 
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
                                     if event == self.filter.currentData():
                                         venue = self.builder.venue_get(
                                             timetable_data[day][slot][event][Types.VENUE]).name
@@ -197,11 +197,11 @@ class Export(QDialog):
         self.header_font = Font(bold=True)
         self.center = Alignment(horizontal="center", vertical="center")
         self.border = Border(
-                        left=Side(style="thin"),
-                        right=Side(style="thin"),
-                        top=Side(style="thin"),
-                        bottom=Side(style="thin")
-                    )
+            left=Side(style="thin"),
+            right=Side(style="thin"),
+            top=Side(style="thin"),
+            bottom=Side(style="thin")
+        )
 
     def populate_filter(self):
         try:
@@ -220,7 +220,7 @@ class Export(QDialog):
                             for event in timetable_data[day][slot]:
                                 if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
                                     filter_data.append((event, self.builder.class_get(event).name))
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
                                     for course in self.builder.module_get(event).courses:
                                         filter_data.append((course, self.builder.course_get(course).name))
 
@@ -283,7 +283,7 @@ class Export(QDialog):
                                                                              f"{self.builder.subject_get(
                                                                                  timetable_data[day][slot][event]
                                                                                  [Types.SUBJECT]).name}")
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
                                     venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
                                     courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
                                     export_data[day][slot_i + 2][col + 2] = (f"{self.builder.module_get(event).name}"
@@ -382,7 +382,7 @@ class Export(QDialog):
                                     if filter_ == event:
                                         export_data[day][slot_i + 2][row + 2] = (f"{self.builder.subject_get(
                                             timetable_data[day][slot][event][Types.SUBJECT]).name}")
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_COLLEGE:
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
                                     module = self.builder.module_get(event)
 
                                     if filter_ in module.courses:
@@ -472,6 +472,7 @@ class Main(QMainWindow):
         self.courses_btn = self.ui.courses_btn
         self.venues_btn = self.ui.venues_btn
         self.blocks_btn = self.ui.blocks_btn
+        self.enrollment_btn = self.ui.enrollment_btn
         self.menu_btns = {
             self.home_btn: {"icons": [u":/icons/icons/home.svg", u":/icons/icons/home-white.svg"],
                             "page": 1},
@@ -490,7 +491,9 @@ class Main(QMainWindow):
             self.courses_btn: {"icons": [u":/icons/icons/classes.svg", u":/icons/icons/classes-white.svg"],
                                "page": 7},
             self.venues_btn: {"icons": [u":/icons/icons/venues.svg", u":/icons/icons/venues-white.svg"],
-                              "page": 9}
+                              "page": 9},
+            self.enrollment_btn: {"icons": [u":/icons/icons/courses-add.svg", u":/icons/icons/courses-add.svg"],
+                                  "page": 10}
         }
         self.display_cards = [self.ui.courses_card, self.ui.venues_card, self.ui.subjects_card,
                               self.ui.modules_card, self.ui.classes_card, self.ui.lecturers_card,
@@ -615,7 +618,7 @@ class Main(QMainWindow):
         if institution_type == Types.INSTITUTION_PRIMARY:
             buttons = [self.teachers_btn, self.lecturers_btn,
                        self.modules_btn, self.courses_btn,
-                       self.blocks_btn]
+                       self.blocks_btn, self.enrollment_btn]
             self.hide_menu_buttons(buttons)
             cards = [self.ui.modules_card, self.ui.lecturers_card,
                      self.ui.teachers_card, self.ui.blocks_card, self.ui.courses_card]
@@ -624,14 +627,14 @@ class Main(QMainWindow):
 
         elif institution_type == Types.INSTITUTION_SECONDARY:
             buttons = [self.lecturers_btn, self.modules_btn,
-                       self.courses_btn]
+                       self.courses_btn, self.enrollment_btn]
             self.hide_menu_buttons(buttons)
             cards = [self.ui.courses_card, self.ui.modules_card,
                      self.ui.lecturers_card]
             self.hide_dash_cards(cards)
             self.ui.add_break_btn.show()
 
-        elif institution_type == Types.INSTITUTION_COLLEGE:
+        elif institution_type == Types.INSTITUTION_TERTIARY:
             buttons = [self.teachers_btn, self.subjects_btn,
                        self.classes_btn, self.blocks_btn]
             self.hide_menu_buttons(buttons)
@@ -742,7 +745,7 @@ class Boarding(QMainWindow):
         self.institution = Types.INSTITUTION_SECONDARY
 
     def set_tertiary(self):
-        self.institution = Types.INSTITUTION_COLLEGE
+        self.institution = Types.INSTITUTION_TERTIARY
 
     def set_next(self):
         if self.institution is not None:

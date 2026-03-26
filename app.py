@@ -8,12 +8,13 @@ from utils.logger_config import logger
 from windows import Main, StartUp, Viewer, Export
 from widgets import (ModulesTable, SubjectsTable, BlocksTable,
                      TeachersTable, LecturersTable, ClassesTable,
-                     CoursesTable, VenuesTable, LoadingDialog, ExitConfirm)
+                     CoursesTable, VenuesTable, LoadingDialog, ExitConfirm,
+                     TertiaryVenuesTable, CoursesEnrollmentTable)
 from windows.dialog_windows import (AddModuleWindow, AddModuleDataWindow, AddSubjectWindow,
                                     AddLecturerWindow, AddTeacherWindow, AddCourseWindow,
                                     AddClassWindow, AddClassDataWindow, AddClassDataPrimaryWindow,
                                     AddVenueWindow, AddBlockWindow, AddBlockDataWindow, AddBreakWindow,
-                                    ProjectsWindow)
+                                    ProjectsWindow, AddTertiaryVenueWindow)
 from typing import Union, Optional
 import sys
 import json
@@ -169,14 +170,16 @@ class AppWindow(Main):
         self.classes_table = ClassesTable()
         self.courses_table = CoursesTable()
         self.venues_table = VenuesTable()
+        self.tertiary_venues_table = TertiaryVenuesTable()
+        self.courses_enrollment_table = CoursesEnrollmentTable()
 
         self.ui.modules_table_layout.addWidget(self.modules_table)
         self.ui.subjects_table_layout.addWidget(self.subjects_table)
         self.ui.lecturers_table_layout.addWidget(self.lecturers_table)
         self.ui.teachers_table_layout.addWidget(self.teachers_table)
         self.ui.courses_table_layout.addWidget(self.courses_table)
+        self.ui.enrollment_courses_table_layout.addWidget(self.courses_enrollment_table)
         self.ui.classes_table_layout.addWidget(self.classes_table)
-        self.ui.venues_table_layout.addWidget(self.venues_table)
         self.ui.blocks_table_layout.addWidget(self.blocks_table)
 
         self.ui.modules_course_filter.lineEdit().setPlaceholderText("Filter by course")
@@ -212,6 +215,8 @@ class AppWindow(Main):
         self.classes_table.set_action_handler(self.classes_callback)
         self.courses_table.set_action_handler(self.courses_callback)
         self.venues_table.set_action_handler(self.venues_callback)
+        self.tertiary_venues_table.set_action_handler(self.venues_callback)
+        self.courses_enrollment_table.set_action_handler(self.enrollment_callback)
 
         self.ui.modules_add_btn.clicked.connect(self.modules_add)
         self.ui.subjects_add_btn.clicked.connect(self.subjects_add)
@@ -257,6 +262,13 @@ class AppWindow(Main):
     def build_menu(self, institution_type):
         super().build_menu(institution_type)
 
+        if self.ui.venues_table_layout.count() > 0:
+            w = self.ui.venues_table_layout.takeAt(0).widget()
+            w.setParent(None)
+        if institution_type == Types.INSTITUTION_TERTIARY:
+            self.ui.venues_table_layout.addWidget(self.tertiary_venues_table)
+        else:
+            self.ui.venues_table_layout.addWidget(self.venues_table)
         self.edit_menu.addAction("Undo", self.undo)
         self.edit_menu.addAction("Add Venue")
 
@@ -283,10 +295,10 @@ class AppWindow(Main):
             self.edit_menu.addAction("Add Class", self.classes_add)
             self.edit_menu.addAction("Add Block", self.blocks_add)
 
-        elif institution_type == Types.INSTITUTION_COLLEGE:
+        elif institution_type == Types.INSTITUTION_TERTIARY:
             self.edit_menu.addAction("Add Lecturer", self.lecturers_add)
             self.edit_menu.addAction("Add Module", self.modules_add)
-            self.edit_menu.addAction("Add Course", self.courses_add)
+            self.edit_menu.addAction("Add Program", self.courses_add)
 
         self.tools_menu.addAction("Viewer", self.show_viewer)
         self.tools_menu.addAction("Online Portal", Utils.view_portal)
@@ -396,9 +408,14 @@ class AppWindow(Main):
 
     def venues_callback(self, venue_id, action):
         if action == "edit":
-            self.dialog_window = AddVenueWindow(self.builder, True, venue_id, self)
-            self.dialog_window.saved.connect(self.refresh_data)
-            self.dialog_window.show()
+            if self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
+                self.dialog_window = AddTertiaryVenueWindow(self.builder, True, venue_id, self)
+                self.dialog_window.saved.connect(self.refresh_data)
+                self.dialog_window.show()
+            else:
+                self.dialog_window = AddVenueWindow(self.builder, True, venue_id, self)
+                self.dialog_window.saved.connect(self.refresh_data)
+                self.dialog_window.show()
         elif action == "delete":
             self.builder.venue_remove(venue_id)
             self.venues_populate()
@@ -406,8 +423,12 @@ class AppWindow(Main):
             if institution == Types.INSTITUTION_SECONDARY:
                 self.classes_populate_secondary()
                 self.subjects_populate()
-            elif institution == Types.INSTITUTION_COLLEGE:
+            elif institution == Types.INSTITUTION_TERTIARY:
                 self.modules_populate()
+
+    def enrollment_callback(self, course_id, action):
+        if action == "edit_enrollment":
+            self.populate_course_enrollment(course_id)
 
     """
     ======================================================
@@ -557,7 +578,7 @@ class AppWindow(Main):
         self.lecturers_populate()
         self.courses_populate()
         self.venues_populate()
-        self.institution_type = Types.INSTITUTION_COLLEGE
+        self.institution_type = Types.INSTITUTION_TERTIARY
 
         self.ui.cfg_daily_slots.setValue(self.builder.timetable_get_slots_per_day())
         self.ui.cfg_days_per_cycle.setValue(self.builder.timetable_get_days_per_cycle())
@@ -656,6 +677,34 @@ class AppWindow(Main):
 
     def change_day_name(self, day_id, day_name: str):
         self.builder.timetable_name_day(day_id, day_name)
+
+    def add_enrollment_table_item(self, c_name, level, course_id, enrollment):
+        row = self.ui.enrollment_table.rowCount()
+        print(row)
+        self.ui.enrollment_table.insertRow(row)
+        slot = QLabel(c_name + " - " + level)
+        name = QLineEdit()
+        name.setPlaceholderText("Enrollment")
+        name.setText(str(enrollment))
+        func = functools.partial(self.change_enrollment, course_id, level)
+        name.textChanged.connect(func)
+        name.returnPressed.connect(name.clearFocus)
+        self.ui.enrollment_table.setCellWidget(row, 0, slot)
+        self.ui.enrollment_table.setCellWidget(row, 1, name)
+
+    def change_enrollment(self, course_id, level, enrollment):
+        self.builder.add_course_enrollment(course_id, level, enrollment)
+
+    def populate_course_enrollment(self, course_id):
+        self.ui.enrollment_table.clearContents()
+        self.ui.enrollment_table.setRowCount(0)
+
+        course = self.builder.course_get(course_id)
+        short_name = course.short_name
+        enrollments = self.builder.get_course_enrollment(course_id)
+
+        for level in enrollments:
+            self.add_enrollment_table_item(short_name, level, course_id, enrollments[level][Types.CAPACITY])
 
     # ============================= MODULES ==========================
     # ================================================================
@@ -1049,6 +1098,7 @@ class AppWindow(Main):
 
         for course in courses:
             self.courses_table.add_item(course.id, course.name, course.short_name)
+            self.courses_enrollment_table.add_item(course.id, course.name, course.short_name)
 
     def courses_course_search(self):
         courses = self.builder.course_get_all()
@@ -1072,24 +1122,64 @@ class AppWindow(Main):
     # ================================================================
 
     def venues_add(self):
-        self.dialog_window = AddVenueWindow(self.builder, parent=self)
-        self.dialog_window.saved.connect(self.refresh_data)
-        self.dialog_window.show()
+        if self.institution_type == Types.INSTITUTION_TERTIARY:
+            self.dialog_window = AddTertiaryVenueWindow(self.builder, parent=self)
+            self.dialog_window.saved.connect(self.refresh_data)
+            self.dialog_window.show()
+        else:
+            self.dialog_window = AddVenueWindow(self.builder, parent=self)
+            self.dialog_window.saved.connect(self.refresh_data)
+            self.dialog_window.show()
 
     def venues_populate(self):
+        if self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
+            self.venues_populate_tertiary()
+        else:
+            self.ui.venues_count.setText(str(self.builder.venue_count()))
+            venues = self.builder.venue_get_all()
+            self.venues_table.clearContents()
+            self.venues_table.setRowCount(0)
+
+            for venue in venues:
+                if venue.id != Types.UNAVAILABLE:
+                    self.venues_table.add_item(venue.id, venue.name, venue.location, venue.location_description)
+
+    def venues_populate_tertiary(self):
         self.ui.venues_count.setText(str(self.builder.venue_count()))
         venues = self.builder.venue_get_all()
-        self.venues_table.clearContents()
-        self.venues_table.setRowCount(0)
+        self.tertiary_venues_table.clearContents()
+        self.tertiary_venues_table.setRowCount(0)
 
         for venue in venues:
             if venue.id != Types.UNAVAILABLE:
-                self.venues_table.add_item(venue.id, venue.name, venue.location, venue.location_description)
+                self.tertiary_venues_table.add_item(venue.id, venue.name, venue.capacity, venue.special)
 
     def venues_venue_search(self):
+        if self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
+            self.venues_venue_search_tertiary()
+        else:
+            venues = self.builder.venue_get_all()
+            self.venues_table.clearContents()
+            self.venues_table.setRowCount(0)
+            search_text = self.ui.venues_search.text()
+
+            if len(venues) > 0 and search_text:
+
+                search_index = [venue.name for venue in venues]
+                results = Utils().list_search(search_text, search_index)
+                matches = [venues[i] for i in results]
+
+                if len(matches) > 0:
+                    for venue in matches:
+                        if venue.id != Types.UNAVAILABLE:
+                            self.venues_table.add_item(venue.id, venue.name, venue.location, venue.location_description)
+            else:
+                self.venues_populate()
+
+    def venues_venue_search_tertiary(self):
         venues = self.builder.venue_get_all()
-        self.venues_table.clearContents()
-        self.venues_table.setRowCount(0)
+        self.tertiary_venues_table.clearContents()
+        self.tertiary_venues_table.setRowCount(0)
         search_text = self.ui.venues_search.text()
 
         if len(venues) > 0 and search_text:
@@ -1101,7 +1191,7 @@ class AppWindow(Main):
             if len(matches) > 0:
                 for venue in matches:
                     if venue.id != Types.UNAVAILABLE:
-                        self.venues_table.add_item(venue.id, venue.name, venue.location, venue.location_description)
+                        self.tertiary_venues_table.add_item(venue.id, venue.name, venue.capacity, venue.special)
         else:
             self.venues_populate()
 

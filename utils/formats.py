@@ -17,6 +17,16 @@ class Formats:
         return {"name": name, "short_name": short_name}
 
     @staticmethod
+    def format_course_capacity(capacity):
+        return {"capacity": capacity}
+
+    @staticmethod
+    def get_level_format():
+        return {'1.1': {}, '1.2': {}, '2.1': {}, '2.2': {},
+                '3.1': {}, '3.2': {}, '4.1': {}, '4.2': {},
+                '5.1': {}, '5.2': {}}
+
+    @staticmethod
     def format_class_subject_primary(time_slots: int,
                                      slots_per_day: int):
         return {"time_slots": time_slots, "slots_per_day": slots_per_day}
@@ -101,3 +111,9 @@ class Formats:
             "classes": classes,
             "time_slots": length
         }
+
+    @staticmethod
+    def format_venue_tertiary(name: str, capacity: int, special: str, location: list,
+                              location_description: str):
+        return {"name": name, "capacity": capacity, "special": special, "location": location,
+                "location_description": location_description}

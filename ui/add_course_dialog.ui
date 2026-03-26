@@ -195,7 +195,7 @@ QWidget#container {
             <enum>QFrame::Shadow::Plain</enum>
            </property>
            <property name="text">
-            <string>Course</string>
+            <string>Program</string>
            </property>
            <property name="textFormat">
             <enum>Qt::TextFormat::RichText</enum>
@@ -229,7 +229,7 @@ QWidget#container {
              </size>
             </property>
             <property name="placeholderText">
-             <string>Course name</string>
+             <string>Program name</string>
             </property>
            </widget>
            <widget class="QPushButton" name="course_save">
@@ -270,7 +270,7 @@ border-radius: 3px;</string>
              </size>
             </property>
             <property name="placeholderText">
-             <string>Course short name, e.g CS</string>
+             <string>Program short name, e.g CS</string>
             </property>
            </widget>
           </widget>

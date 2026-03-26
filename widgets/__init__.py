@@ -1,5 +1,5 @@
 from .widgets import (RecentItem, TimeTable, ModulesTable, SubjectsTable,
                       TeachersTable, LecturersTable, ClassesTable, ProjectItem,
                       CoursesTable, VenuesTable, MessageBox, BlocksTable, LoadingDialog,
-                      GenerationDialog, ExitConfirm)
+                      GenerationDialog, ExitConfirm, TertiaryVenuesTable, CoursesEnrollmentTable)
 from .custom_widgets import ButtonFrame, RemovableTableItem

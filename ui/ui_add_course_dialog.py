@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_course_dialogIiNWYw.ui'
+## Form generated from reading UI file 'add_course_dialogqTZmDY.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -181,9 +181,9 @@ class Ui_AddCourse(object):
     def retranslateUi(self, AddCourse):
         AddCourse.setWindowTitle(QCoreApplication.translate("AddCourse", u"Dialog", None))
         self.close_btn.setText("")
-        self.label.setText(QCoreApplication.translate("AddCourse", u"Course", None))
-        self.course_name.setPlaceholderText(QCoreApplication.translate("AddCourse", u"Course name", None))
+        self.label.setText(QCoreApplication.translate("AddCourse", u"Program", None))
+        self.course_name.setPlaceholderText(QCoreApplication.translate("AddCourse", u"Program name", None))
         self.course_save.setText(QCoreApplication.translate("AddCourse", u"Save", None))
-        self.course_short_name.setPlaceholderText(QCoreApplication.translate("AddCourse", u"Course short name, e.g CS", None))
+        self.course_short_name.setPlaceholderText(QCoreApplication.translate("AddCourse", u"Program short name, e.g CS", None))
     # retranslateUi
 

@@ -372,12 +372,21 @@ class TertiarySchool(QObject):
         slots = range(self.time_table_data.slots_per_day)
 
         modules = self.time_table_data.modules
+        venues = self.time_table_data.venues
+        capacities = self.time_table_data.capacities
 
         all_venues = {v for m in modules.values() for v in m[Types.VENUES] if len(m[Types.COURSES]) > 0}
         all_courses = {f"{c}-{m[Types.COURSES][c][Types.LEVEL]}" for m in modules.values() for c in m[Types.COURSES]
                        if len(m[Types.COURSES]) > 0}
         all_lecturers = {m[Types.LECTURER] for m in modules.values() if len(m[Types.COURSES]) > 0}
 
+        module_demand = {}
+        for mid, m in modules.items():
+            total = sum(capacities[c][m[Types.COURSES][c][Types.LEVEL]][Types.CAPACITY] for c in m[Types.COURSES])
+            module_demand[mid] = total
+
+        print(module_demand)
+        # return
         x = {}
 
         for m_id, m in modules.items():

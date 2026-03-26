@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_data_dialogjWrEJY.ui'
+## Form generated from reading UI file 'add_module_data_dialogMhCcfU.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -257,14 +257,14 @@ class Ui_AddModule(object):
     def retranslateUi(self, AddModule):
         AddModule.setWindowTitle(QCoreApplication.translate("AddModule", u"Dialog", None))
         self.close_btn.setText("")
-        self.label.setText(QCoreApplication.translate("AddModule", u"Module Course and Venues", None))
+        self.label.setText(QCoreApplication.translate("AddModule", u"Module Programs and Venues", None))
         self.module_save.setText(QCoreApplication.translate("AddModule", u"Close", None))
         self.module_add_course_btn.setText("")
         self.module_venue_select.setPlaceholderText("")
         ___qtablewidgetitem = self.module_venues_table.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("AddModule", u"Venues", None));
         ___qtablewidgetitem1 = self.module_courses_table.horizontalHeaderItem(0)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("AddModule", u"Courses", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("AddModule", u"Program", None));
         self.module_add_venue_btn.setText("")
         self.module_course_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Select Course", None))
         self.module_course_level_select.setItemText(0, QCoreApplication.translate("AddModule", u"1.1", None))
@@ -282,6 +282,6 @@ class Ui_AddModule(object):
         self.module_course_level_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Level", None))
         self.module_name.setText(QCoreApplication.translate("AddModule", u"Module name", None))
         self.module_course_module_code.setText("")
-        self.module_course_module_code.setPlaceholderText(QCoreApplication.translate("AddModule", u"Course module code (Optional)", None))
+        self.module_course_module_code.setPlaceholderText(QCoreApplication.translate("AddModule", u"Program custom module code (Optional)", None))
     # retranslateUi
 

@@ -13,7 +13,7 @@ from ui import (ui_add_module_dialog, ui_add_class_dialog,
                 ui_add_module_data_dialog, ui_add_class_data_dialog,
                 ui_add_class_primary_data_dialog, ui_add_block_dialog,
                 ui_add_block_data_dialog, ui_add_break_dialog,
-                ui_open_project)
+                ui_open_project, ui_add_tertiary_venue_dialog)
 import os
 
 
@@ -539,13 +539,13 @@ class AddCourseWindow(QDialog):
             course_short_name = self.course_short_name.text()
 
             if not self.edit:
-                try:
-                    self.builder.add_course(course_name, course_short_name)
-                    self.saved.emit(Types.COURSES)
-                    self.close()
-                except Exception as e:
-                    logger.critical(str(e))
-                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+                # try:
+                self.builder.add_course(course_name, course_short_name)
+                self.saved.emit(Types.COURSES)
+                self.close()
+                # except Exception as e:
+                #     logger.critical(str(e))
+                #     MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.course_change_data(self.course_id, Types.NAME, course_name)
@@ -1210,7 +1210,7 @@ class AddBlockDataWindow(QDialog):
 class AddVenueWindow(QDialog):
     saved = Signal(str)
 
-    def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder, TertiaryBuilder],
+    def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder],
                  edit: bool = False, venue_id: str = None, parent=None):
         super().__init__(parent=parent)
         self.ui = ui_add_venue_dialog.Ui_AddVenue()
@@ -1273,6 +1273,93 @@ class AddVenueWindow(QDialog):
                     self.builder.venue_change_data(self.venue_id, Types.NAME, venue_name)
                     self.builder.venue_change_data(self.venue_id, "location", venue_location)
                     self.builder.venue_change_data(self.venue_id, "location_description", venue_description)
+                    self.saved.emit(Types.VENUES)
+                    self.close()
+                except Exception as e:
+                    logger.critical(str(e))
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+        else:
+            MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
+
+
+class AddTertiaryVenueWindow(QDialog):
+    saved = Signal(str)
+
+    def __init__(self, builder: TertiaryBuilder,
+                 edit: bool = False, venue_id: str = None, parent=None):
+        super().__init__(parent=parent)
+        self.ui = ui_add_tertiary_venue_dialog.Ui_AddVenue()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        self.builder = builder
+        self.edit = edit
+        self.venue_id = venue_id
+
+        self.venue_name = self.ui.venue_name
+        self.venue_latitude = self.ui.venue_latitude
+        self.venue_latitude.setValidator(QDoubleValidator())
+        self.venue_longitude = self.ui.venue_longitude
+        self.venue_longitude.setValidator(QDoubleValidator())
+        self.venue_description = self.ui.venue_location_description
+        self.venue_capacity = self.ui.venue_capacity
+        self.venue_special = self.ui.venue_specialised
+        self.venue_longitude.hide()
+        self.venue_latitude.hide()
+        self.venue_description.hide()
+        self.save_btn = self.ui.venue_save
+
+        if self.edit:
+            venue = self.builder.venue_get(venue_id)
+            self.venue_name.setText(venue.name)
+            self.venue_latitude.setText(str(venue.location[0]))
+            self.venue_longitude.setText(str(venue.location[1]))
+            self.venue_description.setText(venue.location_description)
+            self.venue_capacity.setText(str(venue.capacity))
+            self.venue_special.setChecked(venue.special == "Yes")
+
+        self.ui.close_btn.clicked.connect(self.close)
+        self.save_btn.clicked.connect(self.save)
+
+    def close(self):
+        self.venue_name.clear()
+        self.venue_latitude.clear()
+        self.venue_longitude.clear()
+        self.venue_description.clear()
+        self.venue_capacity.clear()
+        self.venue_special.setChecked(False)
+        super().close()
+
+    def validate(self):
+        return self.venue_name.text() and self.venue_capacity.text()
+
+    def save(self):
+        if self.validate():
+
+            venue_name = self.venue_name.text()
+            # venue_location = [float(self.venue_latitude.text()),
+            #                   float(self.venue_longitude.text())]
+            # venue_description = self.venue_description.toPlainText()
+            venue_capacity = int(self.venue_capacity.text())
+            venue_special = self.venue_special.isChecked()
+
+            if not self.edit:
+                try:
+                    self.builder.add_venue(venue_name, venue_capacity, venue_special, [0, 0])
+                    self.saved.emit(Types.VENUES)
+                    self.close()
+                except Exception as e:
+                    logger.critical(str(e))
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+            else:
+                try:
+                    self.builder.venue_change_data(self.venue_id, Types.NAME, venue_name)
+                    self.builder.venue_change_data(self.venue_id, Types.CAPACITY, venue_capacity)
+                    self.builder.venue_change_data(self.venue_id, Types.SPECIAL, "Yes" if venue_special else "No")
+                    # self.builder.venue_change_data(self.venue_id, "location", venue_location)
+                    # self.builder.venue_change_data(self.venue_id, "location_description", venue_description)
                     self.saved.emit(Types.VENUES)
                     self.close()
                 except Exception as e:

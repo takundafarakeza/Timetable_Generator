@@ -3,7 +3,7 @@ class Types:
     TIMETABLE_NAME = "time_table_name"
     INSTITUTION_PRIMARY = "primary"
     INSTITUTION_SECONDARY = "secondary"
-    INSTITUTION_COLLEGE = "college"
+    INSTITUTION_TERTIARY = "college"
     INSTITUTION_TYPE = "institution_type"
 
     INSTITUTION_NAME = "institution_name"
@@ -25,6 +25,9 @@ class Types:
     VENUES = "venues"
     VENUE = "venue"
     VENUE_PRIMARY = "primary"
+    CAPACITIES = "capacities"
+    CAPACITY = "capacity"
+    SPECIAL = "special"
 
     TEACHER = "teacher"
     TEACHERS = "teachers"

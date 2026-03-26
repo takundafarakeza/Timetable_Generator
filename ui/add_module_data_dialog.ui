@@ -225,7 +225,7 @@ QWidget#container {
             <enum>QFrame::Shadow::Plain</enum>
            </property>
            <property name="text">
-            <string>Module Course and Venues</string>
+            <string>Module Programs and Venues</string>
            </property>
            <property name="textFormat">
             <enum>Qt::TextFormat::RichText</enum>
@@ -357,7 +357,7 @@ border-radius: 3px;</string>
             </attribute>
             <column>
              <property name="text">
-              <string>Courses</string>
+              <string>Program</string>
              </property>
             </column>
            </widget>
@@ -516,7 +516,7 @@ border-radius: 3px;</string>
              <string/>
             </property>
             <property name="placeholderText">
-             <string>Course module code (Optional)</string>
+             <string>Program custom module code (Optional)</string>
             </property>
            </widget>
           </widget>

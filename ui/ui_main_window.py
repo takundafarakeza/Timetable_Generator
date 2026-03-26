@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowwelhRV.ui'
+## Form generated from reading UI file 'main_windowETqlna.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -485,6 +485,18 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.venues_btn)
 
+        self.enrollment_btn = QPushButton(self.middle)
+        self.enrollment_btn.setObjectName(u"enrollment_btn")
+        self.enrollment_btn.setMinimumSize(QSize(0, 40))
+        self.enrollment_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.enrollment_btn.setStyleSheet(u"")
+        icon11 = QIcon()
+        icon11.addFile(u":/icons/icons/courses-add.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.enrollment_btn.setIcon(icon11)
+        self.enrollment_btn.setIconSize(QSize(20, 20))
+
+        self.verticalLayout_5.addWidget(self.enrollment_btn)
+
 
         self.verticalLayout_3.addWidget(self.middle, 0, Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignTop)
 
@@ -516,9 +528,9 @@ class Ui_MainWindow(object):
         self.settings_btn.setMinimumSize(QSize(0, 40))
         self.settings_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.settings_btn.setStyleSheet(u"")
-        icon11 = QIcon()
-        icon11.addFile(u":/icons/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.settings_btn.setIcon(icon11)
+        icon12 = QIcon()
+        icon12.addFile(u":/icons/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.settings_btn.setIcon(icon12)
 
         self.verticalLayout_4.addWidget(self.settings_btn)
 
@@ -527,9 +539,9 @@ class Ui_MainWindow(object):
         self.close_project_btn.setMinimumSize(QSize(0, 40))
         self.close_project_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.close_project_btn.setStyleSheet(u"")
-        icon12 = QIcon()
-        icon12.addFile(u":/icons/icons/log-out.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.close_project_btn.setIcon(icon12)
+        icon13 = QIcon()
+        icon13.addFile(u":/icons/icons/log-out.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.close_project_btn.setIcon(icon13)
 
         self.verticalLayout_4.addWidget(self.close_project_btn)
 
@@ -647,9 +659,9 @@ class Ui_MainWindow(object):
         self.icon_8 = QPushButton(self.venues_card)
         self.icon_8.setObjectName(u"icon_8")
         self.icon_8.setGeometry(QRect(10, 15, 31, 24))
-        icon13 = QIcon()
-        icon13.addFile(u":/icons/icons/primary.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.icon_8.setIcon(icon13)
+        icon14 = QIcon()
+        icon14.addFile(u":/icons/icons/primary.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.icon_8.setIcon(icon14)
         self.icon_8.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.venues_card)
@@ -687,9 +699,9 @@ class Ui_MainWindow(object):
         self.icon_9 = QPushButton(self.subjects_card)
         self.icon_9.setObjectName(u"icon_9")
         self.icon_9.setGeometry(QRect(10, 15, 31, 24))
-        icon14 = QIcon()
-        icon14.addFile(u":/icons/icons/secondary.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.icon_9.setIcon(icon14)
+        icon15 = QIcon()
+        icon15.addFile(u":/icons/icons/secondary.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.icon_9.setIcon(icon15)
         self.icon_9.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.subjects_card)
@@ -725,7 +737,7 @@ class Ui_MainWindow(object):
         self.icon_13 = QPushButton(self.modules_card)
         self.icon_13.setObjectName(u"icon_13")
         self.icon_13.setGeometry(QRect(10, 15, 31, 24))
-        self.icon_13.setIcon(icon14)
+        self.icon_13.setIcon(icon15)
         self.icon_13.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.modules_card)
@@ -761,9 +773,9 @@ class Ui_MainWindow(object):
         self.icon_7 = QPushButton(self.courses_card)
         self.icon_7.setObjectName(u"icon_7")
         self.icon_7.setGeometry(QRect(10, 15, 31, 24))
-        icon15 = QIcon()
-        icon15.addFile(u":/icons/icons/tertiary.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.icon_7.setIcon(icon15)
+        icon16 = QIcon()
+        icon16.addFile(u":/icons/icons/tertiary.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.icon_7.setIcon(icon16)
         self.icon_7.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.courses_card)
@@ -799,7 +811,7 @@ class Ui_MainWindow(object):
         self.icon_15 = QPushButton(self.classes_card)
         self.icon_15.setObjectName(u"icon_15")
         self.icon_15.setGeometry(QRect(10, 15, 31, 24))
-        self.icon_15.setIcon(icon15)
+        self.icon_15.setIcon(icon16)
         self.icon_15.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.classes_card)
@@ -835,9 +847,9 @@ class Ui_MainWindow(object):
         self.icon_11 = QPushButton(self.lecturers_card)
         self.icon_11.setObjectName(u"icon_11")
         self.icon_11.setGeometry(QRect(10, 15, 35, 24))
-        icon16 = QIcon()
-        icon16.addFile(u":/icons/icons/lecturer.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.icon_11.setIcon(icon16)
+        icon17 = QIcon()
+        icon17.addFile(u":/icons/icons/lecturer.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.icon_11.setIcon(icon17)
         self.icon_11.setIconSize(QSize(32, 32))
         self.tertiary_btn_5 = ButtonFrame(self.lecturers_card)
         self.tertiary_btn_5.setObjectName(u"tertiary_btn_5")
@@ -871,7 +883,7 @@ class Ui_MainWindow(object):
         self.icon_17 = QPushButton(self.tertiary_btn_5)
         self.icon_17.setObjectName(u"icon_17")
         self.icon_17.setGeometry(QRect(10, 15, 35, 24))
-        self.icon_17.setIcon(icon16)
+        self.icon_17.setIcon(icon17)
         self.icon_17.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.lecturers_card)
@@ -907,7 +919,7 @@ class Ui_MainWindow(object):
         self.icon_18 = QPushButton(self.teachers_card)
         self.icon_18.setObjectName(u"icon_18")
         self.icon_18.setGeometry(QRect(10, 15, 35, 24))
-        self.icon_18.setIcon(icon16)
+        self.icon_18.setIcon(icon17)
         self.icon_18.setIconSize(QSize(32, 32))
         self.tertiary_btn_7 = ButtonFrame(self.teachers_card)
         self.tertiary_btn_7.setObjectName(u"tertiary_btn_7")
@@ -941,7 +953,7 @@ class Ui_MainWindow(object):
         self.icon_19 = QPushButton(self.tertiary_btn_7)
         self.icon_19.setObjectName(u"icon_19")
         self.icon_19.setGeometry(QRect(10, 15, 35, 24))
-        self.icon_19.setIcon(icon16)
+        self.icon_19.setIcon(icon17)
         self.icon_19.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.teachers_card)
@@ -977,9 +989,9 @@ class Ui_MainWindow(object):
         self.icon_12 = QPushButton(self.blocks_card)
         self.icon_12.setObjectName(u"icon_12")
         self.icon_12.setGeometry(QRect(10, 15, 31, 24))
-        icon17 = QIcon()
-        icon17.addFile(u":/icons/icons/blocks_icon.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.icon_12.setIcon(icon17)
+        icon18 = QIcon()
+        icon18.addFile(u":/icons/icons/blocks_icon.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.icon_12.setIcon(icon18)
         self.icon_12.setIconSize(QSize(32, 32))
 
         self.verticalLayout_34.addWidget(self.blocks_card)
@@ -1126,9 +1138,9 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;}")
-        icon18 = QIcon()
-        icon18.addFile(u":/icons/icons/plus.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.add_break_btn.setIcon(icon18)
+        icon19 = QIcon()
+        icon19.addFile(u":/icons/icons/plus.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.add_break_btn.setIcon(icon19)
         self.add_break_btn.setIconSize(QSize(14, 14))
 
         self.verticalLayout_32.addWidget(self.cfg_cnt)
@@ -1151,9 +1163,9 @@ class Ui_MainWindow(object):
         self.dash_timetable_status.setObjectName(u"dash_timetable_status")
         self.dash_timetable_status.setMinimumSize(QSize(400, 0))
         self.dash_timetable_status.setStyleSheet(u"text-align: left;")
-        icon19 = QIcon()
-        icon19.addFile(u":/icons/icons/info.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.dash_timetable_status.setIcon(icon19)
+        icon20 = QIcon()
+        icon20.addFile(u":/icons/icons/info.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.dash_timetable_status.setIcon(icon20)
 
         self.horizontalLayout_3.addWidget(self.dash_timetable_status)
 
@@ -1226,7 +1238,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.modules_add_btn.setIcon(icon18)
+        self.modules_add_btn.setIcon(icon19)
         self.modules_add_btn.setIconSize(QSize(14, 14))
         self.modules_search = QLineEdit(self.module_header_cnt)
         self.modules_search.setObjectName(u"modules_search")
@@ -1305,7 +1317,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.subjects_add_btn.setIcon(icon18)
+        self.subjects_add_btn.setIcon(icon19)
         self.subjects_add_btn.setIconSize(QSize(14, 14))
         self.subjects_search = QLineEdit(self.module_header_cnt_2)
         self.subjects_search.setObjectName(u"subjects_search")
@@ -1380,7 +1392,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.blocks_add_btn.setIcon(icon18)
+        self.blocks_add_btn.setIcon(icon19)
         self.blocks_add_btn.setIconSize(QSize(14, 14))
         self.blocks_search = QLineEdit(self.module_header_cnt_8)
         self.blocks_search.setObjectName(u"blocks_search")
@@ -1455,7 +1467,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.lecturers_add_btn.setIcon(icon18)
+        self.lecturers_add_btn.setIcon(icon19)
         self.lecturers_add_btn.setIconSize(QSize(14, 14))
         self.lecturers_search = QLineEdit(self.module_header_cnt_3)
         self.lecturers_search.setObjectName(u"lecturers_search")
@@ -1530,7 +1542,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.teachers_add_btn.setIcon(icon18)
+        self.teachers_add_btn.setIcon(icon19)
         self.teachers_add_btn.setIconSize(QSize(14, 14))
         self.teachers_search = QLineEdit(self.module_header_cnt_4)
         self.teachers_search.setObjectName(u"teachers_search")
@@ -1605,7 +1617,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.courses_add_btn.setIcon(icon18)
+        self.courses_add_btn.setIcon(icon19)
         self.courses_add_btn.setIconSize(QSize(14, 14))
         self.courses_search = QLineEdit(self.module_header_cnt_6)
         self.courses_search.setObjectName(u"courses_search")
@@ -1680,7 +1692,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.classes_add_btn.setIcon(icon18)
+        self.classes_add_btn.setIcon(icon19)
         self.classes_add_btn.setIconSize(QSize(14, 14))
         self.classes_search = QLineEdit(self.module_header_cnt_7)
         self.classes_search.setObjectName(u"classes_search")
@@ -1755,7 +1767,7 @@ class Ui_MainWindow(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
-        self.venues_add_btn.setIcon(icon18)
+        self.venues_add_btn.setIcon(icon19)
         self.venues_add_btn.setIconSize(QSize(14, 14))
         self.venues_search = QLineEdit(self.module_header_cnt_5)
         self.venues_search.setObjectName(u"venues_search")
@@ -1788,6 +1800,100 @@ class Ui_MainWindow(object):
         self.verticalLayout_20.addWidget(self.container_6, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
         self.stacked_container.addWidget(self.venues_window)
+        self.enrollment_window = QWidget()
+        self.enrollment_window.setObjectName(u"enrollment_window")
+        self.verticalLayout_37 = QVBoxLayout(self.enrollment_window)
+        self.verticalLayout_37.setObjectName(u"verticalLayout_37")
+        self.container_11 = QWidget(self.enrollment_window)
+        self.container_11.setObjectName(u"container_11")
+        self.verticalLayout_35 = QVBoxLayout(self.container_11)
+        self.verticalLayout_35.setObjectName(u"verticalLayout_35")
+        self.title_container_9 = QFrame(self.container_11)
+        self.title_container_9.setObjectName(u"title_container_9")
+        self.title_container_9.setMinimumSize(QSize(0, 40))
+        self.title_container_9.setMaximumSize(QSize(16777215, 40))
+        self.title_container_9.setFrameShape(QFrame.Shape.StyledPanel)
+        self.title_container_9.setFrameShadow(QFrame.Shadow.Raised)
+        self.title_9 = QLabel(self.title_container_9)
+        self.title_9.setObjectName(u"title_9")
+        self.title_9.setGeometry(QRect(10, 10, 251, 21))
+        self.title_9.setFont(font5)
+
+        self.verticalLayout_35.addWidget(self.title_container_9)
+
+        self.modules_cnt_9 = QFrame(self.container_11)
+        self.modules_cnt_9.setObjectName(u"modules_cnt_9")
+        self.modules_cnt_9.setFrameShape(QFrame.Shape.StyledPanel)
+        self.modules_cnt_9.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_36 = QVBoxLayout(self.modules_cnt_9)
+        self.verticalLayout_36.setObjectName(u"verticalLayout_36")
+        self.module_header_cnt_9 = QFrame(self.modules_cnt_9)
+        self.module_header_cnt_9.setObjectName(u"module_header_cnt_9")
+        self.module_header_cnt_9.setMinimumSize(QSize(0, 50))
+        self.module_header_cnt_9.setMaximumSize(QSize(16777215, 50))
+        self.module_header_cnt_9.setFrameShape(QFrame.Shape.StyledPanel)
+        self.module_header_cnt_9.setFrameShadow(QFrame.Shadow.Raised)
+        self.venues_search_2 = QLineEdit(self.module_header_cnt_9)
+        self.venues_search_2.setObjectName(u"venues_search_2")
+        self.venues_search_2.setGeometry(QRect(0, 10, 201, 30))
+
+        self.verticalLayout_36.addWidget(self.module_header_cnt_9)
+
+        self.capacities_table_container = QFrame(self.modules_cnt_9)
+        self.capacities_table_container.setObjectName(u"capacities_table_container")
+        self.capacities_table_container.setMinimumSize(QSize(920, 405))
+        self.capacities_table_container.setMaximumSize(QSize(920, 16777215))
+        self.capacities_table_container.setStyleSheet(u"QWidget#enrollment_courses{\n"
+"background: #FBFCFE;\n"
+"border-radius: 5px;\n"
+"border: 1px solid #E3E4E6;\n"
+"}")
+        self.capacities_table_container.setFrameShape(QFrame.Shape.StyledPanel)
+        self.capacities_table_container.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_7 = QHBoxLayout(self.capacities_table_container)
+        self.horizontalLayout_7.setSpacing(10)
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.enrollment_courses = QWidget(self.capacities_table_container)
+        self.enrollment_courses.setObjectName(u"enrollment_courses")
+        self.enrollment_courses.setMinimumSize(QSize(510, 0))
+        self.enrollment_courses_table_layout = QVBoxLayout(self.enrollment_courses)
+        self.enrollment_courses_table_layout.setObjectName(u"enrollment_courses_table_layout")
+
+        self.horizontalLayout_7.addWidget(self.enrollment_courses)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_7.addItem(self.horizontalSpacer_2)
+
+        self.enrollment_table = QTableWidget(self.capacities_table_container)
+        if (self.enrollment_table.columnCount() < 2):
+            self.enrollment_table.setColumnCount(2)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.enrollment_table.setHorizontalHeaderItem(0, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.enrollment_table.setHorizontalHeaderItem(1, __qtablewidgetitem5)
+        self.enrollment_table.setObjectName(u"enrollment_table")
+        self.enrollment_table.setMaximumSize(QSize(400, 16777215))
+        self.enrollment_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed)
+        self.enrollment_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.enrollment_table.setShowGrid(False)
+        self.enrollment_table.horizontalHeader().setVisible(True)
+        self.enrollment_table.horizontalHeader().setDefaultSectionSize(150)
+        self.enrollment_table.verticalHeader().setVisible(False)
+
+        self.horizontalLayout_7.addWidget(self.enrollment_table)
+
+
+        self.verticalLayout_36.addWidget(self.capacities_table_container)
+
+
+        self.verticalLayout_35.addWidget(self.modules_cnt_9)
+
+
+        self.verticalLayout_37.addWidget(self.container_11, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
+
+        self.stacked_container.addWidget(self.enrollment_window)
 
         self.verticalLayout_2.addWidget(self.stacked_container)
 
@@ -1885,6 +1991,10 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.venues_btn.setText(QCoreApplication.translate("MainWindow", u"  Venues", None))
 #if QT_CONFIG(tooltip)
+        self.enrollment_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Venues", None))
+#endif // QT_CONFIG(tooltip)
+        self.enrollment_btn.setText(QCoreApplication.translate("MainWindow", u"   Enrollments", None))
+#if QT_CONFIG(tooltip)
         self.settings_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
 #endif // QT_CONFIG(tooltip)
         self.settings_btn.setText(QCoreApplication.translate("MainWindow", u"  Settings", None))
@@ -1927,7 +2037,7 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe Ui';\">0</span></p></body></html>", None))
         self.coner_shadow_13.setText("")
         self.icon_13.setText("")
-        self.head_7.setText(QCoreApplication.translate("MainWindow", u"Courses", None))
+        self.head_7.setText(QCoreApplication.translate("MainWindow", u"Programs", None))
         self.courses_count.setText(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -2051,14 +2161,20 @@ class Ui_MainWindow(object):
         self.title_4.setText(QCoreApplication.translate("MainWindow", u"Manage Teachers", None))
         self.teachers_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Teacher", None))
         self.teachers_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Teacher", None))
-        self.title_6.setText(QCoreApplication.translate("MainWindow", u"Manage Courses", None))
-        self.courses_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Course", None))
-        self.courses_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Courses", None))
+        self.title_6.setText(QCoreApplication.translate("MainWindow", u"Manage Programs", None))
+        self.courses_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Program", None))
+        self.courses_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Programs", None))
         self.title_7.setText(QCoreApplication.translate("MainWindow", u"Manage Classes", None))
         self.classes_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Class", None))
         self.classes_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Class", None))
         self.title_5.setText(QCoreApplication.translate("MainWindow", u"Manage Venues", None))
         self.venues_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Venue", None))
         self.venues_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Venue", None))
+        self.title_9.setText(QCoreApplication.translate("MainWindow", u"Manage Program Enrollments", None))
+        self.venues_search_2.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Program", None))
+        ___qtablewidgetitem4 = self.enrollment_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Level", None));
+        ___qtablewidgetitem5 = self.enrollment_table.horizontalHeaderItem(1)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Enrollment", None));
     # retranslateUi
 

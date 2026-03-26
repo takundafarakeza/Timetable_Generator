@@ -1032,6 +1032,99 @@ class CoursesTable(QTableWidget):
             self.parent_callback(_id, action)
 
 
+class CoursesEnrollmentTable(QTableWidget):
+    def __init__(self):
+        super().__init__(0, 4)
+        self.colors = ["#4785cf", "#63b542", "#d3cb4a",
+                       "#cb4550", "#de8a40", "#4456b0"]
+
+        self.setHorizontalHeaderLabels(["", "Name", "Short Name", "Edit"])
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.setShowGrid(False)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.parent_callback = None
+
+        self.setColumnWidth(0, 15)
+        self.setColumnWidth(1, 140)
+        self.setColumnWidth(2, 140)
+        self.setColumnWidth(3, 120)
+
+        self.setStyleSheet("""
+                            QTableWidget {
+                                border: none;
+                            }
+                            QHeaderView::section {
+                                background-color: #EBECEF;
+                                padding: 3px;
+                                border: none;
+                                font-weight: bold;
+                            }
+
+                            QHeaderView::section:horizontal {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QHeaderView::section:vertical {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QTableWidget::item {
+                                border-bottom: 1px solid #E3E4E6;
+                                padding: 3px;
+                            }
+                        """)
+
+    def set_action_handler(self, handler):
+        self.parent_callback = handler
+
+    def add_item(self, course_id, name, shortname):
+        row = self.rowCount()
+        color = self.colors[Utils.scale_down(6, row) - 1]
+        self.insertRow(row)
+        self.setRowHeight(row, 50)
+
+        color_container = QWidget()
+        layout = QVBoxLayout(color_container)
+        color_item = QWidget()
+        color_item.setMaximumSize(QSize(10, 10))
+        color_item.setMinimumSize(QSize(10, 10))
+        color_item.setStyleSheet(f"background: {color};\n"
+                                 "border-radius: 5px;\n")
+        layout.addWidget(color_item)
+        self.setCellWidget(row, 0, color_container)
+
+        name = QLabel(f"<font color='#414141'><b>{name}</b></font>")
+        self.setCellWidget(row, 1, name)
+
+        shortname = QLabel(f"{shortname}")
+        self.setCellWidget(row, 2, shortname)
+
+        action_widget = QWidget()
+        action_layout = QHBoxLayout(action_widget)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+
+        course_edit_btn = QPushButton()
+        edit_icon = QIcon()
+        edit_icon.addFile(u":/icons/icons/pencil.svg")
+        course_edit_btn.setIcon(edit_icon)
+        course_edit_btn.setToolTip("Edit")
+        course_edit_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        course_edit_btn.setFlat(True)
+        course_edit_btn.clicked.connect(partial(self._handle_action, course_id, "edit_enrollment"))
+
+        for btn in [course_edit_btn]:
+            btn.setStyleSheet("padding: 2px;")
+            action_layout.addWidget(btn)
+        self.setCellWidget(row, 3, action_widget)
+
+    def _handle_action(self, _id, action):
+        if self.parent_callback:
+            self.parent_callback(_id, action)
+
+
 class ClassesTable(QTableWidget):
     def __init__(self):
         super().__init__(0, 5)
@@ -1222,6 +1315,119 @@ class VenuesTable(QTableWidget):
 
         location_description = QLabel(f"{location_description}")
         self.setCellWidget(row, 3, location_description)
+
+        action_widget = QWidget()
+        action_layout = QHBoxLayout(action_widget)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+
+        class_edit_btn = QPushButton()
+        edit_icon = QIcon()
+        edit_icon.addFile(u":/icons/icons/pencil.svg")
+        class_edit_btn.setIcon(edit_icon)
+        class_edit_btn.setToolTip("Edit")
+        class_edit_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        class_edit_btn.setFlat(True)
+        class_edit_btn.clicked.connect(partial(self._handle_action, class_id, "edit"))
+
+        class_delete_btn = QPushButton()
+        delete_icon = QIcon()
+        delete_icon.addFile(u":/icons/icons/trash-2.svg")
+        class_delete_btn.setIcon(delete_icon)
+        class_delete_btn.setToolTip("Delete")
+        class_delete_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        class_delete_btn.setFlat(True)
+        class_delete_btn.clicked.connect(partial(self._handle_action, class_id, "delete"))
+
+        for btn in [class_edit_btn, class_delete_btn]:
+            btn.setStyleSheet("padding: 2px;")
+            action_layout.addWidget(btn)
+        self.setCellWidget(row, 4, action_widget)
+
+    def _handle_action(self, _id, action):
+        if self.parent_callback:
+            self.parent_callback(_id, action)
+
+
+class TertiaryVenuesTable(QTableWidget):
+    def __init__(self):
+        super().__init__(0, 5)
+        self.colors = ["#4785cf", "#63b542", "#d3cb4a",
+                       "#cb4550", "#de8a40", "#4456b0"]
+
+        self.setHorizontalHeaderLabels(["", "Name", "Capacity", "Special", "Actions"])
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.setShowGrid(False)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.parent_callback = None
+
+        self.setColumnWidth(0, 15)
+        self.setColumnWidth(1, 320)
+        self.setColumnWidth(2, 200)
+        self.setColumnWidth(3, 220)
+        self.setColumnWidth(4, 120)
+
+        self.setStyleSheet("""
+                            QTableWidget {
+                                border: none;
+                            }
+                            QHeaderView::section {
+                                background-color: #EBECEF;
+                                padding: 3px;
+                                border: none;
+                                font-weight: bold;
+                            }
+
+                            QHeaderView::section:horizontal {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QHeaderView::section:vertical {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QTableWidget::item {
+                                border-bottom: 1px solid #E3E4E6;
+                                padding: 3px;
+                            }
+                        """)
+
+    def set_action_handler(self, handler):
+        self.parent_callback = handler
+
+    def add_item(self, class_id, name, capacity, special):
+        row = self.rowCount()
+        color = self.colors[Utils.scale_down(6, row) - 1]
+        self.insertRow(row)
+        self.setRowHeight(row, 50)
+
+        color_container = QWidget()
+        layout = QVBoxLayout(color_container)
+        color_item = QWidget()
+        color_item.setMaximumSize(QSize(10, 10))
+        color_item.setMinimumSize(QSize(10, 10))
+        color_item.setStyleSheet(f"background: {color};\n"
+                                 "border-radius: 5px;\n")
+        layout.addWidget(color_item)
+        self.setCellWidget(row, 0, color_container)
+
+        name = QLabel(f"<font color='#414141'><b>{name}</b></font>")
+        self.setCellWidget(row, 1, name)
+
+        capacity = QLabel(f"{capacity}")
+        self.setCellWidget(row, 2, capacity)
+
+        # location = f"Latitude: {location[0]}\nLongitude: {location[1]}"
+        # location = QLabel(f"{location}")
+        # self.setCellWidget(row, 2, location)
+
+        special = QLabel(f"{special}")
+        self.setCellWidget(row, 3, special)
+
+        # location_description = QLabel(f"{location_description}")
+        # self.setCellWidget(row, 3, location_description)
 
         action_widget = QWidget()
         action_layout = QHBoxLayout(action_widget)

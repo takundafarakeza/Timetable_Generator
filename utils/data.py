@@ -25,6 +25,16 @@ class Venue:
 
 
 @dataclass
+class VenueTertiary:
+    id: str
+    name: str
+    capacity: int
+    special: str
+    location: list
+    location_description: str
+
+
+@dataclass
 class Subject:
     id: str
     name: str
@@ -103,6 +113,8 @@ class TimetableTempDataSecondary:
 class TimetableTempDataTertiary:
     modules: dict
     courses: dict
+    venues: dict
+    capacities: dict
     days_per_cycle: int
     slots_per_day: int
     breaks: dict

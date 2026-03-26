@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal, QObject, QThread
 from . import Types, Formats
 from .logger_config import logger
-from .data import (Class, Venue, Subject, Teacher, Lecturer, Course,
+from .data import (Class, Venue, VenueTertiary, Subject, Teacher, Lecturer, Course,
                    TimeTableInitData, TimetableTempDataPrimary, Module,
                    TimetableTempDataSecondary, TimetableTempDataTertiary,
                    Block, Timetable)
@@ -1350,6 +1350,7 @@ class TertiaryBuilder(QObject):
         self._time_table_data[Types.SLOTS_PER_DAY] = data.slots_per_day
         self._time_table_data[Types.SLOTS] = {}
         self._time_table_data[Types.DAYS] = {}
+        self._time_table_data[Types.BREAKING_SLOTS] = {}
 
         self._time_table_data[Types.SEQUENCE] = {
             Types.COURSES: 0,
@@ -1361,9 +1362,11 @@ class TertiaryBuilder(QObject):
 
         self._time_table_data[Types.COURSES] = {}
         self._time_table_data[Types.MODULES] = {}
-        self._time_table_data[Types.VENUES] = {"unavailable": {"name": "Unavailable", "location": [0, 0],
+        self._time_table_data[Types.VENUES] = {"unavailable": {"name": "Unavailable", "capacity": 0, "special": "Yes",
+                                                               "location": [0, 0],
                                                                "location_description": "Unavailable"}}
         self._time_table_data[Types.LECTURERS] = {"unavailable": {"name": "Unavailable"}}
+        self._time_table_data[Types.CAPACITIES] = {}
         self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
 
     def timetable_init_timetable(self):
@@ -1533,6 +1536,8 @@ class TertiaryBuilder(QObject):
         self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
         data = TimetableTempDataTertiary(self._time_table_data[Types.MODULES],
                                          self._time_table_data[Types.COURSES],
+                                         self._time_table_data[Types.VENUES],
+                                         self._time_table_data[Types.CAPACITIES],
                                          self._time_table_data[Types.DAYS_PER_CYCLE],
                                          self._time_table_data[Types.SLOTS_PER_DAY],
                                          self._time_table_data[Types.BREAKING_SLOTS],
@@ -1557,6 +1562,8 @@ class TertiaryBuilder(QObject):
                            lecturer: str):
         data = TimetableTempDataTertiary(self._time_table_data[Types.MODULES],
                                          self._time_table_data[Types.COURSES],
+                                         self._time_table_data[Types.VENUES],
+                                         self._time_table_data[Types.CAPACITIES],
                                          self._time_table_data[Types.DAYS_PER_CYCLE],
                                          self._time_table_data[Types.SLOTS_PER_DAY],
                                          self._time_table_data[Types.BREAKING_SLOTS],
@@ -1574,7 +1581,21 @@ class TertiaryBuilder(QObject):
             Formats.format_course(name, short_name)
         )
         self._time_table_data[Types.SEQUENCE][Types.COURSES] = int(course_id)
+        self._time_table_data[Types.CAPACITIES][course_id] = Formats.get_level_format()
+        levels = ['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2', '5.1', '5.2']
+        for level in levels:
+            self.add_course_enrollment(course_id, level, 0)
         self.set_unsaved()
+
+    def add_course_enrollment(self, course_id, level, capacity):
+        self._time_table_data[Types.CAPACITIES][course_id][level] = (
+            Formats.format_course_capacity(capacity)
+        )
+        self.set_unsaved()
+
+    def get_course_enrollment(self, course_id):
+        enrollments = self._time_table_data[Types.CAPACITIES][course_id]
+        return enrollments
 
     def course_exists(self, name: str):
         courses = self._time_table_data[Types.COURSES]
@@ -1591,6 +1612,7 @@ class TertiaryBuilder(QObject):
         self.modules_remove_course(course_id)
         self.timetable_remove_course(course_id)
         del self._time_table_data[Types.COURSES][course_id]
+        # del self._time_table_data[Types.CAPACITIES][course_id]
         self.set_unsaved()
         self.set_not_generated()
 
@@ -1617,11 +1639,12 @@ class TertiaryBuilder(QObject):
 
     # =================================== VENUES  ================================ #
 
-    def add_venue(self, name: str, location: list,
-                  location_description: str):
+    def add_venue(self, name: str, capacity: int, special: bool, location: list,
+                  location_description: str = "Na"):
         venue_id = str(self._time_table_data[Types.SEQUENCE][Types.VENUES] + 1)
+        special = "Yes" if special else "No"
         self._time_table_data[Types.VENUES][venue_id] = (
-            Formats.format_venue(name, location, location_description)
+            Formats.format_venue_tertiary(name, capacity, special, location, location_description)
         )
         self._time_table_data[Types.SEQUENCE][Types.VENUES] = int(venue_id)
         self.set_unsaved()
@@ -1650,15 +1673,18 @@ class TertiaryBuilder(QObject):
 
     def venue_get_all(self):
         venues_data = self._time_table_data[Types.VENUES]
-        venues = [Venue(venue, venues_data[venue]["name"],
-                        venues_data[venue]["location"],
-                        venues_data[venue]["location_description"]) for venue in venues_data]
+        venues = [VenueTertiary(venue, venues_data[venue]["name"],
+                                venues_data[venue]["capacity"],
+                                venues_data[venue]["special"],
+                                venues_data[venue]["location"],
+                                venues_data[venue]["location_description"])
+                  for venue in venues_data]
         return venues
 
     def venue_get(self, venue_id: str):
         venue_data = self._time_table_data[Types.VENUES][venue_id]
-        return Venue(venue_id, venue_data["name"], venue_data["location"],
-                     venue_data["location_description"])
+        return VenueTertiary(venue_id, venue_data["name"], venue_data["capacity"], venue_data["special"],
+                             venue_data["location"], venue_data["location_description"])
 
     def venue_count(self):
         return len(self._time_table_data[Types.VENUES]) - 1
