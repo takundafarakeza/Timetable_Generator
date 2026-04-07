@@ -1070,14 +1070,6 @@ class TertiaryExport(QDialog):
                                 courses = ", ".join(courses)
                                 export_data[day][slot_i + 2][col + 2] = (f"{self.builder.module_get(event).name}"
                                                                          f":   {courses}: {venue}")
-                            else:
-                                print(self.builder.module_get(event).name, "\n",
-                                      event_data[Types.VENUE] in self.available_venues,
-                                      sum([c in self.available_courses for c in event_data[Types.COURSES]]) ==
-                                      len(event_data[Types.COURSES]),
-                                      self.builder.module_get(event).lecturer in
-                                      self.available_lecturers
-                                      )
                     else:
                         export_data[day][slot_i + 2][2] = timetable_data[day][slot]
 
