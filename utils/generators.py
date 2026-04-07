@@ -4,7 +4,8 @@ from .logger_config import logger
 from .dtypes import Types
 from .data import (TimetableTempDataPrimary,
                    TimetableTempDataSecondary,
-                   TimetableTempDataTertiary, Timetable)
+                   TimetableTempDataTertiary, Timetable,
+                   GenerationReport)
 from ortools.sat.python import cp_model
 import random
 
@@ -357,7 +358,8 @@ class TertiarySchool(QObject):
         self.time_table_data = data
         self.generation_messages = {
             cp_model.INFEASIBLE: "Generation is complete with an infeasible timetable "
-                                 "try adjusting module lecturers or module venues and courses.",
+                                 "try adjusting module lecturers or module venues and courses or "
+                                 "venue capacities if warned before.",
             cp_model.MODEL_INVALID: "Generation was unsuccessful due to an invalid data model.",
             cp_model.FEASIBLE: "Generation is complete with a feasible but not optimal timetable."
                                " You can view it now.",
@@ -374,33 +376,65 @@ class TertiarySchool(QObject):
         modules = self.time_table_data.modules
         venues = self.time_table_data.venues
         capacities = self.time_table_data.capacities
+        accepts = self.time_table_data.accepts
 
         all_venues = {v for m in modules.values() for v in m[Types.VENUES] if len(m[Types.COURSES]) > 0}
         all_courses = {f"{c}-{m[Types.COURSES][c][Types.LEVEL]}" for m in modules.values() for c in m[Types.COURSES]
                        if len(m[Types.COURSES]) > 0}
         all_lecturers = {m[Types.LECTURER] for m in modules.values() if len(m[Types.COURSES]) > 0}
 
+        x = {}
+        un_scheduled = ""
+        skip_list = []
         module_demand = {}
+        auto_venue = []
+
         for mid, m in modules.items():
-            total = sum(capacities[c][m[Types.COURSES][c][Types.LEVEL]][Types.CAPACITY] for c in m[Types.COURSES])
+            total = sum(int(capacities[c][m[Types.COURSES][c][Types.LEVEL]][Types.CAPACITY]) for c in m[Types.COURSES])
             module_demand[mid] = total
 
-        print(module_demand)
-        return
-        x = {}
+        for m_id, m in modules.items():
+            demand = module_demand[m_id]
+            scheduled = False
+
+            if len(m[Types.LECTURER]) > 0 or m[Types.LECTURER] != "unavailable":
+                if len(m[Types.COURSES]) > 0:
+                    if len(m[Types.VENUES]) == 0:
+                        for v in venues:
+                            if ((demand <= venues[v][Types.CAPACITY] or m_id in accepts) and
+                                    venues[v][Types.SPECIAL] == "No" and v != "unavailable"):
+                                m[Types.VENUES].append(v)
+                                scheduled = True
+                                auto_venue.append(m_id)
+                    else:
+                        for v in m[Types.VENUES]:
+                            if demand <= venues[v][Types.CAPACITY] or m_id in accepts:
+                                scheduled = True
+                                break
+
+                    if not scheduled:
+                        skip_list.append(m_id)
+                        un_scheduled += f"{modules[m_id][Types.NAME]}: Venue capacity deficit.\n"
+                else:
+                    skip_list.append(m_id)
+                    un_scheduled += f"{modules[m_id][Types.NAME]}: No programs provided.\n"
+            else:
+                skip_list.append(m_id)
+                un_scheduled += f"{modules[m_id][Types.NAME]}: No lecturer provided.\n"
 
         for m_id, m in modules.items():
-            if len(m[Types.COURSES]) > 0:
+            if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:
                 for d in days:
                     for s in slots:
                         for v in m[Types.VENUES]:
                             x[m_id, d, s, v] = model.NewBoolVar(f"x_{m_id}_{d}_{s}_{v}")
 
         for m_id, m in modules.items():
-            if len(m[Types.COURSES]) > 0:
+            if m_id not in skip_list and len(m[Types.COURSES]) > 0:
                 for d in days:
                     for s in slots:
-                        model.Add(sum(x[m_id, d, s, v] for v in m[Types.VENUES]) <= 1)
+                        model.Add(sum(x[m_id, d, s, v] for v in m[Types.VENUES]
+                                      if (m_id, d, s, v) in x) <= 1)
 
         for d in days:
             for s in slots:
@@ -408,26 +442,29 @@ class TertiarySchool(QObject):
                     model.Add(sum(
                         x[m_id, d, s, v]
                         for m_id, m in modules.items()
-                        if v in m[Types.VENUES] and len(m[Types.COURSES]) > 0
+                        if m_id not in skip_list and v in m[Types.VENUES] and
+                        len(m[Types.COURSES]) > 0 and
+                        (m_id, d, s, v) in x
                     ) <= 1)
 
         for m_id, m in modules.items():
-            if len(m[Types.COURSES]) > 0:
+            if m_id not in skip_list and len(m[Types.COURSES]) > 0:
                 max_per_day = m["slots_per_day"]
                 for d in days:
                     model.Add(sum(
                         x[m_id, d, s, v] for s in slots
-                        for v in m[Types.VENUES]
+                        for v in m[Types.VENUES] if (m_id, d, s, v) in x
                     ) <= max_per_day)
 
         for m_id, m in modules.items():
-            if len(m[Types.COURSES]) > 0:
+            if m_id not in skip_list and len(m[Types.COURSES]) > 0:
                 total = m["time_slots"]
                 model.Add(sum(
                     x[m_id, d, s, v]
                     for d in days
                     for s in slots
                     for v in m[Types.VENUES]
+                    if (m_id, d, s, v) in x
                 ) == total)
 
         for course in all_courses:
@@ -436,9 +473,11 @@ class TertiarySchool(QObject):
                     model.Add(sum(
                         x[m_id, d, s, v]
                         for m_id, m in modules.items()
+                        if m_id not in skip_list
                         if course.split("-")[0] in m[Types.COURSES]
                         if course.split("-")[1] == m[Types.COURSES][course.split("-")[0]][Types.LEVEL]
                         for v in m[Types.VENUES]
+                        if (m_id, d, s, v) in x
                     ) <= 1)
 
         for lecturer in all_lecturers:
@@ -447,9 +486,11 @@ class TertiarySchool(QObject):
                     model.Add(sum(
                         x[m_id, d, s, v]
                         for m_id, m in modules.items()
+                        if m_id not in skip_list
                         if len(m[Types.COURSES]) > 0
                         if lecturer == m[Types.LECTURER]
                         for v in m[Types.VENUES]
+                        if (m_id, d, s, v) in x
                     ) <= 1)
 
         self.status.emit(1, "Starting generation...")
@@ -463,17 +504,22 @@ class TertiarySchool(QObject):
             self.status.emit(2, self.generation_messages[status])
         elif status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             for m_id, m in modules.items():
-                if len(m[Types.COURSES]) > 0:
+                if len(m[Types.COURSES]) > 0 and m_id not in skip_list:
                     for d in days:
                         for s in slots:
                             for v in m[Types.VENUES]:
                                 if solver.Value(x[m_id, d, s, v]):
                                     courses = []
                                     for c_ in m[Types.COURSES]:
-                                        courses.append(f"{self.time_table_data.courses[c_][Types.SHORT_NAME]}-"
-                                                       f"{m[Types.COURSES][c_][Types.LEVEL]}")
+                                        courses.append(f"{c_}-{m[Types.COURSES][c_][Types.LEVEL]}")
                                     time_table[f"{d + 1}"][f"{s + 1}"][m_id] = {Types.VENUE: v, Types.COURSES: courses}
-            self.status.emit(0, self.generation_messages[status])
+            report = self.generation_messages[status]
+            if len(un_scheduled) > 0:
+                report += f"\nSome modules were not scheduled and the following are the reasons:\n\n{un_scheduled}"
+            self.status.emit(0, report)
+
+        for m_id in auto_venue:
+            modules[m_id][Types.VENUES] = []
         self.complete.emit(Timetable(time_table))
         self.finished.emit()
 

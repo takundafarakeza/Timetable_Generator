@@ -275,3 +275,91 @@ class Settings:
                 return
         except Exception:
             return
+
+
+class ExportUtils:
+    @staticmethod
+    def record_matches(record, selected_courses=None, selected_lecturers=None, selected_venues=None):
+        selected_courses = selected_courses or set()
+        selected_lecturers = selected_lecturers or set()
+        selected_venues = selected_venues or set()
+
+        course_ok = True if not selected_courses else any(c in selected_courses for c in record["course_ids"])
+        lecturer_ok = True if not selected_lecturers else record["lecturer_id"] in selected_lecturers
+        venue_ok = True if not selected_venues else record["venue_id"] in selected_venues
+
+        return course_ok and lecturer_ok and venue_ok
+
+    @staticmethod
+    def flatten_timetable(builder):
+        records = []
+        timetable_data = builder.timetable_get()
+
+        for day_id, slots in timetable_data.items():
+            for slot_id, modules in slots.items():
+                for module_id, info in modules.items():
+                    records.append({
+                        "day_id": str(day_id),
+                        "slot_id": str(slot_id),
+                        "module_id": str(module_id),
+                        "venue_id": str(info.get("venue")) if info.get("venue") is not None else "",
+                        "course_ids": [str(c) for c in info.get("courses", [])],
+                        "lecturer_id": builder.module_get(module_id).lecturer
+                    })
+
+        return records
+
+    @staticmethod
+    def apply_filters(records, selected_courses=None, selected_lecturers=None, selected_venues=None):
+        return [
+            r for r in records
+            if ExportUtils.record_matches(r, selected_courses, selected_lecturers, selected_venues)
+        ]
+
+    @staticmethod
+    def get_available_courses(records, selected_lecturers=None, selected_venues=None):
+        filtered = ExportUtils.apply_filters(records, set(), selected_lecturers, selected_venues)
+        result = set()
+        for r in filtered:
+            result.update(r["course_ids"])
+        return sorted(result)
+
+    @staticmethod
+    def get_available_lecturers(records, selected_courses=None, selected_venues=None):
+        filtered = ExportUtils.apply_filters(records, selected_courses, set(), selected_venues)
+        return sorted({r["lecturer_id"] for r in filtered if r["lecturer_id"]})
+
+    @staticmethod
+    def get_available_venues(records, selected_courses=None, selected_lecturers=None):
+        filtered = ExportUtils.apply_filters(records, selected_courses, selected_lecturers, set())
+        return sorted({r["venue_id"] for r in filtered if r["venue_id"]})
+
+    @staticmethod
+    def get_course_counts(records, selected_lecturers=None, selected_venues=None):
+        filtered = ExportUtils.apply_filters(records, set(), selected_lecturers, selected_venues)
+        counts = {}
+        for r in filtered:
+            for c in r["course_ids"]:
+                counts[c] = counts.get(c, 0) + 1
+        return counts
+
+    @staticmethod
+    def get_lecturer_counts(records, selected_courses=None, selected_venues=None):
+        filtered = ExportUtils.apply_filters(records, selected_courses, set(), selected_venues)
+        counts = {}
+        for r in filtered:
+            lid = r["lecturer_id"]
+            if lid:
+                counts[lid] = counts.get(lid, 0) + 1
+        return counts
+
+    @staticmethod
+    def get_venue_counts(records, selected_courses=None, selected_lecturers=None):
+        filtered = ExportUtils.apply_filters(records, selected_courses, selected_lecturers, set())
+        counts = {}
+        for r in filtered:
+            vid = r["venue_id"]
+            if vid:
+                counts[vid] = counts.get(vid, 0) + 1
+        return counts
+

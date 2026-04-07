@@ -5,7 +5,7 @@ from utils.data import TimeTableInitData
 from utils import Types
 from utils import Utils, Settings
 from utils.logger_config import logger
-from windows import Main, StartUp, Viewer, Export
+from windows import Main, StartUp, Viewer, Export, TertiaryExport
 from widgets import (ModulesTable, SubjectsTable, BlocksTable,
                      TeachersTable, LecturersTable, ClassesTable,
                      CoursesTable, VenuesTable, LoadingDialog, ExitConfirm,
@@ -449,8 +449,12 @@ class AppWindow(Main):
         self.set_saved(True)
 
     def export(self):
-        self.dialog_window = Export(self.builder, self)
-        self.dialog_window.show()
+        if self.institution_type == Types.INSTITUTION_TERTIARY:
+            self.dialog_window = TertiaryExport(self.builder, self)
+            self.dialog_window.show()
+        else:
+            self.dialog_window = Export(self.builder, self)
+            self.dialog_window.show()
 
     def undo(self):
         loading_dialog = LoadingDialog(app_window)
@@ -483,14 +487,14 @@ class AppWindow(Main):
         loading_dialog = LoadingDialog()
         loading_dialog.show()
         app.processEvents()
-        try:
-            self.current_project.setText(project_name.replace("_", " "))
-            self.file = self.builder.get_file()
-            self.build_menu(institution)
-            self.setup_window()
-            self.show()
-        except Exception as e:
-            logger.critical(str(e))
+        # try:
+        self.current_project.setText(project_name.replace("_", " "))
+        self.file = self.builder.get_file()
+        self.build_menu(institution)
+        self.setup_window()
+        self.show()
+        # except Exception as e:
+        #     logger.critical(str(e))
         loading_dialog.close()
 
     def populate_slots_days(self):
@@ -680,7 +684,6 @@ class AppWindow(Main):
 
     def add_enrollment_table_item(self, c_name, level, course_id, enrollment):
         row = self.ui.enrollment_table.rowCount()
-        print(row)
         self.ui.enrollment_table.insertRow(row)
         slot = QLabel(c_name + " - " + level)
         name = QLineEdit()

@@ -5,6 +5,7 @@ from .data import (Class, Venue, VenueTertiary, Subject, Teacher, Lecturer, Cour
                    TimeTableInitData, TimetableTempDataPrimary, Module,
                    TimetableTempDataSecondary, TimetableTempDataTertiary,
                    Block, Timetable)
+from widgets import DeficitConfirm
 from .generators import PrimarySchool, SecondarySchool, TertiarySchool
 from widgets import GenerationDialog, MessageBox
 import json
@@ -1534,6 +1535,58 @@ class TertiaryBuilder(QObject):
 
     def generate(self):
         self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
+
+        module_demand = {}
+        modules = self._time_table_data[Types.MODULES]
+        capacities = self._time_table_data[Types.CAPACITIES]
+        venues = self._time_table_data[Types.VENUES]
+
+        accepts = []
+        do_for_all = "", False
+
+        for mid, m in modules.items():
+            total = sum(int(capacities[c][m[Types.COURSES][c][Types.LEVEL]][Types.CAPACITY]) for c in m[Types.COURSES])
+            module_demand[mid] = total
+
+        for m_id, m in modules.items():
+
+            demand = module_demand[m_id]
+            schedule_compatible = False
+            deficits = ""
+
+            if len(m[Types.VENUES]) == 0:
+                for v in venues:
+                    if (demand <= venues[v][Types.CAPACITY] and
+                            venues[v][Types.SPECIAL] == "No" and v != "unavailable"):
+                        schedule_compatible = True
+                    else:
+                        if v != "unavailable" and venues[v][Types.SPECIAL] == "No":
+                            deficits += (f"{venues[v][Types.NAME]}  |  Capacity: {venues[v][Types.CAPACITY]} - "
+                                         f"Required: {demand} - Deficit: {demand - venues[v][Types.CAPACITY]}\n")
+            else:
+                for v in m[Types.VENUES]:
+                    if demand <= venues[v][Types.CAPACITY]:
+                        schedule_compatible = True
+                        break
+                    else:
+                        deficits += (f"{venues[v][Types.NAME]}  |  Capacity: {venues[v][Types.CAPACITY]} - "
+                                     f"Required: {demand} - Deficit: {demand - venues[v][Types.CAPACITY]}\n")
+
+            if not schedule_compatible:
+                if not do_for_all[1]:
+                    selection = DeficitConfirm.confirm(self.builder_parent,
+                                                       f"{modules[m_id][Types.NAME]} has no "
+                                                       f"compatible venue. "
+                                                       f"Do you want to schedule it anyway?\n\n{deficits}")
+                else:
+                    selection = do_for_all
+
+                if selection[0] == "Abort":
+                    return
+                elif selection[0] == "Yes":
+                    accepts.append(m_id)
+                do_for_all = selection
+
         data = TimetableTempDataTertiary(self._time_table_data[Types.MODULES],
                                          self._time_table_data[Types.COURSES],
                                          self._time_table_data[Types.VENUES],
@@ -1541,7 +1594,8 @@ class TertiaryBuilder(QObject):
                                          self._time_table_data[Types.DAYS_PER_CYCLE],
                                          self._time_table_data[Types.SLOTS_PER_DAY],
                                          self._time_table_data[Types.BREAKING_SLOTS],
-                                         self._time_table_data[Types.TIMETABLE])
+                                         self._time_table_data[Types.TIMETABLE],
+                                         accepts)
         self.generator_thread = QThread()
         self.generator = TertiarySchool(data)
         self.generator.moveToThread(self.generator_thread)
@@ -1553,25 +1607,6 @@ class TertiaryBuilder(QObject):
         self.generator_thread.finished.connect(self.generator_thread.deleteLater)
         self.generator_dialog.show()
         self.generator_thread.start()
-
-    def generate_patches(self):
-        pass
-
-    def get_possible_slots(self, module_id: str, venues: list,
-                           time_slots: int, time_slots_daily: int,
-                           lecturer: str):
-        data = TimetableTempDataTertiary(self._time_table_data[Types.MODULES],
-                                         self._time_table_data[Types.COURSES],
-                                         self._time_table_data[Types.VENUES],
-                                         self._time_table_data[Types.CAPACITIES],
-                                         self._time_table_data[Types.DAYS_PER_CYCLE],
-                                         self._time_table_data[Types.SLOTS_PER_DAY],
-                                         self._time_table_data[Types.BREAKING_SLOTS],
-                                         self.timetable_init_timetable())
-        generator = TertiarySchool(data)
-        time_table = generator.generate()
-        return generator.possible_slots(module_id, venues, time_slots,
-                                        time_slots_daily, lecturer, time_table)
 
     # ======================================= COURSES ================================== #
 

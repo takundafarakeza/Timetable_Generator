@@ -1,16 +1,78 @@
-from PySide6.QtWidgets import (QFrame, QPushButton, QLabel,
-                               QHBoxLayout, QWidget, QDialog,
+from PySide6.QtWidgets import (QFrame, QPushButton, QLabel, QListWidgetItem,
+                               QHBoxLayout, QWidget, QDialog, QListWidget, QAbstractItemView,
                                QTableWidget, QVBoxLayout, QTableWidgetItem)
 from PySide6.QtGui import QIcon, QPixmap, QCursor, QFont, QColor, QPainter
 from PySide6.QtCore import QSize, Qt, QRect, QTimer
 from utils import Utils
 from functools import partial
 from .custom_widgets import ButtonFrameSilent
-from ui import ui_message_box, ui_exit_confirm
+from ui import ui_message_box, ui_exit_confirm, ui_deficit_confirm
 import os.path
 import math
 
 def_path = os.path.join(Utils.get_timetables_path(), "timetable.tbl")
+
+
+class CheckListFilter(QFrame):
+    def __init__(self, parent=None, title: str = "Filter"):
+        super().__init__(parent)
+
+        self.setFrameShape(QFrame.Shape.StyledPanel)
+
+        self.title_label = QLabel(title)
+        self.title_label.setObjectName("titleLabel")
+
+        self.list_widget = QListWidget()
+        self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.title_label)
+        layout.addWidget(self.list_widget)
+
+    def set_title(self, title: str):
+        self.title_label.setText(title)
+
+    def populate(self, titles, values, counts=None, selected=None, enabled_values=None, block_signals=True):
+        counts = counts or {}
+        selected = selected or set()
+        enabled_values = enabled_values or set(values)
+
+        if block_signals:
+            self.list_widget.blockSignals(True)
+
+        old_selected = selected.copy()
+        self.list_widget.clear()
+
+        for title, value in zip(titles, values):
+            count = counts.get(value, 0)
+            courses = len(value.split("-")) == 2
+            desc = value.split("-")[1] if courses else ""
+            text = f"{title} {desc} ({count})"
+
+            item = QListWidgetItem(text)
+            item.setData(Qt.ItemDataRole.UserRole, value)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+
+            if value in old_selected:
+                item.setCheckState(Qt.CheckState.Checked)
+            else:
+                item.setCheckState(Qt.CheckState.Unchecked)
+
+            if value not in enabled_values:
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEnabled)
+
+            self.list_widget.addItem(item)
+
+        if block_signals:
+            self.list_widget.blockSignals(False)
+
+    def selected_values(self):
+        selected = set()
+        for i in range(self.list_widget.count()):
+            item = self.list_widget.item(i)
+            if item.checkState() == Qt.CheckState.Checked:
+                selected.add(str(item.data(Qt.ItemDataRole.UserRole)))
+        return selected
 
 
 class RecentItem(ButtonFrameSilent):
@@ -378,6 +440,52 @@ class ExitConfirm(QDialog):
         if result == QDialog.DialogCode.Accepted:
             return True
         return False
+
+
+class DeficitConfirm(QDialog):
+    def __init__(self, parent, text: str):
+        super().__init__(parent=parent)
+        self.ui = ui_deficit_confirm.Ui_Dialog()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setModal(True)
+        self.setStyleSheet("background: #E3E4E6;")
+
+        self.abort_btn = self.ui.abort_btn
+        self.yes_btn = self.ui.yes_btn
+        self.no_btn = self.ui.no_btn
+        self.icon = self.ui.icon
+        self.text = self.ui.text
+
+        self.no_btn.clicked.connect(self.reject)
+        self.yes_btn.clicked.connect(self.accept)
+        self.abort_btn.clicked.connect(self.cancel)
+        self.yes_btn.setDefault(True)
+        self.abort_btn.setAutoDefault(False)
+        self.setWindowTitle("Close")
+        self.reply = "No"
+        self.setWindowTitle("Venue capacity deficit")
+        self.ui.text.setText(text)
+
+    def accept(self, /):
+        self.reply = "Yes", self.ui.do_for_all.isChecked()
+        super().accept()
+
+    def reject(self, /):
+        self.reply = self.reply, self.ui.do_for_all.isChecked()
+        super().reject()
+
+    def cancel(self):
+        self.reply = "Abort"
+        self.reject()
+
+    @staticmethod
+    def confirm(parent, text: str):
+        dialog = DeficitConfirm(parent, text)
+        dialog.exec()
+        return dialog.reply
 
 
 class ModulesTable(QTableWidget):

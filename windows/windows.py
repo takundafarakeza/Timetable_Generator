@@ -4,8 +4,9 @@ from PySide6.QtWidgets import (QMainWindow, QMessageBox,
 from utils.builders import PrimaryBuilder, SecondaryBuilder, TertiaryBuilder
 from PySide6.QtGui import QGuiApplication, QColor, QIcon
 from PySide6.QtCore import Qt, Signal, QSize
-from ui import ui_startup, ui_boarding, ui_main_window, ui_viewer, ui_export_project_dialog
-from utils import Types, Settings
+from ui import (ui_startup, ui_boarding, ui_main_window,
+                ui_viewer, ui_export_project_dialog, ui_export_tertiary_project_dialog)
+from utils import Types, Settings, ExportUtils
 from utils.logger_config import logger
 from typing import Optional, Union
 from widgets import RecentItem, TimeTable, MessageBox
@@ -99,7 +100,10 @@ class Viewer(QWidget):
 
                                 elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
                                     venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
-                                    courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
+                                    courses = [f"{self.builder.course_get(c.split('-')[0]
+                                                                          ).short_name}-{c.split('-')[1]}"
+                                               for c in timetable_data[day][slot][event][Types.COURSES]]
+                                    courses = ", ".join(courses)
                                     timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
                                     filter_data.append((event, self.builder.module_get(event).name))
                         else:
@@ -168,275 +172,15 @@ class Viewer(QWidget):
                                     if event == self.filter.currentData():
                                         venue = self.builder.venue_get(
                                             timetable_data[day][slot][event][Types.VENUE]).name
-                                        courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
+                                        courses = [f"{self.builder.course_get(c.split('-')[0]
+                                                                              ).short_name}-{c.split('-')[1]}"
+                                                   for c in timetable_data[day][slot][event][Types.COURSES]]
+                                        courses = ", ".join(courses)
                                         timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
                         else:
                             timetable.add_item(i, timetable_data[day][slot], "", "")
         except Exception as e:
             logger.critical(str(e))
-
-
-class Export(QDialog):
-    def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder, TertiaryBuilder], parent):
-        super().__init__(parent)
-        self.ui = ui_export_project_dialog.Ui_Export()
-        self.ui.setupUi(self)
-        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
-        self.setWindowModality(Qt.WindowModality.WindowModal)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.setModal(True)
-
-        self.builder = builder
-
-        self.ui.close_btn.clicked.connect(self.close)
-        self.ui.cancel_btn.clicked.connect(self.close)
-        self.filter = self.ui.timetable_filter
-        self.ui.timetable_export.clicked.connect(self.export)
-        self.populate_filter()
-
-        self.header_font = Font(bold=True)
-        self.center = Alignment(horizontal="center", vertical="center")
-        self.border = Border(
-            left=Side(style="thin"),
-            right=Side(style="thin"),
-            top=Side(style="thin"),
-            bottom=Side(style="thin")
-        )
-
-    def populate_filter(self):
-        try:
-            self.filter.clear()
-            timetable_data = self.builder.timetable_get()
-            filter_data = []
-
-            for day in timetable_data:
-                for i, slot in enumerate(timetable_data[day]):
-                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
-                        if isinstance(timetable_data[day][slot], dict):
-                            for event in timetable_data[day][slot][Types.EVENTS]:
-                                filter_data.append((event, self.builder.class_get(event).name))
-                    else:
-                        if isinstance(timetable_data[day][slot], dict):
-                            for event in timetable_data[day][slot]:
-                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
-                                    filter_data.append((event, self.builder.class_get(event).name))
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
-                                    for course in self.builder.module_get(event).courses:
-                                        filter_data.append((course, self.builder.course_get(course).name))
-
-            filter_data = {filter_item for filter_item in filter_data}
-            self.filter.addItem("All", userData="all")
-            for filter_item in filter_data:
-                self.filter.addItem(filter_item[1], userData=filter_item[0])
-            self.filter.setCurrentText("All")
-        except Exception as e:
-            logger.critical(str(e))
-
-    def export(self):
-
-        if self.filter.currentData() != "all":
-            self.export_filtered()
-            return
-
-        try:
-            timetable_data = self.builder.timetable_get()
-            work_book = Workbook()
-            work_book.remove(work_book.active)
-            export_data = {}
-
-            for day in timetable_data:
-                export_data[day] = {}
-                for slot_i, slot in enumerate(timetable_data[day]):
-                    export_data[day][slot_i + 2] = {}
-                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
-                        if isinstance(timetable_data[day][slot], dict):
-                            for col, event in enumerate(timetable_data[day][slot][Types.EVENTS]):
-                                if timetable_data[day][slot][Types.EVENTS][event][Types.SUBJECT][0] == "b":
-                                    block = self.builder.block_get(timetable_data[day][slot][Types.EVENTS]
-                                                                   [event][Types.SUBJECT])
-                                    subjects = ""
-                                    for subject in block.subjects:
-                                        subjects += (f"({self.builder.subject_get(subject).name}:   "
-                                                     f"{self.builder.teacher_get(block.subjects[subject]
-                                                                                 [Types.TEACHER]).name}: "
-                                                     f"{self.builder.venue_get(block.subjects[subject]
-                                                                               [Types.VENUE]).name})")
-                                    export_data[day][
-                                        slot_i + 2][col + 2] = (f"{self.builder.class_get(event).name}:   "
-                                                                f"{block.name}\n {subjects}")
-
-                                else:
-                                    export_data[day][slot_i + 2][col + 2] = (f"{self.builder.class_get(event).name}:   "
-                                                                             f"{self.builder.subject_get(
-                                                                                 timetable_data[day][slot][Types.EVENTS]
-                                                                                 [event][Types.SUBJECT]).name}: "
-                                                                             f"{self.builder.teacher_get(
-                                                                                 timetable_data[day][slot][Types.EVENTS]
-                                                                                 [event][Types.TEACHER]).name}")
-                        else:
-                            export_data[day][slot_i + 2][2] = timetable_data[day][slot]
-                    else:
-                        if isinstance(timetable_data[day][slot], dict):
-                            for col, event in enumerate(timetable_data[day][slot]):
-                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
-                                    export_data[day][slot_i + 2][col + 2] = (f"{self.builder.class_get(event).name}:   "
-                                                                             f"{self.builder.subject_get(
-                                                                                 timetable_data[day][slot][event]
-                                                                                 [Types.SUBJECT]).name}")
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
-                                    venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
-                                    courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
-                                    export_data[day][slot_i + 2][col + 2] = (f"{self.builder.module_get(event).name}"
-                                                                             f":   {courses}: {venue}")
-                        else:
-                            export_data[day][slot_i + 2][2] = timetable_data[day][slot]
-
-            vertical_header = []
-            slots = self.builder.timetable_slots()
-
-            for slot in range(self.builder.timetable_get_slots_per_day()):
-                slot = str(slot + 1)
-                slot_item = slot if slot not in slots else slots[slot]
-                vertical_header.append(slot_item)
-
-            for day in export_data:
-                days = self.builder.timetable_days()
-                work_sheet = work_book.create_sheet(days[day] if day in days else f"Day {day}")
-                work_sheet.append(["Period"])
-                cell = work_sheet.cell(row=1, column=1)
-                cell.font = self.header_font
-                cell.alignment = self.center
-                cell.border = self.border
-
-                for row in range(2, len(vertical_header) + 2):
-                    work_sheet.append([slots[str(row - 1)]] if str(row - 1) in slots else [str(row - 1)])
-                    cell = work_sheet.cell(row=row, column=1)
-                    cell.font = self.header_font
-                    cell.alignment = self.center
-                    cell.border = self.border
-                for slot in export_data[day]:
-                    for col in export_data[day][slot]:
-                        work_sheet.cell(row=slot, column=col, value=export_data[day][slot][col])
-
-            save_name = self.builder.timetable_get_name().replace(" ", "_") + ".xlsx"
-            file_path, _ = QFileDialog.getSaveFileName(
-                self, "Export Timetable", save_name, "Excel Files (*.xlsx)"
-            )
-            if file_path:
-                work_book.save(file_path)
-                MessageBox(self).information("Success", f"Exported to: {file_path}")
-                self.close()
-
-        except Exception as e:
-            logger.critical(str(e))
-            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
-
-    def export_filtered(self):
-
-        try:
-            filter_ = self.filter.currentData()
-            timetable_data = self.builder.timetable_get()
-            work_book = Workbook()
-            work_book.remove(work_book.active)
-            export_data = {}
-
-            for row, day in enumerate(timetable_data):
-                export_data[day] = {}
-                for slot_i, slot in enumerate(timetable_data[day]):
-                    export_data[day][slot_i + 2] = {}
-                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
-                        if isinstance(timetable_data[day][slot], dict):
-                            for event in timetable_data[day][slot][Types.EVENTS]:
-                                if event == filter_:
-                                    if timetable_data[day][slot][Types.EVENTS][event][Types.SUBJECT][0] == "b":
-                                        block = self.builder.block_get(timetable_data[day][slot][Types.EVENTS]
-                                                                       [event][Types.SUBJECT])
-                                        subjects = ""
-                                        for subject in block.subjects:
-                                            subjects += (f"({self.builder.subject_get(subject).name}:   "
-                                                         f"{self.builder.teacher_get(block.subjects[subject]
-                                                                                     [Types.TEACHER]).name}: "
-                                                         f"{self.builder.venue_get(block.subjects[subject]
-                                                                                   [Types.VENUE]).name})")
-                                        export_data[day][
-                                            slot_i + 2][row + 2] = (f"{self.builder.class_get(event).name}:   "
-                                                                    f"{block.name}\n {subjects}")
-
-                                    else:
-                                        export_data[day][slot_i + 2][row + 2] = (f"{self.builder.class_get(event).name}"
-                                                                                 f":   "
-                                                                                 f"{self.builder.subject_get(
-                                                                                     timetable_data[day][slot]
-                                                                                     [Types.EVENTS][event]
-                                                                                     [Types.SUBJECT]).name}: "
-                                                                                 f"{self.builder.teacher_get(
-                                                                                     timetable_data[day][slot]
-                                                                                     [Types.EVENTS][event]
-                                                                                     [Types.TEACHER]).name}")
-                        else:
-                            export_data[day][slot_i + 2][row + 2] = timetable_data[day][slot]
-                    else:
-                        if isinstance(timetable_data[day][slot], dict):
-                            for event in timetable_data[day][slot]:
-                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
-                                    if filter_ == event:
-                                        export_data[day][slot_i + 2][row + 2] = (f"{self.builder.subject_get(
-                                            timetable_data[day][slot][event][Types.SUBJECT]).name}")
-                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
-                                    module = self.builder.module_get(event)
-
-                                    if filter_ in module.courses:
-                                        venue = self.builder.venue_get(timetable_data[day][slot]
-                                                                       [event][Types.VENUE]).name
-                                        courses = ", ".join(timetable_data[day][slot][event][Types.COURSES])
-                                        export_data[day][slot_i + 2][row + 2] = (
-                                            f"{self.builder.module_get(event).name}:   "
-                                            f"{courses}: {venue}")
-                        else:
-                            export_data[day][slot_i + 2][row + 2] = timetable_data[day][slot]
-
-            horizontal_header = [""]
-
-            slots = self.builder.timetable_slots()
-            for slot in range(self.builder.timetable_get_slots_per_day()):
-                slot = str(slot + 1)
-                slot_item = slot if slot not in slots else slots[slot]
-                horizontal_header.append(slot_item)
-
-            work_sheet = work_book.create_sheet(self.builder.timetable_get_name())
-            work_sheet.append(horizontal_header)
-
-            for slot_i in range(2, len(horizontal_header) + 2):
-                cell = work_sheet.cell(row=1, column=slot_i)
-                cell.font = self.header_font
-                cell.alignment = self.center
-                cell.border = self.border
-
-            days = self.builder.timetable_days()
-
-            for day in export_data:
-                row = int(day) + 1
-                cell = work_sheet.cell(row=row, column=1, value=(days[str(row - 1)] if str(row - 1) in days else
-                                                                 f"Day {str(row - 1)}"))
-                cell.font = self.header_font
-                cell.alignment = self.center
-                cell.border = self.border
-                for slot in export_data[day]:
-                    for row in export_data[day][slot]:
-                        work_sheet.cell(row=row, column=slot, value=export_data[day][slot][row])
-
-            save_name = self.builder.timetable_get_name().replace(" ", "_") + ".xlsx"
-            file_path, _ = QFileDialog.getSaveFileName(
-                self, "Export Timetable", save_name, "Excel Files (*.xlsx)"
-            )
-            if file_path:
-                work_book.save(file_path)
-                MessageBox(self).information("Success", f"Exported to: {file_path}")
-                self.close()
-
-        except Exception as e:
-            logger.critical(str(e))
-            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
 
 class Main(QMainWindow):
@@ -872,3 +616,508 @@ class StartUp(QMainWindow):
     def recent_clear(self):
         Settings().clear_recent()
         self.populate_recent()
+
+
+class Export(QDialog):
+    def __init__(self, builder: Union[PrimaryBuilder, SecondaryBuilder, TertiaryBuilder], parent):
+        super().__init__(parent)
+        self.ui = ui_export_project_dialog.Ui_Export()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setModal(True)
+
+        self.builder = builder
+
+        self.ui.close_btn.clicked.connect(self.close)
+        self.ui.cancel_btn.clicked.connect(self.close)
+        self.filter = self.ui.timetable_filter
+        self.ui.timetable_export.clicked.connect(self.export)
+        self.populate_filter()
+
+        self.header_font = Font(bold=True)
+        self.center = Alignment(horizontal="center", vertical="center")
+        self.border = Border(
+            left=Side(style="thin"),
+            right=Side(style="thin"),
+            top=Side(style="thin"),
+            bottom=Side(style="thin")
+        )
+
+    def populate_filter(self):
+        try:
+            self.filter.clear()
+            timetable_data = self.builder.timetable_get()
+            filter_data = []
+
+            for day in timetable_data:
+                for i, slot in enumerate(timetable_data[day]):
+                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot][Types.EVENTS]:
+                                filter_data.append((event, self.builder.class_get(event).name))
+                    else:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot]:
+                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
+                                    filter_data.append((event, self.builder.class_get(event).name))
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
+                                    for course in self.builder.module_get(event).courses:
+                                        filter_data.append((course, self.builder.course_get(course).name))
+
+            filter_data = {filter_item for filter_item in filter_data}
+            self.filter.addItem("All", userData="all")
+            for filter_item in filter_data:
+                self.filter.addItem(filter_item[1], userData=filter_item[0])
+            self.filter.setCurrentText("All")
+        except Exception as e:
+            logger.critical(str(e))
+
+    def export(self):
+
+        if self.filter.currentData() != "all":
+            self.export_filtered()
+            return
+
+        try:
+            timetable_data = self.builder.timetable_get()
+            work_book = Workbook()
+            work_book.remove(work_book.active)
+            export_data = {}
+
+            for day in timetable_data:
+                export_data[day] = {}
+                for slot_i, slot in enumerate(timetable_data[day]):
+                    export_data[day][slot_i + 2] = {}
+                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for col, event in enumerate(timetable_data[day][slot][Types.EVENTS]):
+                                if timetable_data[day][slot][Types.EVENTS][event][Types.SUBJECT][0] == "b":
+                                    block = self.builder.block_get(timetable_data[day][slot][Types.EVENTS]
+                                                                   [event][Types.SUBJECT])
+                                    subjects = ""
+                                    for subject in block.subjects:
+                                        subjects += (f"({self.builder.subject_get(subject).name}:   "
+                                                     f"{self.builder.teacher_get(block.subjects[subject]
+                                                                                 [Types.TEACHER]).name}: "
+                                                     f"{self.builder.venue_get(block.subjects[subject]
+                                                                               [Types.VENUE]).name})")
+                                    export_data[day][
+                                        slot_i + 2][col + 2] = (f"{self.builder.class_get(event).name}:   "
+                                                                f"{block.name}\n {subjects}")
+
+                                else:
+                                    export_data[day][slot_i + 2][col + 2] = (f"{self.builder.class_get(event).name}:   "
+                                                                             f"{self.builder.subject_get(
+                                                                                 timetable_data[day][slot][Types.EVENTS]
+                                                                                 [event][Types.SUBJECT]).name}: "
+                                                                             f"{self.builder.teacher_get(
+                                                                                 timetable_data[day][slot][Types.EVENTS]
+                                                                                 [event][Types.TEACHER]).name}")
+                        else:
+                            export_data[day][slot_i + 2][2] = timetable_data[day][slot]
+                    else:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for col, event in enumerate(timetable_data[day][slot]):
+                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
+                                    export_data[day][slot_i + 2][col + 2] = (f"{self.builder.class_get(event).name}:   "
+                                                                             f"{self.builder.subject_get(
+                                                                                 timetable_data[day][slot][event]
+                                                                                 [Types.SUBJECT]).name}")
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
+                                    venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
+                                    courses = [f"{self.builder.course_get(c.split('-')[0]
+                                                                          ).short_name}-{c.split('-')[1]}"
+                                               for c in timetable_data[day][slot][event][Types.COURSES]]
+                                    courses = ", ".join(courses)
+                                    export_data[day][slot_i + 2][col + 2] = (f"{self.builder.module_get(event).name}"
+                                                                             f":   {courses}: {venue}")
+                        else:
+                            export_data[day][slot_i + 2][2] = timetable_data[day][slot]
+
+            vertical_header = []
+            slots = self.builder.timetable_slots()
+
+            for slot in range(self.builder.timetable_get_slots_per_day()):
+                slot = str(slot + 1)
+                slot_item = slot if slot not in slots else slots[slot]
+                vertical_header.append(slot_item)
+
+            for day in export_data:
+                days = self.builder.timetable_days()
+                work_sheet = work_book.create_sheet(days[day] if day in days else f"Day {day}")
+                work_sheet.append(["Period"])
+                cell = work_sheet.cell(row=1, column=1)
+                cell.font = self.header_font
+                cell.alignment = self.center
+                cell.border = self.border
+
+                for row in range(2, len(vertical_header) + 2):
+                    work_sheet.append([slots[str(row - 1)]] if str(row - 1) in slots else [str(row - 1)])
+                    cell = work_sheet.cell(row=row, column=1)
+                    cell.font = self.header_font
+                    cell.alignment = self.center
+                    cell.border = self.border
+                for slot in export_data[day]:
+                    for col in export_data[day][slot]:
+                        work_sheet.cell(row=slot, column=col, value=export_data[day][slot][col])
+
+            save_name = self.builder.timetable_get_name().replace(" ", "_") + ".xlsx"
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "Export Timetable", save_name, "Excel Files (*.xlsx)"
+            )
+            if file_path:
+                work_book.save(file_path)
+                MessageBox(self).information("Success", f"Exported to: {file_path}")
+                self.close()
+
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def export_filtered(self):
+
+        try:
+            filter_ = self.filter.currentData()
+            timetable_data = self.builder.timetable_get()
+            work_book = Workbook()
+            work_book.remove(work_book.active)
+            export_data = {}
+
+            for row, day in enumerate(timetable_data):
+                export_data[day] = {}
+                for slot_i, slot in enumerate(timetable_data[day]):
+                    export_data[day][slot_i + 2] = {}
+                    if self.builder.timetable_get_institution_type() == Types.INSTITUTION_SECONDARY:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot][Types.EVENTS]:
+                                if event == filter_:
+                                    if timetable_data[day][slot][Types.EVENTS][event][Types.SUBJECT][0] == "b":
+                                        block = self.builder.block_get(timetable_data[day][slot][Types.EVENTS]
+                                                                       [event][Types.SUBJECT])
+                                        subjects = ""
+                                        for subject in block.subjects:
+                                            subjects += (f"({self.builder.subject_get(subject).name}:   "
+                                                         f"{self.builder.teacher_get(block.subjects[subject]
+                                                                                     [Types.TEACHER]).name}: "
+                                                         f"{self.builder.venue_get(block.subjects[subject]
+                                                                                   [Types.VENUE]).name})")
+                                        export_data[day][
+                                            slot_i + 2][row + 2] = (f"{self.builder.class_get(event).name}:   "
+                                                                    f"{block.name}\n {subjects}")
+
+                                    else:
+                                        export_data[day][slot_i + 2][row + 2] = (f"{self.builder.class_get(event).name}"
+                                                                                 f":   "
+                                                                                 f"{self.builder.subject_get(
+                                                                                     timetable_data[day][slot]
+                                                                                     [Types.EVENTS][event]
+                                                                                     [Types.SUBJECT]).name}: "
+                                                                                 f"{self.builder.teacher_get(
+                                                                                     timetable_data[day][slot]
+                                                                                     [Types.EVENTS][event]
+                                                                                     [Types.TEACHER]).name}")
+                        else:
+                            export_data[day][slot_i + 2][row + 2] = timetable_data[day][slot]
+                    else:
+                        if isinstance(timetable_data[day][slot], dict):
+                            for event in timetable_data[day][slot]:
+                                if self.builder.timetable_get_institution_type() == Types.INSTITUTION_PRIMARY:
+                                    if filter_ == event:
+                                        export_data[day][slot_i + 2][row + 2] = (f"{self.builder.subject_get(
+                                            timetable_data[day][slot][event][Types.SUBJECT]).name}")
+                                elif self.builder.timetable_get_institution_type() == Types.INSTITUTION_TERTIARY:
+                                    module = self.builder.module_get(event)
+
+                                    if filter_ in module.courses:
+                                        venue = self.builder.venue_get(timetable_data[day][slot]
+                                                                       [event][Types.VENUE]).name
+                                        courses = [f"{self.builder.course_get(c.split('-')[0]
+                                                                              ).short_name}-{c.split('-')[1]}"
+                                                   for c in timetable_data[day][slot][event][Types.COURSES]]
+                                        courses = ", ".join(courses)
+                                        export_data[day][slot_i + 2][row + 2] = (
+                                            f"{self.builder.module_get(event).name}:   "
+                                            f"{courses}: {venue}")
+                        else:
+                            export_data[day][slot_i + 2][row + 2] = timetable_data[day][slot]
+
+            horizontal_header = [""]
+
+            slots = self.builder.timetable_slots()
+            for slot in range(self.builder.timetable_get_slots_per_day()):
+                slot = str(slot + 1)
+                slot_item = slot if slot not in slots else slots[slot]
+                horizontal_header.append(slot_item)
+
+            work_sheet = work_book.create_sheet(self.builder.timetable_get_name())
+            work_sheet.append(horizontal_header)
+
+            for slot_i in range(2, len(horizontal_header) + 2):
+                cell = work_sheet.cell(row=1, column=slot_i)
+                cell.font = self.header_font
+                cell.alignment = self.center
+                cell.border = self.border
+
+            days = self.builder.timetable_days()
+
+            for day in export_data:
+                row = int(day) + 1
+                cell = work_sheet.cell(row=row, column=1, value=(days[str(row - 1)] if str(row - 1) in days else
+                                                                 f"Day {str(row - 1)}"))
+                cell.font = self.header_font
+                cell.alignment = self.center
+                cell.border = self.border
+                for slot in export_data[day]:
+                    for row in export_data[day][slot]:
+                        work_sheet.cell(row=row, column=slot, value=export_data[day][slot][row])
+
+            save_name = self.builder.timetable_get_name().replace(" ", "_") + ".xlsx"
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "Export Timetable", save_name, "Excel Files (*.xlsx)"
+            )
+            if file_path:
+                work_book.save(file_path)
+                MessageBox(self).information("Success", f"Exported to: {file_path}")
+                self.close()
+
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+
+class TertiaryExport(QDialog):
+    def __init__(self, builder: TertiaryBuilder, parent):
+        super().__init__(parent)
+        self.ui = ui_export_tertiary_project_dialog.Ui_Export()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setModal(True)
+
+        self.builder = builder
+
+        self.ui.close_btn.clicked.connect(self.close)
+        self.ui.cancel_btn.clicked.connect(self.close)
+
+        self.ui.timetable_export.clicked.connect(self.export)
+
+        self.header_font = Font(bold=True)
+        self.center = Alignment(horizontal="center", vertical="center")
+        self.border = Border(
+            left=Side(style="thin"),
+            right=Side(style="thin"),
+            top=Side(style="thin"),
+            bottom=Side(style="thin")
+        )
+
+        self.records = ExportUtils.flatten_timetable(builder)
+        self.selected_courses = set()
+        self.selected_lecturers = set()
+        self.selected_venues = set()
+
+        self.all_courses = sorted({
+            c for r in self.records for c in r["course_ids"]
+        })
+        self.all_courses_titles = [
+            self.builder.course_get(r.split("-")[0]).name for r in self.all_courses
+        ]
+
+        self.all_lecturers = sorted({
+            r["lecturer_id"] for r in self.records if r["lecturer_id"]
+        })
+        self.all_lecturers_titles = [
+            self.builder.lecturer_get(r).name for r in self.all_lecturers
+        ]
+
+        self.all_venues = sorted({
+            r["venue_id"] for r in self.records if r["venue_id"]
+        })
+        self.all_venues_titles = [
+            self.builder.venue_get(r).name for r in self.all_venues
+        ]
+
+        self.available_courses = self.all_courses
+        self.available_lecturers = self.all_lecturers
+        self.available_venues = self.all_venues
+        self.filtered_records = self.records
+
+        self.course_filter = self.ui.courses_checklist
+        self.lecturer_filter = self.ui.lecturers_checklist
+        self.venue_filter = self.ui.venues_checklist
+        self.course_filter.set_title("Programs")
+        self.lecturer_filter.set_title("Lecturers")
+        self.venue_filter.set_title("Venues")
+
+        self.course_counts = None
+        self.lecturer_counts = None
+        self.venue_counts = None
+        self.set_counts()
+
+        self.clear_btn = self.ui.clear_btn
+
+        self.course_filter.list_widget.itemChanged.connect(self.on_filters_changed)
+        self.lecturer_filter.list_widget.itemChanged.connect(self.on_filters_changed)
+        self.venue_filter.list_widget.itemChanged.connect(self.on_filters_changed)
+        self.clear_btn.clicked.connect(self.clear_filters)
+        self.populate_filter()
+
+    def clear_filters(self):
+        self.selected_venues.clear()
+        self.selected_lecturers.clear()
+        self.selected_courses.clear()
+        self.populate_filter()
+
+    def on_filters_changed(self, _item=None):
+        self.selected_courses = self.course_filter.selected_values()
+        self.selected_lecturers = self.lecturer_filter.selected_values()
+        self.selected_venues = self.venue_filter.selected_values()
+        self.populate_filter()
+
+    def populate_filter(self):
+        self.filtered_records = ExportUtils.apply_filters(
+            self.records,
+            self.selected_courses,
+            self.selected_lecturers,
+            self.selected_venues
+        )
+
+        self.available_courses = set(ExportUtils.get_available_courses(
+            self.records,
+            self.selected_lecturers,
+            self.selected_venues
+        ))
+        self.available_lecturers = set(ExportUtils.get_available_lecturers(
+            self.records,
+            self.selected_courses,
+            self.selected_venues
+        ))
+        self.available_venues = set(ExportUtils.get_available_venues(
+            self.records,
+            self.selected_courses,
+            self.selected_lecturers
+        ))
+
+        self.selected_courses &= set(self.all_courses)
+        self.selected_lecturers &= set(self.all_lecturers)
+        self.selected_venues &= set(self.all_venues)
+
+        self.set_counts()
+        self.course_filter.populate(
+            titles=self.all_courses_titles,
+            values=self.all_courses,
+            counts=self.course_counts,
+            selected=self.selected_courses,
+            enabled_values=self.available_courses | self.selected_courses
+        )
+        self.lecturer_filter.populate(
+            titles=self.all_lecturers_titles,
+            values=self.all_lecturers,
+            counts=self.lecturer_counts,
+            selected=self.selected_lecturers,
+            enabled_values=self.available_lecturers | self.selected_lecturers
+        )
+        self.venue_filter.populate(
+            titles=self.all_venues_titles,
+            values=self.all_venues,
+            counts=self.venue_counts,
+            selected=self.selected_venues,
+            enabled_values=self.available_venues | self.selected_venues
+        )
+
+    def set_counts(self):
+        self.course_counts = ExportUtils.get_course_counts(
+            self.records,
+            self.selected_lecturers,
+            self.selected_venues
+        )
+        self.lecturer_counts = ExportUtils.get_lecturer_counts(
+            self.records,
+            self.selected_courses,
+            self.selected_venues
+        )
+        self.venue_counts = ExportUtils.get_venue_counts(
+            self.records,
+            self.selected_courses,
+            self.selected_lecturers
+        )
+
+    def export(self):
+        try:
+            timetable_data = self.builder.timetable_get()
+            work_book = Workbook()
+            work_book.remove(work_book.active)
+            export_data = {}
+
+            for day in timetable_data:
+                export_data[day] = {}
+                for slot_i, slot in enumerate(timetable_data[day]):
+                    export_data[day][slot_i + 2] = {}
+                    if isinstance(timetable_data[day][slot], dict):
+                        for col, event in enumerate(timetable_data[day][slot]):
+                            event_data = timetable_data[day][slot][event]
+                            if (event_data[Types.VENUE] in self.available_venues and
+                                    sum([c in self.available_courses for c in event_data[Types.COURSES]]) ==
+                                    len(event_data[Types.COURSES]) and self.builder.module_get(event).lecturer in
+                                    self.available_lecturers):
+
+                                venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
+                                courses = [f"{self.builder.course_get(c.split('-')[0]
+                                                                      ).short_name}-{c.split('-')[1]}"
+                                           for c in timetable_data[day][slot][event][Types.COURSES]]
+                                courses = ", ".join(courses)
+                                export_data[day][slot_i + 2][col + 2] = (f"{self.builder.module_get(event).name}"
+                                                                         f":   {courses}: {venue}")
+                            else:
+                                print(self.builder.module_get(event).name, "\n",
+                                      event_data[Types.VENUE] in self.available_venues,
+                                      sum([c in self.available_courses for c in event_data[Types.COURSES]]) ==
+                                      len(event_data[Types.COURSES]),
+                                      self.builder.module_get(event).lecturer in
+                                      self.available_lecturers
+                                      )
+                    else:
+                        export_data[day][slot_i + 2][2] = timetable_data[day][slot]
+
+            vertical_header = []
+            slots = self.builder.timetable_slots()
+
+            for slot in range(self.builder.timetable_get_slots_per_day()):
+                slot = str(slot + 1)
+                slot_item = slot if slot not in slots else slots[slot]
+                vertical_header.append(slot_item)
+
+            for day in export_data:
+                days = self.builder.timetable_days()
+                work_sheet = work_book.create_sheet(days[day] if day in days else f"Day {day}")
+                work_sheet.append(["Period"])
+                cell = work_sheet.cell(row=1, column=1)
+                cell.font = self.header_font
+                cell.alignment = self.center
+                cell.border = self.border
+
+                for row in range(2, len(vertical_header) + 2):
+                    work_sheet.append([slots[str(row - 1)]] if str(row - 1) in slots else [str(row - 1)])
+                    cell = work_sheet.cell(row=row, column=1)
+                    cell.font = self.header_font
+                    cell.alignment = self.center
+                    cell.border = self.border
+                for slot in export_data[day]:
+                    for col in export_data[day][slot]:
+                        work_sheet.cell(row=slot, column=col, value=export_data[day][slot][col])
+
+            save_name = self.builder.timetable_get_name().replace(" ", "_") + ".xlsx"
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "Export Timetable", save_name, "Excel Files (*.xlsx)"
+            )
+            if file_path:
+                work_book.save(file_path)
+                MessageBox(self).information("Success", f"Exported to: {file_path}")
+                self.close()
+
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+    

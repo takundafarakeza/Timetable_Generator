@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'message_boxczTyAz.ui'
+## Form generated from reading UI file 'deficit_confirmRUCaWO.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -15,16 +15,24 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
-    QLabel, QLayout, QPushButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
+    QHBoxLayout, QLabel, QLayout, QPushButton,
+    QScrollArea, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 import icons_rc
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(400, 136)
+        Dialog.resize(448, 187)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
+        Dialog.setSizePolicy(sizePolicy)
+        Dialog.setMinimumSize(QSize(400, 130))
+        Dialog.setMaximumSize(QSize(500, 500))
         Dialog.setStyleSheet(u"* {\n"
 "	background: transparent;\n"
 "	border: none;\n"
@@ -35,18 +43,16 @@ class Ui_Dialog(object):
 "	background: #DBEAFE;\n"
 "}\n"
 "\n"
-"QWidget#container{\n"
+"QFrame#container{\n"
 "	background: #F3F4F6;\n"
 "}")
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.container = QFrame(Dialog)
         self.container.setObjectName(u"container")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.container.sizePolicy().hasHeightForWidth())
         self.container.setSizePolicy(sizePolicy)
         self.container.setFrameShape(QFrame.Shape.StyledPanel)
@@ -68,7 +74,7 @@ class Ui_Dialog(object):
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
         self.icon = QLabel(self.frame_2)
         self.icon.setObjectName(u"icon")
-        self.icon.setGeometry(QRect(10, 20, 40, 40))
+        self.icon.setGeometry(QRect(10, 30, 40, 40))
         self.icon.setPixmap(QPixmap(u":/icons/icons/warning.svg"))
         self.icon.setScaledContents(True)
 
@@ -88,7 +94,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 325, 77))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 373, 106))
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
@@ -112,6 +118,11 @@ class Ui_Dialog(object):
 
         self.verticalLayout_3.addWidget(self.scrollArea)
 
+        self.do_for_all = QCheckBox(self.frame_3)
+        self.do_for_all.setObjectName(u"do_for_all")
+
+        self.verticalLayout_3.addWidget(self.do_for_all)
+
         self.frame_4 = QFrame(self.frame_3)
         self.frame_4.setObjectName(u"frame_4")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -130,21 +141,31 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.cancel_btn = QPushButton(self.frame_4)
-        self.cancel_btn.setObjectName(u"cancel_btn")
-        self.cancel_btn.setMinimumSize(QSize(60, 25))
+        self.abort_btn = QPushButton(self.frame_4)
+        self.abort_btn.setObjectName(u"abort_btn")
+        self.abort_btn.setMinimumSize(QSize(60, 25))
 
-        self.horizontalLayout_2.addWidget(self.cancel_btn)
+        self.horizontalLayout_2.addWidget(self.abort_btn)
 
-        self.ok_btn = QPushButton(self.frame_4)
-        self.ok_btn.setObjectName(u"ok_btn")
-        self.ok_btn.setMinimumSize(QSize(70, 0))
-        self.ok_btn.setStyleSheet(u"padding: 5px;\n"
+        self.yes_btn = QPushButton(self.frame_4)
+        self.yes_btn.setObjectName(u"yes_btn")
+        self.yes_btn.setMinimumSize(QSize(60, 25))
+        self.yes_btn.setStyleSheet(u"padding: 5px;\n"
+"background: #57954F;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;")
+
+        self.horizontalLayout_2.addWidget(self.yes_btn)
+
+        self.no_btn = QPushButton(self.frame_4)
+        self.no_btn.setObjectName(u"no_btn")
+        self.no_btn.setMinimumSize(QSize(70, 0))
+        self.no_btn.setStyleSheet(u"padding: 5px;\n"
 "background: #2F69B2;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
 
-        self.horizontalLayout_2.addWidget(self.ok_btn)
+        self.horizontalLayout_2.addWidget(self.no_btn)
 
 
         self.verticalLayout_3.addWidget(self.frame_4)
@@ -155,6 +176,9 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.container)
 
+        QWidget.setTabOrder(self.yes_btn, self.no_btn)
+        QWidget.setTabOrder(self.no_btn, self.abort_btn)
+        QWidget.setTabOrder(self.abort_btn, self.scrollArea)
 
         self.retranslateUi(Dialog)
 
@@ -165,7 +189,9 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.icon.setText("")
         self.text.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Hello! You shouldn't see this.</p></body></html>", None))
-        self.cancel_btn.setText(QCoreApplication.translate("Dialog", u"Cancel", None))
-        self.ok_btn.setText(QCoreApplication.translate("Dialog", u"Ok", None))
+        self.do_for_all.setText(QCoreApplication.translate("Dialog", u"Do this for all items", None))
+        self.abort_btn.setText(QCoreApplication.translate("Dialog", u"Abort", None))
+        self.yes_btn.setText(QCoreApplication.translate("Dialog", u"Yes", None))
+        self.no_btn.setText(QCoreApplication.translate("Dialog", u"No", None))
     # retranslateUi
 

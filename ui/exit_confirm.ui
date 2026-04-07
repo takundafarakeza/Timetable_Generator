@@ -153,6 +153,13 @@ border-radius: 3px;</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>cancel_btn</tabstop>
+  <tabstop>ok_btn</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>cancel_btn</tabstop>
+  <tabstop>ok_btn</tabstop>
+ </tabstops>
  <resources>
   <include location="../assets/icons.qrc"/>
  </resources>

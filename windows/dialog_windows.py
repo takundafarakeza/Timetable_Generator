@@ -278,17 +278,17 @@ class AddModuleDataWindow(QDialog):
 
     def courses_populate(self):
         courses = self.builder.module_get(self.module_id).courses
-        courses = [self.builder.course_get(course) for course in courses]
+        courses = [(self.builder.course_get(course), courses[course][Types.LEVEL]) for course in courses]
         self.module_courses_table.clearContents()
         self.module_courses_table.setRowCount(0)
 
-        for course in courses:
+        for course, level in courses:
             row = self.module_courses_table.rowCount()
             self.module_courses_table.insertRow(row)
             self.module_courses_table.setRowHeight(row, 50)
             item = RemovableTableItem()
             item.set_header(course.name)
-            item.set_text(course.short_name)
+            item.set_text(f"{course.short_name} - {level}")
             remove_func = partial(self.delete_course, self.module_id, course.id)
             item.remove_btn.clicked.connect(remove_func)
             self.module_courses_table.setCellWidget(row, 0, item)

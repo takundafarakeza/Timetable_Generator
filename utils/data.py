@@ -119,3 +119,9 @@ class TimetableTempDataTertiary:
     slots_per_day: int
     breaks: dict
     time_table: dict
+    accepts: list
+
+
+@dataclass
+class GenerationReport:
+    report: dict
