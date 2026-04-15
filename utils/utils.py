@@ -114,7 +114,7 @@ class Utils:
                     shutil.copytree(file_path, dest_path)
                 else:
                     shutil.copy2(file_path, dest_path)
-                return True
+                return dest_path
             except Exception as e:
                 QMessageBox.critical(None, "Error", str(e))
         return False
@@ -303,7 +303,7 @@ class ExportUtils:
                         "slot_id": str(slot_id),
                         "module_id": str(module_id),
                         "venue_id": str(info.get("venue")) if info.get("venue") is not None else "",
-                        "course_ids": [str(c) for c in info.get("courses", [])],
+                        "course_ids": [str(c).split('-')[0] for c in info.get("courses", [])],
                         "lecturer_id": builder.module_get(module_id).lecturer
                     })
 

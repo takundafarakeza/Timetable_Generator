@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowETqlna.ui'
+## Form generated from reading UI file 'main_windowkdHQCC.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QHBoxLay
     QVBoxLayout, QWidget)
 
 from widgets.custom_widgets import (ButtonFrame, SearchableComboBox)
+from widgets.widgets import TitleBar
 import icons_rc
 
 class Ui_MainWindow(object):
@@ -295,7 +296,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.frame_2)
 
-        self.frame = QFrame(self.toolbar)
+        self.frame = TitleBar(self.toolbar)
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
@@ -1243,6 +1244,15 @@ class Ui_MainWindow(object):
         self.modules_search = QLineEdit(self.module_header_cnt)
         self.modules_search.setObjectName(u"modules_search")
         self.modules_search.setGeometry(QRect(669, 10, 251, 30))
+        self.modules_auto_assign_btn = QPushButton(self.module_header_cnt)
+        self.modules_auto_assign_btn.setObjectName(u"modules_auto_assign_btn")
+        self.modules_auto_assign_btn.setGeometry(QRect(130, 10, 131, 30))
+        self.modules_auto_assign_btn.setMinimumSize(QSize(0, 30))
+        self.modules_auto_assign_btn.setStyleSheet(u"#modules_auto_assign_btn{padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;}")
+        self.modules_auto_assign_btn.setIconSize(QSize(14, 14))
 
         self.verticalLayout_7.addWidget(self.module_header_cnt)
 
@@ -1991,7 +2001,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.venues_btn.setText(QCoreApplication.translate("MainWindow", u"  Venues", None))
 #if QT_CONFIG(tooltip)
-        self.enrollment_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Venues", None))
+        self.enrollment_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Enrollments", None))
 #endif // QT_CONFIG(tooltip)
         self.enrollment_btn.setText(QCoreApplication.translate("MainWindow", u"   Enrollments", None))
 #if QT_CONFIG(tooltip)
@@ -2147,6 +2157,10 @@ class Ui_MainWindow(object):
         self.title.setText(QCoreApplication.translate("MainWindow", u"Manage Modules", None))
         self.modules_add_btn.setText(QCoreApplication.translate("MainWindow", u"  Add Module", None))
         self.modules_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Module", None))
+#if QT_CONFIG(tooltip)
+        self.modules_auto_assign_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Generate or regenerate the entire timetable.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.modules_auto_assign_btn.setText(QCoreApplication.translate("MainWindow", u"Auto Assign Venues", None))
         self.subjects_class_filter.setCurrentText("")
         self.subjects_class_filter.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Filter By Class", None))
         self.title_2.setText(QCoreApplication.translate("MainWindow", u"Manage Subjects", None))

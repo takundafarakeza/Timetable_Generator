@@ -1,12 +1,12 @@
-from PySide6.QtWidgets import (QFrame, QPushButton, QLabel, QListWidgetItem,
+from PySide6.QtWidgets import (QFrame, QPushButton, QLabel, QListWidgetItem, QApplication,
                                QHBoxLayout, QWidget, QDialog, QListWidget, QAbstractItemView,
-                               QTableWidget, QVBoxLayout, QTableWidgetItem)
+                               QTableWidget, QVBoxLayout, QTableWidgetItem, QMainWindow)
 from PySide6.QtGui import QIcon, QPixmap, QCursor, QFont, QColor, QPainter
-from PySide6.QtCore import QSize, Qt, QRect, QTimer
+from PySide6.QtCore import QSize, Qt, QRect, QTimer, QPoint, QEvent
 from utils import Utils
 from functools import partial
 from .custom_widgets import ButtonFrameSilent
-from ui import ui_message_box, ui_exit_confirm, ui_deficit_confirm
+from ui import ui_message_box, ui_exit_confirm, ui_deficit_confirm, ui_confirmation_dialog
 import os.path
 import math
 
@@ -45,15 +45,13 @@ class CheckListFilter(QFrame):
 
         for title, value in zip(titles, values):
             count = counts.get(value, 0)
-            courses = len(value.split("-")) == 2
-            desc = value.split("-")[1] if courses else ""
-            text = f"{title} {desc} ({count})"
+            text = f"{title} ({count})"
 
             item = QListWidgetItem(text)
             item.setData(Qt.ItemDataRole.UserRole, value)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
 
-            if value in old_selected:
+            if value in old_selected and not count == 0:
                 item.setCheckState(Qt.CheckState.Checked)
             else:
                 item.setCheckState(Qt.CheckState.Unchecked)
@@ -442,6 +440,46 @@ class ExitConfirm(QDialog):
         return False
 
 
+class Confirmation(QDialog):
+    def __init__(self, parent, title, text):
+        super().__init__(parent=parent)
+        self.ui = ui_confirmation_dialog.Ui_Dialog()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setModal(True)
+        self.setStyleSheet("background: #E3E4E6;")
+
+        self.cancel_btn = self.ui.cancel_btn
+        self.ok_btn = self.ui.ok_btn
+        self.icon = self.ui.icon
+        self.text = self.ui.text
+        self.do_for_all = self.ui.do_for_all
+
+        self.cancel_btn.clicked.connect(self.reject)
+        self.ok_btn.clicked.connect(self.accept)
+        self.do_for_all.checkStateChanged.connect(self.toggle_do_for_all)
+        self.cancel_btn.setDefault(True)
+        self.ok_btn.setAutoDefault(False)
+
+        self.setWindowTitle(title)
+        self.text.setText(text)
+
+        self._do_for_all = False
+
+    def toggle_do_for_all(self):
+        self._do_for_all = not self._do_for_all
+
+    @staticmethod
+    def confirm(parent, title: str, text: str):
+        dialog = Confirmation(parent, title, text)
+        result = dialog.exec()
+        if result == QDialog.DialogCode.Accepted:
+            return True, dialog._do_for_all
+        return False, dialog._do_for_all
+
+
 class DeficitConfirm(QDialog):
     def __init__(self, parent, text: str):
         super().__init__(parent=parent)
@@ -486,6 +524,133 @@ class DeficitConfirm(QDialog):
         dialog = DeficitConfirm(parent, text)
         dialog.exec()
         return dialog.reply
+
+
+class TitleBar(QFrame):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+    def mousePressEvent(self, event, /):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.window().windowHandle().startSystemMove()
+
+
+class FramelessWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.margin = 3
+        self.pressing = False
+        self.resize_dir = None
+
+        self.setMouseTracking(True)
+        self.installEventFilter(self)
+        QApplication.instance().installEventFilter(self)
+
+    def _get_resize_direction(self, pos):
+        rect = self.rect()
+        x, y = pos.x(), pos.y()
+        parts = []
+        if y < self.margin:
+            parts.append("top")
+        elif y > rect.height() - self.margin:
+            parts.append("bottom")
+        if x < self.margin:
+            parts.append("left")
+        elif x > rect.width() - self.margin:
+            parts.append("right")
+        return "-".join(parts) if parts else None
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.pressing = True
+            self.start_pos = event.globalPosition().toPoint()
+            self.start_geometry = self.geometry()
+            self.resize_dir = self._get_resize_direction(event.position().toPoint())
+
+    def mouseMoveEvent(self, event):
+
+        if not self.pressing:
+            return
+        else:
+            diff = event.globalPosition().toPoint() - self.start_pos
+
+            min_w = self.minimumWidth()
+            min_h = self.minimumHeight()
+
+            left = self.start_geometry.left()
+            top = self.start_geometry.top()
+            right = self.start_geometry.right()
+            bottom = self.start_geometry.bottom()
+
+            if self.resize_dir:
+                self._update_cursor(self.resize_dir)
+                if "left" in self.resize_dir:
+                    new_left = left + diff.x()
+                    if right - new_left >= min_w:
+                        left = new_left
+                    else:
+                        left = right - min_w
+
+                if "right" in self.resize_dir:
+                    new_right = right + diff.x()
+                    if new_right - left >= min_w:
+                        right = new_right
+                    else:
+                        right = left + min_w
+
+                if "top" in self.resize_dir:
+                    new_top = top + diff.y()
+                    if bottom - new_top >= min_h:
+                        top = new_top
+                    else:
+                        top = bottom - min_h
+
+                if "bottom" in self.resize_dir:
+                    new_bottom = bottom + diff.y()
+                    if new_bottom - top >= min_h:
+                        bottom = new_bottom
+                    else:
+                        bottom = top + min_h
+
+                self.setGeometry(QRect(QPoint(left, top), QPoint(right, bottom)))
+
+    def mouseReleaseEvent(self, event):
+        self.pressing = False
+        self.setCursor(Qt.CursorShape.ArrowCursor)
+
+    def leaveEvent(self, event):
+        if not self.pressing:
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Type.MouseMove:
+            global_pos = QCursor.pos()
+            local_pos = self.mapFromGlobal(global_pos)
+
+            if self.rect().contains(local_pos):
+                if not self.pressing:
+                    direction = self._get_resize_direction(local_pos)
+                    if direction:
+                        self._update_cursor(direction)
+                    else:
+                        self.unsetCursor()
+            else:
+                self.unsetCursor()
+
+        return super().eventFilter(obj, event)
+
+    def _update_cursor(self, direction):
+        if direction in ["top", "bottom"]:
+            self.setCursor(Qt.CursorShape.SizeVerCursor)
+        elif direction in ["left", "right"]:
+            self.setCursor(Qt.CursorShape.SizeHorCursor)
+        elif direction in ["top-left", "bottom-right"]:
+            self.setCursor(Qt.CursorShape.SizeFDiagCursor)
+        elif direction in ["top-right", "bottom-left"]:
+            self.setCursor(Qt.CursorShape.SizeBDiagCursor)
+        else:
+            self.setCursor(Qt.CursorShape.ArrowCursor)
 
 
 class ModulesTable(QTableWidget):

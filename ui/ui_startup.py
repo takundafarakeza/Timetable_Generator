@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'startupMaTrrU.ui'
+## Form generated from reading UI file 'startupAqWgAm.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QLineEdit,
     QVBoxLayout, QWidget)
 
 from widgets.custom_widgets import ButtonFrame
+from widgets.widgets import TitleBar
 import icons_rc
 
 class Ui_StartUp(object):
@@ -126,7 +127,7 @@ class Ui_StartUp(object):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.toolbar = QWidget(self.window_container)
+        self.toolbar = TitleBar(self.window_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMaximumSize(QSize(16777215, 60))
         self.close_btn = QPushButton(self.toolbar)

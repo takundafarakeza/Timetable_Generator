@@ -12,7 +12,7 @@ MAGIC = b'TBLF'
 
 class FileLoader:
     def __init__(self, file: str):
-        self.file_name = file
+        self._file_name = file
 
     def save_file(self, payload: dict):
         salt = os.urandom(16)
@@ -36,7 +36,7 @@ class FileLoader:
         ciphertext = encrypted[:-16]
         tag = encrypted[-16:]
 
-        with open(self.file_name, "wb") as f:
+        with open(self._file_name, "wb") as f:
             f.write(MAGIC)
             f.write(struct.pack("B", VERSION))
             f.write(struct.pack("B", FLAG_ENCRYPTED))
@@ -49,7 +49,7 @@ class FileLoader:
             f.write(tag)
 
     def load_tbl(self) -> dict:
-        with open(self.file_name, "rb") as f:
+        with open(self._file_name, "rb") as f:
             magic = f.read(4)
             if magic != MAGIC:
                 raise ValueError("Invalid file type")
@@ -88,8 +88,3 @@ def derive_key(salt: bytes) -> bytes:
         p=1
     )
     return kdf.derive("90$9{|BOs~}!BZY".encode("utf-8"))
-
-
-file_loader = FileLoader(r"C:\Users\TAKUNDA\AppData\Roaming\Timetable_Generator\timetables\MSU_v2.tbl")
-print(file_loader.load_tbl())
-

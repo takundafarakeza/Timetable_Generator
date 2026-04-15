@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'export_tertiary_project_dialogMucqam.ui'
+## Form generated from reading UI file 'export_tertiary_project_dialogSjObuM.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
+    QHBoxLayout, QLabel, QPushButton, QSizePolicy,
+    QVBoxLayout, QWidget)
 
 from widgets.widgets import CheckListFilter
 import icons_rc
@@ -218,6 +218,9 @@ class Ui_Export(object):
 "color: #414141;\n"
 "border-radius: 3px;")
         self.clear_btn.setIconSize(QSize(12, 12))
+        self.export_codes = QCheckBox(self.widget)
+        self.export_codes.setObjectName(u"export_codes")
+        self.export_codes.setGeometry(QRect(170, 0, 171, 31))
 
         self.verticalLayout_4.addWidget(self.widget)
 
@@ -244,5 +247,6 @@ class Ui_Export(object):
         self.timetable_export.setText(QCoreApplication.translate("Export", u"Export", None))
         self.cancel_btn.setText(QCoreApplication.translate("Export", u"Cancel", None))
         self.clear_btn.setText(QCoreApplication.translate("Export", u"Clear Filters", None))
+        self.export_codes.setText(QCoreApplication.translate("Export", u"Export modules using codes", None))
     # retranslateUi
 

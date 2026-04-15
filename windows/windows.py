@@ -9,7 +9,7 @@ from ui import (ui_startup, ui_boarding, ui_main_window,
 from utils import Types, Settings, ExportUtils
 from utils.logger_config import logger
 from typing import Optional, Union
-from widgets import RecentItem, TimeTable, MessageBox
+from widgets import RecentItem, TimeTable, MessageBox, FramelessWindow
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, Border, Side
 import functools
@@ -183,7 +183,7 @@ class Viewer(QWidget):
             logger.critical(str(e))
 
 
-class Main(QMainWindow):
+class Main(FramelessWindow):
     file_signal = Signal(str)
 
     def __init__(self):
@@ -236,7 +236,7 @@ class Main(QMainWindow):
                                "page": 7},
             self.venues_btn: {"icons": [u":/icons/icons/venues.svg", u":/icons/icons/venues-white.svg"],
                               "page": 9},
-            self.enrollment_btn: {"icons": [u":/icons/icons/courses-add.svg", u":/icons/icons/courses-add.svg"],
+            self.enrollment_btn: {"icons": [u":/icons/icons/courses-add.svg", u":/icons/icons/courses-add-white.svg"],
                                   "page": 10}
         }
         self.display_cards = [self.ui.courses_card, self.ui.venues_card, self.ui.subjects_card,
@@ -956,6 +956,10 @@ class TertiaryExport(QDialog):
         self.venue_counts = None
         self.set_counts()
 
+        self.selected_venues = set(self.all_venues)
+        self.selected_courses = set(self.all_courses)
+        self.selected_lecturers = set(self.all_lecturers)
+
         self.clear_btn = self.ui.clear_btn
 
         self.course_filter.list_widget.itemChanged.connect(self.on_filters_changed)
@@ -1050,6 +1054,7 @@ class TertiaryExport(QDialog):
             work_book = Workbook()
             work_book.remove(work_book.active)
             export_data = {}
+            export_codes = self.ui.export_codes.isChecked()
 
             for day in timetable_data:
                 export_data[day] = {}
@@ -1068,7 +1073,10 @@ class TertiaryExport(QDialog):
                                                                       ).short_name}-{c.split('-')[1]}"
                                            for c in timetable_data[day][slot][event][Types.COURSES]]
                                 courses = ", ".join(courses)
-                                export_data[day][slot_i + 2][col + 2] = (f"{self.builder.module_get(event).name}"
+                                module = self.builder.module_get(event).code if export_codes else (
+                                    self.builder.module_get(event).name)
+
+                                export_data[day][slot_i + 2][col + 2] = (f"{module}"
                                                                          f":   {courses}: {venue}")
                     else:
                         export_data[day][slot_i + 2][2] = timetable_data[day][slot]

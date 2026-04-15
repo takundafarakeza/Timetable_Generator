@@ -437,7 +437,7 @@ QSpinBox:up-arrow{
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame">
+        <widget class="TitleBar" name="frame">
          <property name="frameShape">
           <enum>QFrame::Shape::StyledPanel</enum>
          </property>
@@ -985,7 +985,7 @@ color: #F3F4F6;</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>Venues</string>
+                <string>Enrollments</string>
                </property>
                <property name="styleSheet">
                 <string notr="true"/>
@@ -3117,6 +3117,40 @@ border-radius: 3px;</string>
                         <string>Search Module</string>
                        </property>
                       </widget>
+                      <widget class="QPushButton" name="modules_auto_assign_btn">
+                       <property name="geometry">
+                        <rect>
+                         <x>130</x>
+                         <y>10</y>
+                         <width>131</width>
+                         <height>30</height>
+                        </rect>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>30</height>
+                        </size>
+                       </property>
+                       <property name="toolTip">
+                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generate or regenerate the entire timetable.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">#modules_auto_assign_btn{padding: 5px;
+background: #2F69B2;
+color: #F3F4F6;
+border-radius: 3px;}</string>
+                       </property>
+                       <property name="text">
+                        <string>Auto Assign Venues</string>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>14</width>
+                         <height>14</height>
+                        </size>
+                       </property>
+                      </widget>
                      </widget>
                     </item>
                     <item>
@@ -4761,6 +4795,12 @@ border: 1px solid #E3E4E6;
    <class>SearchableComboBox</class>
    <extends>QComboBox</extends>
    <header>widgets.custom_widgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TitleBar</class>
+   <extends>QFrame</extends>
+   <header location="global">widgets.widgets</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

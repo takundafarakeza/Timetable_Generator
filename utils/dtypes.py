@@ -9,6 +9,7 @@ class Types:
     INSTITUTION_NAME = "institution_name"
     TIME_SLOT_LENGTH = "time_slot_length"
     DAYS_PER_CYCLE = "days_per_cycle"
+    TIME_SLOTS = "time_slots"
     SLOTS_PER_DAY = "slots_per_day"
     BREAKING_SLOTS = "break_slots"
     BLOCK_SLOTS = "block_slots"
@@ -28,6 +29,8 @@ class Types:
     CAPACITIES = "capacities"
     CAPACITY = "capacity"
     SPECIAL = "special"
+    LOCATION = "location"
+    LOCATION_DESCRIPTION = "location_description"
 
     TEACHER = "teacher"
     TEACHERS = "teachers"

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'viewerxQpaeX.ui'
+## Form generated from reading UI file 'viewerhmWVTV.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -18,6 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QPushButton, QSizePolicy, QSpacerItem, QTabWidget,
     QVBoxLayout, QWidget)
+
+from widgets.widgets import TitleBar
 import icons_rc
 
 class Ui_ViewerWindow(object):
@@ -230,7 +232,7 @@ class Ui_ViewerWindow(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(1, 1, 1, 1)
-        self.toolbar = QWidget(self.main_container)
+        self.toolbar = TitleBar(self.main_container)
         self.toolbar.setObjectName(u"toolbar")
         self.toolbar.setMinimumSize(QSize(0, 30))
         self.toolbar.setMaximumSize(QSize(16777215, 30))
@@ -272,6 +274,7 @@ class Ui_ViewerWindow(object):
         self.close_btn = QPushButton(self.frame_3)
         self.close_btn.setObjectName(u"close_btn")
         self.close_btn.setGeometry(QRect(80, 0, 40, 30))
+        self.close_btn.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         icon1 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit))
         self.close_btn.setIcon(icon1)
         self.close_btn.setIconSize(QSize(10, 10))

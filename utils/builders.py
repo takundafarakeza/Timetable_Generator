@@ -8,6 +8,7 @@ from .data import (Class, Venue, VenueTertiary, Subject, Teacher, Lecturer, Cour
 from widgets import DeficitConfirm
 from .generators import PrimarySchool, SecondarySchool, TertiarySchool
 from widgets import GenerationDialog, MessageBox
+from .loader import FileLoader
 import json
 
 
@@ -16,16 +17,16 @@ class PrimaryBuilder(QObject):
     saved = Signal(bool)
 
     def __init__(self, file_path: str,
-                 init_data: TimeTableInitData = None):
+                 init_data: TimeTableInitData = None,
+                 file_loader: FileLoader = None):
         super().__init__()
 
-        file = open(file_path)
+        self.file_loader = file_loader
         try:
-            time_table_data = json.loads(file.read())
+            time_table_data = self.file_loader.load_tbl()
         except Exception as e:
             logger.warning(str(e))
             time_table_data = None
-        file.close()
 
         self._time_table_data: dict = ({} if time_table_data is None else time_table_data)
         if not self._time_table_data:
@@ -89,10 +90,7 @@ class PrimaryBuilder(QObject):
         self.set_unsaved()
 
     def reload(self):
-        file = open(self.save_path)
-        time_table_data = json.loads(file.read())
-        file.close()
-
+        time_table_data = self.file_loader.load_tbl()
         self._time_table_data: dict = ({} if time_table_data is None else time_table_data)
         if not self._time_table_data:
             self.timetable_init_headers(self._init_data)
@@ -141,9 +139,7 @@ class PrimaryBuilder(QObject):
         self.set_not_generated()
 
     def timetable_save(self):
-        data = json.dumps(self._time_table_data)
-        with open(self.save_path, "w") as tbl:
-            tbl.write(data)
+        self.file_loader.save_file(self._time_table_data)
         self.set_saved()
 
     def timetable_add_patch(self, class_id: str,
@@ -492,16 +488,16 @@ class SecondaryBuilder(QObject):
     saved = Signal(bool)
 
     def __init__(self, file_path: str,
-                 init_data: TimeTableInitData = None):
+                 init_data: TimeTableInitData = None,
+                 file_loader: FileLoader = None):
         super().__init__()
 
-        file = open(file_path)
+        self.file_loader = file_loader
         try:
-            time_table_data = json.loads(file.read())
+            time_table_data = self.file_loader.load_tbl()
         except Exception as e:
             logger.warning(str(e))
             time_table_data = None
-        file.close()
 
         self._time_table_data = ({} if time_table_data is None else time_table_data)
         if not self._time_table_data:
@@ -565,9 +561,7 @@ class SecondaryBuilder(QObject):
         self.set_unsaved()
 
     def reload(self):
-        file = open(self.save_path)
-        time_table_data = json.loads(file.read())
-        file.close()
+        time_table_data = self.file_loader.load_tbl()
 
         self._time_table_data: dict = ({} if time_table_data is None else time_table_data)
         if not self._time_table_data:
@@ -627,9 +621,7 @@ class SecondaryBuilder(QObject):
         self.set_not_generated()
 
     def timetable_save(self):
-        data = json.dumps(self._time_table_data)
-        with open(self.save_path, "w") as tbl:
-            tbl.write(data)
+        self.file_loader.save_file(self._time_table_data)
         self.set_saved()
 
     def timetable_add_patch(self, class_id: str, teacher: str,
@@ -1254,13 +1246,13 @@ class TertiaryBuilder(QObject):
     saved = Signal(bool)
 
     def __init__(self, file_path: str,
-                 init_data: TimeTableInitData = None):
+                 init_data: TimeTableInitData = None,
+                 file_loader: FileLoader = None):
         super().__init__()
 
+        self.file_loader = file_loader
         try:
-            file = open(file_path)
-            time_table_data = json.loads(file.read())
-            file.close()
+            time_table_data = self.file_loader.load_tbl()
         except Exception as e:
             logger.warning(str(e))
             time_table_data = None
@@ -1327,9 +1319,7 @@ class TertiaryBuilder(QObject):
         self.set_unsaved()
 
     def reload(self):
-        file = open(self.save_path)
-        time_table_data = json.loads(file.read())
-        file.close()
+        time_table_data = self.file_loader.load_tbl()
 
         self._time_table_data: dict = ({} if time_table_data is None else time_table_data)
         if not self._time_table_data:
@@ -1396,9 +1386,7 @@ class TertiaryBuilder(QObject):
         self.set_unsaved()
 
     def timetable_save(self):
-        data = json.dumps(self._time_table_data)
-        with open(self.save_path, "w") as tbl:
-            tbl.write(data)
+        self.file_loader.save_file(self._time_table_data)
         self.set_saved()
 
     def timetable_add_patch(self, module_id: str):
@@ -1608,6 +1596,48 @@ class TertiaryBuilder(QObject):
         self.generator_dialog.show()
         self.generator_thread.start()
 
+    def assign_venues(self):
+
+        module_demand = {}
+        un_scheduled = ""
+        changes = False
+
+        modules = self._time_table_data[Types.MODULES]
+        capacities = self._time_table_data[Types.CAPACITIES]
+        venues = self._time_table_data[Types.VENUES]
+
+        for mid, m in modules.items():
+            total = sum(int(capacities[c][m[Types.COURSES][c][Types.LEVEL]][Types.CAPACITY]) for c in m[Types.COURSES])
+            module_demand[mid] = total
+
+        for m_id, m in modules.items():
+            demand = module_demand[m_id]
+            scheduled = False
+
+            if len(m[Types.VENUES]) == 0:
+                for v in venues:
+                    if ((demand <= venues[v][Types.CAPACITY]) and
+                            venues[v][Types.SPECIAL] == "No" and v != "unavailable"):
+                        m[Types.VENUES].append(v)
+                        changes = True
+                        scheduled = True
+            else:
+                for v in m[Types.VENUES]:
+                    if demand <= venues[v][Types.CAPACITY]:
+                        scheduled = True
+                        break
+
+            if not scheduled:
+                un_scheduled += f"{modules[m_id][Types.NAME]}: Venue capacity deficit.\n"
+
+        if un_scheduled != "":
+            un_scheduled = f"Report:\n\n{un_scheduled}"
+
+        if changes:
+            self.set_unsaved()
+            self.set_not_generated()
+        return un_scheduled
+
     # ======================================= COURSES ================================== #
 
     def add_course(self, name: str, short_name: str):
@@ -1635,8 +1665,15 @@ class TertiaryBuilder(QObject):
     def course_exists(self, name: str):
         courses = self._time_table_data[Types.COURSES]
         for course_id in courses:
-            if courses[course_id][Types.NAME] == name:
+            if courses[course_id][Types.NAME].lower().strip() == name.lower().strip():
                 return True
+        return False
+
+    def course_get_by_name(self, name: str):
+        courses = self._time_table_data[Types.COURSES]
+        for course_id in courses:
+            if courses[course_id][Types.NAME].lower().strip() == name.lower().strip():
+                return course_id
         return False
 
     def course_change_data(self, course_id: str, dtype: str, value):
@@ -1687,8 +1724,15 @@ class TertiaryBuilder(QObject):
     def venue_exists(self, name: str):
         venues = self._time_table_data[Types.VENUES]
         for venue in venues:
-            if venues[venue][Types.NAME] == name:
+            if venues[venue][Types.NAME].lower().strip() == name.lower().strip():
                 return True
+        return False
+
+    def venue_get_by_name(self, name: str):
+        venues = self._time_table_data[Types.VENUES]
+        for venue in venues:
+            if venues[venue][Types.NAME].lower().strip() == name.lower().strip():
+                return venue
         return False
 
     def venue_remove(self, venue_id):
@@ -1877,8 +1921,16 @@ class TertiaryBuilder(QObject):
         lecturers = self._time_table_data[Types.LECTURERS]
 
         for lecturer in lecturers:
-            if lecturers[lecturer][Types.NAME] == name:
+            if lecturers[lecturer][Types.NAME].lower().strip() == name.lower().strip():
                 return True
+        return False
+
+    def lecturer_get_by_name(self, name: str):
+        lecturers = self._time_table_data[Types.LECTURERS]
+
+        for lecturer in lecturers:
+            if lecturers[lecturer][Types.NAME].lower().strip() == name.lower().strip():
+                return lecturer
         return False
 
     def lecturer_remove(self, lecturer_id):

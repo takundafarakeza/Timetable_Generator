@@ -241,7 +241,7 @@ QSpinBox:up-arrow{
        <number>1</number>
       </property>
       <item>
-       <widget class="QWidget" name="toolbar" native="true">
+       <widget class="TitleBar" name="toolbar">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -462,6 +462,14 @@ QSpinBox:up-arrow{
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TitleBar</class>
+   <extends>QFrame</extends>
+   <header location="global">widgets.widgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../assets/icons.qrc"/>
  </resources>

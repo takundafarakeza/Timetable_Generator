@@ -3,13 +3,14 @@ from PySide6.QtGui import QIcon
 from utils.builders import PrimaryBuilder, SecondaryBuilder, TertiaryBuilder
 from utils.data import TimeTableInitData
 from utils import Types
-from utils import Utils, Settings
+from utils import Utils, Settings, FileLoader
 from utils.logger_config import logger
 from windows import Main, StartUp, Viewer, Export, TertiaryExport
 from widgets import (ModulesTable, SubjectsTable, BlocksTable,
                      TeachersTable, LecturersTable, ClassesTable,
                      CoursesTable, VenuesTable, LoadingDialog, ExitConfirm,
-                     TertiaryVenuesTable, CoursesEnrollmentTable)
+                     TertiaryVenuesTable, CoursesEnrollmentTable, MessageBox,
+                     Confirmation)
 from windows.dialog_windows import (AddModuleWindow, AddModuleDataWindow, AddSubjectWindow,
                                     AddLecturerWindow, AddTeacherWindow, AddCourseWindow,
                                     AddClassWindow, AddClassDataWindow, AddClassDataPrimaryWindow,
@@ -19,7 +20,6 @@ from typing import Union, Optional
 import sys
 import json
 import functools
-import os.path
 
 
 class StartUpWindow(StartUp):
@@ -38,21 +38,22 @@ class StartUpWindow(StartUp):
         loading_dialog.close()
 
         if file_path:
-            with open(file_path) as file:
-                try:
-                    time_table_data = json.loads(file.read())
-                except Exception as e:
-                    logger.warning(str(e))
-                    time_table_data = None
+            try:
+                file_loader = FileLoader(file_path)
+                time_table_data = file_loader.load_tbl()
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
 
-            if time_table_data:
+            if time_table_data and file_loader:
                 institution = time_table_data[Types.INSTITUTION_TYPE]
                 builder = (
                     PrimaryBuilder if institution == Types.INSTITUTION_PRIMARY else
                     SecondaryBuilder if institution == Types.INSTITUTION_SECONDARY else
                     TertiaryBuilder
                 )
-                builder = builder(file_path)
+                builder = builder(file_path, file_loader=file_loader)
                 project_name = Utils.project_path_to_name(file_path)
                 settings.add_recent_file(project_name, file_path)
                 app_window.set_builder(builder)
@@ -69,12 +70,11 @@ class StartUpWindow(StartUp):
                 try:
                     import_path = Utils.get_timetables_path()
                     json.loads(file.read())
-                    Utils.save_file(file_path, None, import_path)
-                    file_path = os.path.join(import_path, os.path.basename(file_path))
-                    file_ = open(file_path)
-                    time_table_data = json.loads(file_.read())
-                    file_.close()
+                    file_path = Utils.save_file(file_path, None, import_path)
+                    file_loader = FileLoader(file_path)
+                    time_table_data = file_loader.load_tbl()
                 except Exception as e:
+                    MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
                     logger.warning(str(e))
                     return
 
@@ -85,7 +85,7 @@ class StartUpWindow(StartUp):
                         SecondaryBuilder if institution == Types.INSTITUTION_SECONDARY else
                         TertiaryBuilder
                     )
-                    builder = builder(file_path)
+                    builder = builder(file_path, file_loader=file_loader)
                     project_name = Utils.project_path_to_name(file_path)
                     settings.add_recent_file(project_name, file_path)
                     app_window.set_builder(builder)
@@ -104,7 +104,8 @@ class StartUpWindow(StartUp):
             init_data = TimeTableInitData(time_table_name, institution, name, slot_length,
                                           days_per_cycle, slots_per_day)
             file = Utils().create_project_file(time_table_name, name)
-            builder = builder(file, init_data)
+            file_loader = FileLoader(file)
+            builder = builder(file, init_data, file_loader)
             builder.timetable_save()
             app_window.set_builder(builder)
             project_name = f"{time_table_name}_{name}".replace(" ", "_")
@@ -123,13 +124,14 @@ class StartUpWindow(StartUp):
         else:
             file_path = Settings().get_recent_file(name)
             if file_path:
-                file = open(file_path)
+                file_loader = FileLoader(file_path)
                 try:
-                    time_table_data = json.loads(file.read())
+                    time_table_data = file_loader.load_tbl()
                 except Exception as e:
+                    MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
                     logger.warning(str(e))
-                    time_table_data = None
-                file.close()
+                    return
+
                 if time_table_data:
                     institution = time_table_data[Types.INSTITUTION_TYPE]
                     builder = (
@@ -137,7 +139,7 @@ class StartUpWindow(StartUp):
                         SecondaryBuilder if institution == Types.INSTITUTION_SECONDARY else
                         TertiaryBuilder
                     )
-                    builder = builder(file_path)
+                    builder = builder(file_path, file_loader=file_loader)
                     project_name = Utils.project_path_to_name(file_path)
                     settings.add_recent_file(project_name, file_path)
                     app_window.set_builder(builder)
@@ -219,6 +221,7 @@ class AppWindow(Main):
         self.courses_enrollment_table.set_action_handler(self.enrollment_callback)
 
         self.ui.modules_add_btn.clicked.connect(self.modules_add)
+        self.ui.modules_auto_assign_btn.clicked.connect(self.modules_assign_venues)
         self.ui.subjects_add_btn.clicked.connect(self.subjects_add)
         self.ui.add_break_btn.clicked.connect(self.break_add)
         self.ui.blocks_add_btn.clicked.connect(self.blocks_add)
@@ -299,6 +302,12 @@ class AppWindow(Main):
             self.edit_menu.addAction("Add Lecturer", self.lecturers_add)
             self.edit_menu.addAction("Add Module", self.modules_add)
             self.edit_menu.addAction("Add Program", self.courses_add)
+            self.edit_menu.addAction("Import Modules", self.modules_import)
+            self.edit_menu.addAction("Import Lecturers", self.lecturers_import)
+            self.edit_menu.addAction("Import Programs", self.courses_import)
+            self.edit_menu.addAction("Import Venues", self.venues_import)
+            self.edit_menu.addAction("Import Enrollments", self.enrollments_import)
+            self.edit_menu.addAction("Merge Timetable data", self.datas_merge)
 
         self.tools_menu.addAction("Viewer", self.show_viewer)
         self.tools_menu.addAction("Online Portal", Utils.view_portal)
@@ -480,6 +489,7 @@ class AppWindow(Main):
             self.setup_window()
             self.show()
         except Exception as e:
+            MessageBox(self).critical("Invalid file", f"Could not use this file: {str(e)}")
             logger.critical(str(e))
         loading_dialog.close()
 
@@ -487,14 +497,15 @@ class AppWindow(Main):
         loading_dialog = LoadingDialog()
         loading_dialog.show()
         app.processEvents()
-        # try:
-        self.current_project.setText(project_name.replace("_", " "))
-        self.file = self.builder.get_file()
-        self.build_menu(institution)
-        self.setup_window()
-        self.show()
-        # except Exception as e:
-        #     logger.critical(str(e))
+        try:
+            self.current_project.setText(project_name.replace("_", " "))
+            self.file = self.builder.get_file()
+            self.build_menu(institution)
+            self.setup_window()
+            self.show()
+        except Exception as e:
+            MessageBox(self).critical("Invalid file", f"Could not use this file: {str(e)}")
+            logger.critical(str(e))
         loading_dialog.close()
 
     def populate_slots_days(self):
@@ -803,6 +814,20 @@ class AppWindow(Main):
         else:
             self.modules_populate()
 
+    def modules_assign_venues(self):
+        loading_dialog = LoadingDialog(self)
+        loading_dialog.show()
+
+        try:
+            report = self.builder.assign_venues()
+            self.modules_populate()
+            MessageBox(self).information("Success", f"Automatic venue assignment completed successfully! {report}")
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "An error occurred while trying to assign venues.")
+
+        loading_dialog.close()
+
     # ============================= SUBJECTS =========================
     # ================================================================
 
@@ -1098,6 +1123,8 @@ class AppWindow(Main):
         courses = self.builder.course_get_all()
         self.courses_table.clearContents()
         self.courses_table.setRowCount(0)
+        self.courses_enrollment_table.clearContents()
+        self.courses_enrollment_table.setRowCount(0)
 
         for course in courses:
             self.courses_table.add_item(course.id, course.name, course.short_name)
@@ -1197,6 +1224,413 @@ class AppWindow(Main):
                         self.tertiary_venues_table.add_item(venue.id, venue.name, venue.capacity, venue.special)
         else:
             self.venues_populate()
+
+    # ============================ IMPORTS ===========================
+    # ================================================================
+
+    def courses_import(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
+                                                   "", "Timetable (*tbl)")
+
+        if file_path:
+            try:
+                file_loader = FileLoader(file_path)
+                timetable_data = file_loader.load_tbl()
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
+
+            courses = timetable_data[Types.COURSES]
+            do_for_all = False, False
+
+            if len(courses) > 0:
+                existing_courses = [course.name.lower().strip() for course in self.builder.course_get_all()]
+
+                for c in courses:
+                    name = courses[c][Types.NAME]
+                    if name.lower() in existing_courses:
+                        if not do_for_all[1]:
+                            confirmation = Confirmation.confirm(self, "Already exists",
+                                                                f"A program with this name ({name}) already exists. "
+                                                                "Do you want to import it anyway?")
+                            if confirmation[1]:
+                                do_for_all = confirmation
+                        else:
+                            confirmation = do_for_all
+
+                        if confirmation[0]:
+                            self.builder.add_course(name, courses[c][Types.SHORT_NAME])
+                    else:
+                        self.builder.add_course(name, courses[c][Types.SHORT_NAME])
+
+                self.courses_populate()
+                MessageBox(self).information("Success", "Programs imported successfully.")
+            else:
+                MessageBox(self).warning("Nothing found", "No programs were found in this file.")
+
+    def modules_import(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
+                                                   "", "Timetable (*tbl)")
+
+        if file_path:
+            try:
+                file_loader = FileLoader(file_path)
+                timetable_data = file_loader.load_tbl()
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
+
+            modules = timetable_data[Types.MODULES]
+            do_for_all = False, False
+
+            if len(modules) > 0:
+                existing_modules = [module.name.lower().strip() for module in self.builder.module_get_all()]
+
+                for m in modules:
+                    name = modules[m][Types.NAME]
+                    if name.lower().strip() in existing_modules:
+
+                        if not do_for_all[1]:
+                            confirmation = Confirmation.confirm(self, "Already exists",
+                                                                f"A module with this name ({name}) already "
+                                                                f"exists. Do you want to import it anyway?")
+                            if confirmation[1]:
+                                do_for_all = confirmation
+                        else:
+                            confirmation = do_for_all
+
+                        if confirmation[0]:
+                            courses = modules[m][Types.COURSES]
+
+                            lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
+                            print(lecturer_name)
+                            lecturer_exists = self.builder.lecturer_get_by_name(lecturer_name)
+                            print(lecturer_exists)
+                            lecturer = lecturer_exists if lecturer_exists else "unavailable"
+
+                            venues_list = []
+                            venues = modules[m][Types.VENUES]
+
+                            for v in venues:
+                                v_name = timetable_data[Types.VENUES][v][Types.NAME]
+                                if self.builder.venue_exists(v_name):
+                                    venues_list.append(self.builder.venue_get_by_name(v_name))
+
+                            courses_list = {}
+                            for c in courses:
+                                c_name = timetable_data[Types.COURSES][c][Types.NAME]
+                                if self.builder.course_exists(c_name):
+                                    courses_list[self.builder.course_get_by_name(c_name)] = courses[c]
+
+                            self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
+                                                    venues_list, modules[m][Types.TIME_SLOTS],
+                                                    modules[m][Types.SLOTS_PER_DAY])
+
+                    else:
+                        lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
+                        lecturer_exists = self.builder.lecturer_get_by_name(lecturer_name)
+                        lecturer = lecturer_exists if lecturer_exists else "unavailable"
+
+                        venues_list = []
+                        venues = modules[m][Types.VENUES]
+
+                        for v in venues:
+                            v_name = timetable_data[Types.VENUES][v][Types.NAME]
+                            if self.builder.venue_exists(v_name):
+                                venues_list.append(self.builder.venue_get_by_name(v_name))
+
+                        courses = modules[m][Types.COURSES]
+                        courses_list = {}
+                        for c in courses:
+                            c_name = timetable_data[Types.COURSES][c][Types.NAME]
+                            if self.builder.course_exists(c_name):
+                                courses_list[self.builder.course_get_by_name(c_name)] = courses[c]
+
+                        self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
+                                                venues_list, modules[m][Types.TIME_SLOTS],
+                                                modules[m][Types.SLOTS_PER_DAY])
+                self.modules_populate()
+                MessageBox(self).information("Success", "Modules imported successfully.")
+            else:
+                MessageBox(self).warning("Nothing found", "No modules were found in this file.")
+
+    def lecturers_import(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
+                                                   "", "Timetable (*tbl)")
+
+        if file_path:
+            try:
+                file_loader = FileLoader(file_path)
+                timetable_data = file_loader.load_tbl()
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
+
+            lecturers = timetable_data[Types.LECTURERS]
+            do_for_all = False, False
+
+            if len(lecturers) > 0:
+                existing_lecturers = [lecturer.name.lower().strip() for lecturer in self.builder.lecturer_get_all()]
+
+                for lecturer in lecturers:
+
+                    if lecturer == "unavailable":
+                        continue
+
+                    name = lecturers[lecturer][Types.NAME]
+
+                    if name.lower() in existing_lecturers:
+
+                        if not do_for_all[1]:
+                            confirmation = Confirmation.confirm(self, "Already exists",
+                                                                f"A lecturer with this name ({name}) "
+                                                                f"already exists. Do you want to import it anyway?")
+                            if confirmation[1]:
+                                do_for_all = confirmation
+                        else:
+                            confirmation = do_for_all
+
+                        if confirmation[0]:
+                            self.builder.add_lecturer(name)
+                    else:
+                        self.builder.add_lecturer(name)
+
+                self.lecturers_populate()
+                MessageBox(self).information("Success", "Lecturers imported successfully.")
+            else:
+                MessageBox(self).warning("Nothing found", "No lecturers were found in this file.")
+
+    def venues_import(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
+                                                   "", "Timetable (*tbl)")
+
+        if file_path:
+            try:
+                file_loader = FileLoader(file_path)
+                timetable_data = file_loader.load_tbl()
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
+
+            venues = timetable_data[Types.VENUES]
+            do_for_all = False, False
+
+            if len(venues) > 0:
+                existing_venues = [venue.name.lower().strip() for venue in self.builder.venue_get_all()]
+
+                for v in venues:
+
+                    if v == "unavailable":
+                        continue
+
+                    name = venues[v][Types.NAME]
+                    if name.lower() in existing_venues:
+
+                        if not do_for_all[1]:
+                            confirmation = Confirmation.confirm(self, "Already exists",
+                                                                f"A venue with this name ({name}) already exists. "
+                                                                "Do you want to import it anyway?")
+                            if confirmation[1]:
+                                do_for_all = confirmation
+                        else:
+                            confirmation = do_for_all
+
+                        if confirmation[0]:
+                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                                                   venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
+                    else:
+                        self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                                               venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
+
+                self.venues_populate()
+                MessageBox(self).information("Success", "Venues imported successfully.")
+            else:
+                MessageBox(self).warning("Nothing found", "No venues were found in this file.")
+
+    def enrollments_import(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
+                                                   "", "Timetable (*tbl)")
+
+        if file_path:
+            try:
+                file_loader = FileLoader(file_path)
+                timetable_data = file_loader.load_tbl()
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
+
+            if not isinstance(self.builder, TertiaryBuilder):
+                return
+
+            enrollments = timetable_data[Types.CAPACITIES]
+
+            if len(enrollments) > 0:
+
+                existing_courses = [course.id for course in self.builder.course_get_all()]
+
+                for course in enrollments:
+                    if course in existing_courses:
+                        course_levels = enrollments[course]
+                        for level in course_levels:
+                            self.builder.add_course_enrollment(course, level, course_levels[level][Types.CAPACITY])
+
+                MessageBox(self).information("Success", "Enrollments imported successfully.")
+            else:
+                MessageBox(self).warning("Nothing found", "No enrollments were found in this file.")
+
+    def datas_merge(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
+                                                   "", "Timetable (*tbl)")
+
+        try:
+            if file_path:
+                try:
+                    file_loader = FileLoader(file_path)
+                    timetable_data = file_loader.load_tbl()
+                except Exception as e:
+                    MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                    logger.warning(str(e))
+                    return
+
+                courses = timetable_data[Types.COURSES]
+                do_for_all = False, False
+
+                if len(courses) > 0:
+                    existing_courses = [course.name.lower().strip() for course in self.builder.course_get_all()]
+
+                    for c in courses:
+                        name = courses[c][Types.NAME]
+                        if name.lower() in existing_courses:
+                            if not do_for_all[1]:
+                                confirmation = Confirmation.confirm(self, "Already exists",
+                                                                    f"A program with this name ({name}) "
+                                                                    f"already exists. Do you want to import it anyway?")
+                                if confirmation[1]:
+                                    do_for_all = confirmation
+                            else:
+                                confirmation = do_for_all
+
+                            if confirmation[0]:
+                                self.builder.add_course(name, courses[c][Types.SHORT_NAME])
+                        else:
+                            self.builder.add_course(name, courses[c][Types.SHORT_NAME])
+
+                lecturers = timetable_data[Types.LECTURERS]
+                do_for_all = False, False
+
+                if len(lecturers) > 0:
+                    existing_lecturers = [lecturer.name.lower().strip() for lecturer in
+                                          self.builder.lecturer_get_all()]
+
+                    for lecturer in lecturers:
+
+                        if lecturer == "unavailable":
+                            continue
+
+                        name = lecturers[lecturer][Types.NAME]
+                        if name.lower() in existing_lecturers:
+
+                            if not do_for_all[1]:
+                                confirmation = Confirmation.confirm(self, "Already exists",
+                                                                    f"A lecturer with this name ({name}) "
+                                                                    f"already exists. Do you want to import it anyway?")
+                                if confirmation[1]:
+                                    do_for_all = confirmation
+                            else:
+                                confirmation = do_for_all
+
+                            if confirmation[0]:
+                                self.builder.add_lecturer(name)
+                        else:
+                            self.builder.add_lecturer(name)
+
+                venues = timetable_data[Types.VENUES]
+                do_for_all = False, False
+
+                if len(venues) > 0:
+                    existing_venues = [venue.name.lower().strip() for venue in self.builder.venue_get_all()]
+
+                    for v in venues:
+
+                        if v == "unavailable":
+                            continue
+
+                        name = venues[v][Types.NAME]
+                        if name.lower() in existing_venues:
+
+                            if not do_for_all[1]:
+                                confirmation = Confirmation.confirm(self, "Already exists",
+                                                                    f"A venue with this name ({name}) "
+                                                                    f"already exists. Do you want to import it anyway?")
+                                if confirmation[1]:
+                                    do_for_all = confirmation
+                            else:
+                                confirmation = do_for_all
+
+                            if confirmation[0]:
+                                self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                                                       venues[v][Types.LOCATION],
+                                                       venues[v][Types.LOCATION_DESCRIPTION])
+                        else:
+                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                                                   venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
+
+                enrollments = timetable_data[Types.CAPACITIES]
+
+                if len(enrollments) > 0:
+
+                    existing_courses = [course.id for course in self.builder.course_get_all()]
+
+                    for course in enrollments:
+                        if course in existing_courses:
+                            course_levels = enrollments[course]
+                            for level in course_levels:
+                                self.builder.add_course_enrollment(course, level,
+                                                                   course_levels[level][Types.CAPACITY])
+
+                modules = timetable_data[Types.MODULES]
+                do_for_all = False, False
+
+                if len(modules) > 0:
+                    existing_modules = [module.name.lower().strip() for module in self.builder.module_get_all()]
+
+                    for m in modules:
+                        name = modules[m][Types.NAME]
+                        if name.lower().strip() in existing_modules:
+
+                            if not do_for_all[1]:
+                                confirmation = Confirmation.confirm(self, "Already exists",
+                                                                    f"A module with this name ({name}) already "
+                                                                    f"exists. Do you want to import it anyway?")
+                                if confirmation[1]:
+                                    do_for_all = confirmation
+                            else:
+                                confirmation = do_for_all
+
+                            if confirmation[0]:
+                                self.builder.add_module(name, modules[m][Types.CODE], modules[m][Types.LECTURER],
+                                                        modules[m][Types.COURSES], modules[m][Types.VENUES],
+                                                        modules[m][Types.TIME_SLOTS],
+                                                        modules[m][Types.SLOTS_PER_DAY])
+                        else:
+                            self.builder.add_module(name, modules[m][Types.CODE], modules[m][Types.LECTURER],
+                                                    modules[m][Types.COURSES], modules[m][Types.VENUES],
+                                                    modules[m][Types.TIME_SLOTS], modules[m][Types.SLOTS_PER_DAY])
+
+                self.modules_populate()
+                self.lecturers_populate()
+                self.modules_populate()
+                self.courses_populate()
+                MessageBox(self).information("Success", "Timetable projects merged successfully.")
+
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).information("Error", f"An error occurred while trying to merge")
 
 
 def close_project():

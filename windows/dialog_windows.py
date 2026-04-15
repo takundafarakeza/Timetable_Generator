@@ -219,17 +219,22 @@ class AddModuleDataWindow(QDialog):
                 MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
 
     def add_course(self):
+
+        if self.module_course_level.currentText() == "":
+            MessageBox(self).warning("Incomplete input", "Please select the program level!")
+            return
+
         course = self.module_course_select.currentData()
 
         if not course:
-            MessageBox(self).warning("Not Found", "This course is not found! You can add it"
+            MessageBox(self).warning("Not Found", "This program is not found! You can add it"
                                                   " in the courses section.")
             return
 
         module_courses = self.builder.module_get(self.module_id).courses
 
         if course in module_courses:
-            MessageBox(self).warning("Already Exits", "This course is already added!")
+            MessageBox(self).warning("Already Exits", "This program is already added!")
             return
         else:
             course_module_code = (self.ui.module_course_module_code.text() if
@@ -407,6 +412,7 @@ class AddLecturerWindow(QDialog):
 
         self.ui.close_btn.clicked.connect(self.close)
         self.save_btn.clicked.connect(self.save)
+        self.lecturer_name.returnPressed.connect(self.save)
 
     def close(self):
         self.lecturer_name.clear()
@@ -422,9 +428,13 @@ class AddLecturerWindow(QDialog):
 
             if not self.edit:
                 try:
-                    self.builder.add_lecturer(lecturer_name)
-                    self.saved.emit(Types.LECTURERS)
-                    self.close()
+                    if not self.builder.lecturer_exits(lecturer_name):
+                        self.builder.add_lecturer(lecturer_name)
+                        self.saved.emit(Types.LECTURERS)
+                        self.close()
+                    else:
+                        MessageBox(self).warning("Already exists",
+                                                 f"A lecturer with the name ({lecturer_name}) already exists!")
                 except Exception as e:
                     logger.critical(str(e))
                     MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
@@ -523,6 +533,8 @@ class AddCourseWindow(QDialog):
 
         self.ui.course_save.clicked.connect(self.save)
         self.ui.close_btn.clicked.connect(self.close)
+        self.course_short_name.returnPressed.connect(self.save)
+        self.course_name.returnPressed.connect(self.save)
 
     def close(self):
         self.course_name.clear()
@@ -539,13 +551,17 @@ class AddCourseWindow(QDialog):
             course_short_name = self.course_short_name.text()
 
             if not self.edit:
-                # try:
-                self.builder.add_course(course_name, course_short_name)
-                self.saved.emit(Types.COURSES)
-                self.close()
-                # except Exception as e:
-                #     logger.critical(str(e))
-                #     MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+                try:
+                    if not self.builder.course_exists(course_name):
+                        self.builder.add_course(course_name, course_short_name)
+                        self.saved.emit(Types.COURSES)
+                        self.close()
+                    else:
+                        MessageBox(self).warning("Already exists",
+                                                 f"A program with the name ({course_name}) already exists!")
+                except Exception as e:
+                    logger.critical(str(e))
+                    MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
             else:
                 try:
                     self.builder.course_change_data(self.course_id, Types.NAME, course_name)
@@ -1262,9 +1278,13 @@ class AddVenueWindow(QDialog):
 
             if not self.edit:
                 try:
-                    self.builder.add_venue(venue_name, venue_location, venue_description)
-                    self.saved.emit(Types.VENUES)
-                    self.close()
+                    if not self.builder.venue_exists(venue_name):
+                        self.builder.add_venue(venue_name, venue_location, venue_description)
+                        self.saved.emit(Types.VENUES)
+                        self.close()
+                    else:
+                        MessageBox(self).warning("Already exists",
+                                                 f"A venue with the name ({venue_name}) already exists!")
                 except Exception as e:
                     logger.critical(str(e))
                     MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
@@ -1322,6 +1342,8 @@ class AddTertiaryVenueWindow(QDialog):
 
         self.ui.close_btn.clicked.connect(self.close)
         self.save_btn.clicked.connect(self.save)
+        self.venue_capacity.returnPressed.connect(self.save)
+        self.venue_name.returnPressed.connect(self.save)
 
     def close(self):
         self.venue_name.clear()
@@ -1347,9 +1369,13 @@ class AddTertiaryVenueWindow(QDialog):
 
             if not self.edit:
                 try:
-                    self.builder.add_venue(venue_name, venue_capacity, venue_special, [0, 0])
-                    self.saved.emit(Types.VENUES)
-                    self.close()
+                    if not self.builder.venue_exists(venue_name):
+                        self.builder.add_venue(venue_name, venue_capacity, venue_special, [0, 0])
+                        self.saved.emit(Types.VENUES)
+                        self.close()
+                    else:
+                        MessageBox(self).warning("Already exists",
+                                                 f"A venue with the name ({venue_name}) already exists!")
                 except Exception as e:
                     logger.critical(str(e))
                     MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
