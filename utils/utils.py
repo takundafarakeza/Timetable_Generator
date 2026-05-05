@@ -1,13 +1,16 @@
-import re
-
-from PySide6.QtCore import QStandardPaths
+from PySide6.QtCore import QStandardPaths, QCoreApplication
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 from pathlib import Path
 import json
 import os
+import re
 import math
 import random
 import shutil
+
+
+QCoreApplication.setOrganizationName("Takunda")
+QCoreApplication.setApplicationName("Timetable_Generator")
 
 
 class Utils:
@@ -66,16 +69,12 @@ class Utils:
             return []
 
     @staticmethod
-    def get_appdata_path(app_name="Timetable_Generator"):
+    def get_appdata_path():
         base_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
-
         if not base_path or not os.path.exists(base_path):
             base_path = os.getenv('APPDATA')
-
-        app_path = os.path.join(base_path, app_name)
-        Path(app_path).mkdir(parents=True, exist_ok=True)
-
-        return app_path
+        Path(base_path).mkdir(parents=True, exist_ok=True)
+        return base_path
 
     @staticmethod
     def get_timetables_path():
@@ -85,14 +84,8 @@ class Utils:
 
     @staticmethod
     def get_log_path(app_name="Timetable_Generator"):
-        base_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
-
-        if not base_path or not os.path.exists(base_path):
-            base_path = os.getenv('APPDATA')
-
-        app_path = os.path.join(base_path, app_name, "logs")
+        app_path = os.path.join(Utils.get_appdata_path(), "logs")
         Path(app_path).mkdir(parents=True, exist_ok=True)
-
         return app_path
 
     @staticmethod
@@ -109,12 +102,13 @@ class Utils:
             try:
                 if os.path.isdir(file_path):
                     if os.path.exists(dest_path):
+
                         QMessageBox.warning(parent, "Already exists", f"This project file already exists")
                         return False
                     shutil.copytree(file_path, dest_path)
                 else:
                     shutil.copy2(file_path, dest_path)
-                return dest_path
+                return os.path.join(dest_path, os.path.basename(file_path))
             except Exception as e:
                 QMessageBox.critical(None, "Error", str(e))
         return False

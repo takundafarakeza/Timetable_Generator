@@ -384,6 +384,14 @@ border-radius: 3px;</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>module_save</tabstop>
+  <tabstop>module_code</tabstop>
+  <tabstop>module_lecturer</tabstop>
+  <tabstop>slots_per_cycle</tabstop>
+  <tabstop>slots_per_day</tabstop>
+  <tabstop>module_name</tabstop>
+ </tabstops>
  <resources>
   <include location="../assets/icons.qrc"/>
  </resources>

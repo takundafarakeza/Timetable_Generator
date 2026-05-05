@@ -18,7 +18,6 @@ from windows.dialog_windows import (AddModuleWindow, AddModuleDataWindow, AddSub
                                     ProjectsWindow, AddTertiaryVenueWindow)
 from typing import Union, Optional
 import sys
-import json
 import functools
 
 
@@ -66,32 +65,32 @@ class StartUpWindow(StartUp):
                                                    "", "Timetable (*tbl)")
 
         if file_path:
-            with open(file_path) as file:
-                try:
-                    import_path = Utils.get_timetables_path()
-                    json.loads(file.read())
-                    file_path = Utils.save_file(file_path, None, import_path)
-                    file_loader = FileLoader(file_path)
-                    time_table_data = file_loader.load_tbl()
-                except Exception as e:
-                    MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
-                    logger.warning(str(e))
-                    return
+            try:
+                import_path = Utils.get_timetables_path()
+                file_loader = FileLoader(file_path)
+                time_table_data = file_loader.load_tbl()
+                file_path = Utils.save_file(file_path, None, import_path)
 
-                if time_table_data:
-                    institution = time_table_data[Types.INSTITUTION_TYPE]
-                    builder = (
-                        PrimaryBuilder if institution == Types.INSTITUTION_PRIMARY else
-                        SecondaryBuilder if institution == Types.INSTITUTION_SECONDARY else
-                        TertiaryBuilder
-                    )
-                    builder = builder(file_path, file_loader=file_loader)
-                    project_name = Utils.project_path_to_name(file_path)
-                    settings.add_recent_file(project_name, file_path)
-                    app_window.set_builder(builder)
-                    self.populate_recent()
-                    self.close()
-                    self.project_open.emit(institution, project_name)
+            except Exception as e:
+                MessageBox(self).critical("Invalid file", f"Could not open this file: {str(e)}")
+                logger.warning(str(e))
+                return
+
+            if time_table_data:
+                institution = time_table_data[Types.INSTITUTION_TYPE]
+                builder = (
+                    PrimaryBuilder if institution == Types.INSTITUTION_PRIMARY else
+                    SecondaryBuilder if institution == Types.INSTITUTION_SECONDARY else
+                    TertiaryBuilder
+                )
+                builder = builder(file_path, file_loader=file_loader)
+                project_name = Utils.project_path_to_name(file_path)
+                print(project_name, file_path)
+                settings.add_recent_file(project_name, file_path)
+                app_window.set_builder(builder)
+                self.populate_recent()
+                self.close()
+                self.project_open.emit(institution, project_name)
 
     def create_project(self, data: tuple):
         try:

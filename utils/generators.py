@@ -378,11 +378,6 @@ class TertiarySchool(QObject):
         capacities = self.time_table_data.capacities
         accepts = self.time_table_data.accepts
 
-        all_venues = {v for m in modules.values() for v in m[Types.VENUES] if len(m[Types.COURSES]) > 0}
-        all_courses = {f"{c}-{m[Types.COURSES][c][Types.LEVEL]}" for m in modules.values() for c in m[Types.COURSES]
-                       if len(m[Types.COURSES]) > 0}
-        all_lecturers = {m[Types.LECTURER] for m in modules.values() if len(m[Types.COURSES]) > 0}
-
         x = {}
         un_scheduled = ""
         skip_list = []
@@ -421,6 +416,11 @@ class TertiarySchool(QObject):
             else:
                 skip_list.append(m_id)
                 un_scheduled += f"{modules[m_id][Types.NAME]}: No lecturer provided.\n"
+
+        all_venues = {v for m in modules.values() for v in m[Types.VENUES] if len(m[Types.COURSES]) > 0}
+        all_courses = {f"{c}-{m[Types.COURSES][c][Types.LEVEL]}" for m in modules.values() for c in m[Types.COURSES]
+                       if len(m[Types.COURSES]) > 0}
+        all_lecturers = {m[Types.LECTURER] for m in modules.values() if len(m[Types.COURSES]) > 0}
 
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:

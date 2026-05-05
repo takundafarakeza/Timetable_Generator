@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_dialogVYduhN.ui'
+## Form generated from reading UI file 'add_module_dialogGmdZJV.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -199,6 +199,11 @@ class Ui_AddModule(object):
 
         self.verticalLayout_2.addWidget(self.main_container)
 
+        QWidget.setTabOrder(self.module_save, self.module_code)
+        QWidget.setTabOrder(self.module_code, self.module_lecturer)
+        QWidget.setTabOrder(self.module_lecturer, self.slots_per_cycle)
+        QWidget.setTabOrder(self.slots_per_cycle, self.slots_per_day)
+        QWidget.setTabOrder(self.slots_per_day, self.module_name)
 
         self.retranslateUi(AddModule)
 

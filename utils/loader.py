@@ -75,7 +75,6 @@ class FileLoader:
         key = derive_key(salt)
         aesgcm = AESGCM(key)
         payload_bytes = aesgcm.decrypt(nonce, ciphertext + tag, header_bytes)
-
         return json.loads(payload_bytes.decode("utf-8"))
 
 
