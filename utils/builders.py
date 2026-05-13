@@ -1487,6 +1487,9 @@ class TertiaryBuilder(QObject):
     def timetable_get(self):
         return self._time_table_data[Types.TIMETABLE]
 
+    def timetable_data_get(self):
+        return self._time_table_data
+
     def timetable_get_days_per_cycle(self):
         return self._time_table_data[Types.DAYS_PER_CYCLE]
 

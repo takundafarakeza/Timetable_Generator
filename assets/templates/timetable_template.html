@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Timetable Viewer</title>
+
+        <style>
+            body {
+                font-family: "Segoe UI", Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: #eef2f7;
+                color: #1e293b;
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 25px;
+                font-size: 2rem;
+                color: #0f172a;
+            }
+
+            .top-bar {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 25px;
+            }
+
+            select,
+            input {
+                padding: 12px 14px;
+                border: none;
+                border-radius: 12px;
+                background: white;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+                font-size: 14px;
+                min-width: 220px;
+                outline: none;
+                transition: 0.2s ease;
+            }
+
+            select:focus,
+            input:focus {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+            }
+
+            #schedule {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 18px;
+            }
+
+            .card {
+                background: white;
+                border-radius: 18px;
+                padding: 18px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+                transition: 0.2s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+            }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 6px;
+                height: 100%;
+                background: #2563eb;
+            }
+
+            .card h3 {
+                margin: 0 0 12px 0;
+                font-size: 1.2rem;
+                color: #0f172a;
+            }
+
+            .meta {
+                margin-top: 8px;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #475569;
+            }
+
+            .meta strong {
+                color: #0f172a;
+            }
+
+            .empty {
+                text-align: center;
+                background: white;
+                padding: 40px;
+                border-radius: 18px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+                color: #64748b;
+                grid-column: 1/-1;
+            }
+
+            @media screen and (max-width: 700px) {
+                body {
+                    padding: 14px;
+                }
+
+                h1 {
+                    font-size: 1.5rem;
+                }
+
+                select,
+                input {
+                    width: 100%;
+                    min-width: unset;
+                }
+
+                #schedule {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1 id="tbl-title">Test State University Timetable</h1>
+
+        <div class="top-bar">
+            <select id="daySelect"></select>
+
+            <select id="courseFilter">
+                <option value="">All Courses</option>
+            </select>
+
+            <select id="levelFilter">
+                <option value="">All Levels</option>
+            </select>
+
+            <select id="lecturerFilter">
+                <option value="">All Lecturers</option>
+            </select>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search module, lecturer, venue..."
+            />
+        </div>
+
+        <div id="schedule"></div>
+
+        <script>
+            /*
+    POPULATE COURSE AND LECTURER FILTERS
+*/
+
+            function populateFilters() {
+                /*
+        COURSES
+    */
+
+                const courseSelect = document.getElementById("courseFilter");
+
+                for (const id in timetableData.courses) {
+                    const course = timetableData.courses[id];
+
+                    const option = document.createElement("option");
+
+                    option.value = id;
+
+                    option.textContent = `${course.short_name} - ${course.name}`;
+
+                    courseSelect.appendChild(option);
+                }
+
+                if (Object.keys(timetableData.days).length === 0) {
+                    for (const day in timetableData.time_table) {
+                        const option = document.createElement("option");
+
+                        option.value = day;
+
+                        option.textContent = `Day ${day}`;
+                        document
+                            .getElementById("daySelect")
+                            .appendChild(option);
+                    }
+
+                } else {
+                    for (const day in timetableData.days) {
+                        const dayData = timetableData.days[day];
+
+                        const option = document.createElement("option");
+
+                        option.value = day;
+
+                        option.textContent = dayData;
+
+                        document
+                            .getElementById("daySelect")
+                            .appendChild(option);
+                    }
+                }
+                /*
+        LECTURERS
+    */
+
+                const lecturerSelect =
+                    document.getElementById("lecturerFilter");
+
+                for (const id in timetableData.lecturers) {
+                    if (id === "unavailable") {
+                        continue;
+                    }
+
+                    const lecturer = timetableData.lecturers[id];
+
+                    const option = document.createElement("option");
+
+                    option.value = id;
+
+                    option.textContent = lecturer.name;
+
+                    lecturerSelect.appendChild(option);
+                }
+            }
+
+            function populateLevels() {
+                const levelSelect = document.getElementById("levelFilter");
+
+                const levels = new Set();
+
+                for (const day in timetableData.time_table) {
+                    const dayData = timetableData.time_table[day];
+
+                    for (const slot in dayData) {
+                        const slotData = dayData[slot];
+
+                        for (const moduleId in slotData) {
+                            const entry = slotData[moduleId];
+
+                            entry.courses.forEach((course) => {
+                                const [, level] = course.split("-");
+
+                                levels.add(level);
+                            });
+                        }
+                    }
+                }
+
+                [...levels].sort().forEach((level) => {
+                    const option = document.createElement("option");
+
+                    option.value = level;
+
+                    option.textContent = level;
+
+                    levelSelect.appendChild(option);
+                });
+            }
+
+/*
+    EMBEDDED TIMETABLE DATA
+*/
+
+            const timetableData = {
+                time_table_name: "First Semester",
+                institution_type: "college",
+                institution_name: "Good University",
+                time_slot_length: 120,
+                days_per_cycle: 5,
+                slots_per_day: 4,
+                slots: {},
+                days: {},
+                break_slots: {},
+                sequence: {
+                    courses: 4,
+                    modules: 31,
+                    venues: 4,
+                    lecturers: 17,
+                    blocks: 0,
+                },
+                courses: {
+                    1: { name: "Computer Science", short_name: "CS" },
+                    2: {
+                        name: "Computer Systems Engineering",
+                        short_name: "CSE",
+                    },
+                    3: { name: "Cyber Security", short_name: "CSC" },
+                    4: { name: "Software Engineering", short_name: "SWE" },
+                },
+                modules: {
+                    1: {
+                        name: "Object Oriented Programming",
+                        code: "HCSE 224",
+                        lecturer: "1",
+                        courses: {
+                            1: { level: "2.2", course_module_code: "HCSE 224" },
+                            2: { level: "2.2", course_module_code: "HCSE 224" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    2: {
+                        name: "Digital Signal Processing",
+                        code: "HTENG 237",
+                        lecturer: "2",
+                        courses: {
+                            2: {
+                                level: "2.2",
+                                course_module_code: "HTENG 237",
+                            },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    3: {
+                        name: "Data Communication and Computer Networks",
+                        code: "HCSCI237",
+                        lecturer: "3",
+                        courses: {
+                            1: { level: "2.2", course_module_code: "HCSCI237" },
+                            2: { level: "2.2", course_module_code: "HCSCI237" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    4: {
+                        name: "Software Project Management",
+                        code: "HCSCI235",
+                        lecturer: "4",
+                        courses: {
+                            1: { level: "4.2", course_module_code: "HCSCI235" },
+                            2: { level: "4.2", course_module_code: "HCSCI235" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    5: {
+                        name: "Digital Image Processing",
+                        code: "HCSCI239",
+                        lecturer: "5",
+                        courses: {
+                            1: { level: "2.2", course_module_code: "HCSCI239" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    6: {
+                        name: "Operating Systems",
+                        code: "HCSCI133",
+                        lecturer: "3",
+                        courses: {
+                            1: { level: "2.1", course_module_code: "HCSCI133" },
+                            2: { level: "2.1", course_module_code: "HCSCI133" },
+                        },
+                        venues: ["2"],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    7: {
+                        name: "Caculus",
+                        code: "HMAT 131",
+                        lecturer: "2",
+                        courses: {
+                            2: { level: "1.1", course_module_code: "HMAT 131" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    8: {
+                        name: "Technoprenuership",
+                        code: "TCNP201",
+                        lecturer: "5",
+                        courses: {
+                            2: { level: "2.1", course_module_code: "TCNP201" },
+                            1: { level: "2.1", course_module_code: "TCNP201" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    9: {
+                        name: "Web Technologies",
+                        code: "HSWE221",
+                        lecturer: "4",
+                        courses: {
+                            4: { level: "2.1", course_module_code: "HSWE221" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    10: {
+                        name: "Discrete Maths",
+                        code: "HMAT121",
+                        lecturer: "8",
+                        courses: {
+                            2: { level: "1.2", course_module_code: "HMAT121" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    11: {
+                        name: "Software Engineering",
+                        code: "HSWE121",
+                        lecturer: "9",
+                        courses: {
+                            2: { level: "1.2", course_module_code: "HSWE121" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    12: {
+                        name: "Gender Studies",
+                        code: "GS121",
+                        lecturer: "9",
+                        courses: {
+                            2: { level: "2.1", course_module_code: "GS121" },
+                            1: { level: "2.1", course_module_code: "GS121" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 2,
+                    },
+                    13: {
+                        name: "Ethics",
+                        code: "Eth131",
+                        lecturer: "4",
+                        courses: {
+                            2: { level: "1.1", course_module_code: "Eth131" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    14: {
+                        name: "Communication Skills",
+                        code: "HLAN121",
+                        lecturer: "8",
+                        courses: {
+                            1: { level: "1.1", course_module_code: "HLAN121" },
+                            2: { level: "1.1", course_module_code: "HLAN121" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    15: {
+                        name: "Database systems",
+                        code: "DB121",
+                        lecturer: "3",
+                        courses: {
+                            1: { level: "1.2", course_module_code: "DB121" },
+                            2: { level: "1.2", course_module_code: "DB121" },
+                            3: { level: "1.2", course_module_code: "DB121" },
+                            4: { level: "1.2", course_module_code: "DB121" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    16: {
+                        name: "Control Systems ",
+                        code: "Ht12",
+                        lecturer: "8",
+                        courses: {
+                            2: { level: "4.1", course_module_code: "Ht12" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    17: {
+                        name: "Artificial Intelligence",
+                        code: "AI",
+                        lecturer: "1",
+                        courses: {
+                            2: { level: "1.1", course_module_code: "AI" },
+                            1: { level: "1.1", course_module_code: "AI" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    18: {
+                        name: "Linear Algebrae",
+                        code: "LA23",
+                        lecturer: "15",
+                        courses: {
+                            2: { level: "2.1", course_module_code: "LA23" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    19: {
+                        name: "Secure Coding",
+                        code: "SC23",
+                        lecturer: "17",
+                        courses: {
+                            3: { level: "2.1", course_module_code: "SC23" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    20: {
+                        name: "Web Development",
+                        code: "WD234",
+                        lecturer: "16",
+                        courses: {
+                            1: { level: "2.1", course_module_code: "WD234" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    21: {
+                        name: "Research Methods",
+                        code: "RMW231",
+                        lecturer: "14",
+                        courses: {
+                            2: { level: "4.1", course_module_code: "RMW231" },
+                            1: { level: "2.1", course_module_code: "RMW231" },
+                            4: { level: "2.1", course_module_code: "RMW231" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    22: {
+                        name: "Computer Security",
+                        code: "CSRF21",
+                        lecturer: "17",
+                        courses: {
+                            3: { level: "1.2", course_module_code: "CSRF21" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    23: {
+                        name: "Object Oriented Analysis and Design",
+                        code: "OOAD",
+                        lecturer: "4",
+                        courses: {
+                            2: { level: "2.1", course_module_code: "OOAD" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    24: {
+                        name: "Algorithms and Data structures",
+                        code: "ADS231",
+                        lecturer: "17",
+                        courses: {
+                            1: { level: "1.2", course_module_code: "ADS231" },
+                            2: { level: "1.2", course_module_code: "ADS231" },
+                            4: { level: "1.2", course_module_code: "ADS231" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    25: {
+                        name: "Forencics",
+                        code: "FRN231",
+                        lecturer: "16",
+                        courses: {
+                            3: { level: "2.1", course_module_code: "FRN231" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    26: {
+                        name: "Applied Statistics",
+                        code: "HMAT1231",
+                        lecturer: "11",
+                        courses: {
+                            1: { level: "2.1", course_module_code: "HMAT1231" },
+                            4: { level: "1.2", course_module_code: "HMAT1231" },
+                            2: { level: "2.1", course_module_code: "HMAT1231" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    27: {
+                        name: "Physics for Engineers",
+                        code: "PFE231",
+                        lecturer: "11",
+                        courses: {
+                            2: { level: "1.1", course_module_code: "PFE231" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    28: {
+                        name: "Requirements  Engineering",
+                        code: "RQE123",
+                        lecturer: "10",
+                        courses: {
+                            4: { level: "2.2", course_module_code: "RQE123" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    29: {
+                        name: "Visual Programming",
+                        code: "VSP122",
+                        lecturer: "12",
+                        courses: {
+                            4: { level: "2.1", course_module_code: "VSP122" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    30: {
+                        name: "Graphics Design",
+                        code: "GRD123",
+                        lecturer: "16",
+                        courses: {
+                            1: { level: "2.2", course_module_code: "GRD123" },
+                        },
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                    31: {
+                        name: "Motion Tracking",
+                        code: "MH78",
+                        lecturer: "1",
+                        courses: {},
+                        venues: [],
+                        time_slots: 2,
+                        slots_per_day: 1,
+                        duration: 1,
+                    },
+                },
+                venues: {
+                    unavailable: {
+                        name: "Unavailable",
+                        capacity: 0,
+                        special: "Yes",
+                        location: [0, 0],
+                        location_description: "Unavailable",
+                    },
+                    1: {
+                        name: "Science Lab",
+                        capacity: 60,
+                        special: "No",
+                        location: [0, 0],
+                        location_description: "Na",
+                    },
+                    2: {
+                        name: "Lab 30",
+                        capacity: 60,
+                        special: "No",
+                        location: [0, 0],
+                        location_description: "Na",
+                    },
+                    3: {
+                        name: "Lab 1",
+                        capacity: 60,
+                        special: "No",
+                        location: [0, 0],
+                        location_description: "Na",
+                    },
+                    4: {
+                        name: "Lab 2",
+                        capacity: 60,
+                        special: "No",
+                        location: [0, 0],
+                        location_description: "Na",
+                    },
+                },
+                lecturers: {
+                    unavailable: { name: "Unavailable" },
+                    1: { name: "Mr A Tigere" },
+                    2: { name: "Mr L T Dube" },
+                    3: { name: "Mr T Mzikamwi" },
+                    4: { name: "Me T G Rebanewako" },
+                    5: { name: "MS A K Sibanda" },
+                    6: { name: "Mr Mpini" },
+                    7: { name: "Mr Tapedzesa" },
+                    8: { name: "Mr Mashoko" },
+                    9: { name: "Mr Mpfiga" },
+                    10: { name: "Mr Mbire" },
+                    11: { name: "Mrs Gonzo" },
+                    12: { name: "Mr Mafukidze" },
+                    13: { name: "Mr Ndondo" },
+                    14: { name: "Mr Kativu" },
+                    15: { name: "Mrs Mkwembi" },
+                    16: { name: "Mr Mkwembi" },
+                    17: { name: "Mrs Sarai" },
+                },
+                capacities: {
+                    1: {
+                        1.1: { capacity: 0 },
+                        1.2: { capacity: 0 },
+                        2.1: { capacity: 0 },
+                        2.2: { capacity: 0 },
+                        3.1: { capacity: 0 },
+                        3.2: { capacity: 0 },
+                        4.1: { capacity: 0 },
+                        4.2: { capacity: 0 },
+                        5.1: { capacity: 0 },
+                        5.2: { capacity: 0 },
+                    },
+                    2: {
+                        1.1: { capacity: 0 },
+                        1.2: { capacity: 0 },
+                        2.1: { capacity: 0 },
+                        2.2: { capacity: 0 },
+                        3.1: { capacity: 0 },
+                        3.2: { capacity: 0 },
+                        4.1: { capacity: 0 },
+                        4.2: { capacity: 0 },
+                        5.1: { capacity: 0 },
+                        5.2: { capacity: 0 },
+                    },
+                    3: {
+                        1.1: { capacity: 0 },
+                        1.2: { capacity: 0 },
+                        2.1: { capacity: 0 },
+                        2.2: { capacity: 0 },
+                        3.1: { capacity: 0 },
+                        3.2: { capacity: 0 },
+                        4.1: { capacity: 0 },
+                        4.2: { capacity: 0 },
+                        5.1: { capacity: 0 },
+                        5.2: { capacity: 0 },
+                    },
+                    4: {
+                        1.1: { capacity: 0 },
+                        1.2: { capacity: 0 },
+                        2.1: { capacity: 0 },
+                        2.2: { capacity: 0 },
+                        3.1: { capacity: 0 },
+                        3.2: { capacity: 0 },
+                        4.1: { capacity: 0 },
+                        4.2: { capacity: 0 },
+                        5.1: { capacity: 0 },
+                        5.2: { capacity: 0 },
+                    },
+                },
+                time_table: {
+                    1: {
+                        1: {
+                            5: { venue: "1", courses: ["1-2.2"] },
+                            6: { venue: "2", courses: ["1-2.1", "2-2.1"] },
+                            11: { venue: "3", courses: ["2-1.2"] },
+                            16: { venue: "4", courses: ["2-4.1"] },
+                        },
+                        2: {
+                            20: { venue: "2", courses: ["1-2.1"] },
+                            22: { venue: "3", courses: ["3-1.2"] },
+                            27: { venue: "1", courses: ["2-1.1"] },
+                        },
+                        3: {
+                            1: { venue: "4", courses: ["1-2.2", "2-2.2"] },
+                            14: { venue: "2", courses: ["1-1.1", "2-1.1"] },
+                            21: {
+                                venue: "3",
+                                courses: ["2-4.1", "1-2.1", "4-2.1"],
+                            },
+                        },
+                        4: {
+                            7: { venue: "2", courses: ["2-1.1"] },
+                            18: { venue: "3", courses: ["2-2.1"] },
+                            24: {
+                                venue: "4",
+                                courses: ["1-1.2", "2-1.2", "4-1.2"],
+                            },
+                            29: { venue: "1", courses: ["4-2.1"] },
+                        },
+                    },
+                    2: {
+                        1: {
+                            4: { venue: "4", courses: ["1-4.2", "2-4.2"] },
+                            17: { venue: "3", courses: ["2-1.1", "1-1.1"] },
+                            25: { venue: "1", courses: ["3-2.1"] },
+                            26: {
+                                venue: "2",
+                                courses: ["1-2.1", "4-1.2", "2-2.1"],
+                            },
+                        },
+                        2: {
+                            5: { venue: "4", courses: ["1-2.2"] },
+                            15: {
+                                venue: "2",
+                                courses: ["1-1.2", "2-1.2", "3-1.2", "4-1.2"],
+                            },
+                            21: {
+                                venue: "1",
+                                courses: ["2-4.1", "1-2.1", "4-2.1"],
+                            },
+                        },
+                        3: {
+                            6: { venue: "2", courses: ["1-2.1", "2-2.1"] },
+                            9: { venue: "3", courses: ["4-2.1"] },
+                            28: { venue: "4", courses: ["4-2.2"] },
+                        },
+                        4: {
+                            2: { venue: "2", courses: ["2-2.2"] },
+                            8: { venue: "4", courses: ["2-2.1", "1-2.1"] },
+                            13: { venue: "1", courses: ["2-1.1"] },
+                        },
+                    },
+                    3: {
+                        1: {
+                            2: { venue: "4", courses: ["2-2.2"] },
+                            14: { venue: "3", courses: ["1-1.1", "2-1.1"] },
+                            18: { venue: "2", courses: ["2-2.1"] },
+                            25: { venue: "1", courses: ["3-2.1"] },
+                        },
+                        2: {
+                            1: { venue: "1", courses: ["1-2.2", "2-2.2"] },
+                            15: {
+                                venue: "2",
+                                courses: ["1-1.2", "2-1.2", "3-1.2", "4-1.2"],
+                            },
+                            23: { venue: "3", courses: ["2-2.1"] },
+                            29: { venue: "4", courses: ["4-2.1"] },
+                        },
+                        3: {
+                            3: { venue: "1", courses: ["1-2.2", "2-2.2"] },
+                            12: { venue: "2", courses: ["2-2.1", "1-2.1"] },
+                        },
+                        4: {
+                            4: { venue: "4", courses: ["1-4.2", "2-4.2"] },
+                            10: { venue: "1", courses: ["2-1.2"] },
+                            12: { venue: "2", courses: ["2-2.1", "1-2.1"] },
+                        },
+                    },
+                    4: {
+                        1: {
+                            26: {
+                                venue: "3",
+                                courses: ["1-2.1", "4-1.2", "2-2.1"],
+                            },
+                            30: { venue: "4", courses: ["1-2.2"] },
+                        },
+                        2: {
+                            3: { venue: "2", courses: ["1-2.2", "2-2.2"] },
+                            13: { venue: "1", courses: ["2-1.1"] },
+                            19: { venue: "3", courses: ["3-2.1"] },
+                        },
+                        3: {
+                            7: { venue: "4", courses: ["2-1.1"] },
+                            10: { venue: "1", courses: ["2-1.2"] },
+                            28: { venue: "2", courses: ["4-2.2"] },
+                        },
+                        4: {
+                            8: { venue: "2", courses: ["2-2.1", "1-2.1"] },
+                            16: { venue: "3", courses: ["2-4.1"] },
+                        },
+                    },
+                    5: {
+                        1: {
+                            17: { venue: "4", courses: ["2-1.1", "1-1.1"] },
+                            19: { venue: "1", courses: ["3-2.1"] },
+                            20: { venue: "3", courses: ["1-2.1"] },
+                            23: { venue: "2", courses: ["2-2.1"] },
+                        },
+                        2: {
+                            11: { venue: "3", courses: ["2-1.2"] },
+                            22: { venue: "1", courses: ["3-1.2"] },
+                            30: { venue: "2", courses: ["1-2.2"] },
+                        },
+                        3: {
+                            12: { venue: "4", courses: ["2-2.1", "1-2.1"] },
+                            24: {
+                                venue: "3",
+                                courses: ["1-1.2", "2-1.2", "4-1.2"],
+                            },
+                            27: { venue: "2", courses: ["2-1.1"] },
+                        },
+                        4: {
+                            9: { venue: "1", courses: ["4-2.1"] },
+                            12: { venue: "4", courses: ["2-2.1", "1-2.1"] },
+                        },
+                    },
+                },
+            };
+/*
+    SLOT LABELS
+*/
+
+            const slotLabels = timetableData.slots;
+            document.getElementById("tbl-title").textContent = `${timetableData.time_table_name}`;
+
+/*
+    MAIN RENDER FUNCTION
+*/
+
+            function renderDayFromData(day, data) {
+                const container = document.getElementById("schedule");
+
+                container.innerHTML = "";
+
+                const searchText = document
+                    .getElementById("searchInput")
+                    .value.toLowerCase();
+
+                const dayData = data[day];
+
+                if (!dayData) {
+                    container.innerHTML = `
+            <div class="empty">
+                No timetable data available.
+            </div>
+        `;
+
+                    return;
+                }
+
+                let found = false;
+
+                for (const slot in dayData) {
+                    const slotData = dayData[slot];
+
+                    for (const moduleId in slotData) {
+                        const entry = slotData[moduleId];
+
+                        const module = timetableData.modules[moduleId];
+
+                        const lecturer =
+                            timetableData.lecturers[module.lecturer];
+
+                        const venue = timetableData.venues[entry.venue];
+
+                        const textBlob = `
+                ${module.name}
+                ${module.code}
+                ${lecturer.name}
+                ${venue.name}
+            `.toLowerCase();
+
+                        if (searchText && !textBlob.includes(searchText)) {
+                            continue;
+                        }
+
+                        found = true;
+
+                        const card = document.createElement("div");
+
+                        card.className = "card";
+
+                        card.innerHTML = `
+
+                <h3>${module.name}</h3>
+
+                <div class="meta">
+                    <strong>Code:</strong>
+                    ${module.code}
+                </div>
+
+                <div class="meta">
+                    <strong>Time:</strong>
+                    ${slotLabels[slot] || "Slot " + slot}
+                </div>
+
+                <div class="meta">
+                    <strong>Venue:</strong>
+                    ${venue.name}
+                </div>
+
+                <div class="meta">
+                    <strong>Lecturer:</strong>
+                    ${lecturer.name}
+                </div>
+
+                <div class="meta">
+                    <strong>Courses:</strong>
+
+                    ${entry.courses
+                        .map((course) => {
+                            const [courseId, level] = course.split("-");
+
+                            const courseInfo = timetableData.courses[courseId];
+
+                            return `
+                            ${courseInfo.short_name}
+                            ${level}
+                        `;
+                        })
+                        .join(", ")}
+
+                </div>
+
+            `;
+
+                        container.appendChild(card);
+                    }
+                }
+
+                if (!found) {
+                    container.innerHTML = `
+            <div class="empty">
+                No matching schedule found.
+            </div>
+        `;
+                }
+            }
+
+            function renderDay(day) {
+                const container = document.getElementById("schedule");
+
+                container.innerHTML = "";
+
+                const searchText = document
+                    .getElementById("searchInput")
+                    .value.toLowerCase();
+
+                const dayData = timetableData.time_table[day];
+
+                if (!dayData) {
+                    container.innerHTML = `
+            <div class="empty">
+                No timetable data available.
+            </div>
+        `;
+
+                    return;
+                }
+
+                let found = false;
+
+                for (const slot in dayData) {
+                    const slotData = dayData[slot];
+
+                    for (const moduleId in slotData) {
+                        const entry = slotData[moduleId];
+
+                        const module = timetableData.modules[moduleId];
+
+                        const lecturer =
+                            timetableData.lecturers[module.lecturer];
+
+                        const venue = timetableData.venues[entry.venue];
+
+                        const textBlob = `
+                ${module.name}
+                ${module.code}
+                ${lecturer.name}
+                ${venue.name}
+            `.toLowerCase();
+
+                        if (searchText && !textBlob.includes(searchText)) {
+                            continue;
+                        }
+
+                        found = true;
+
+                        const card = document.createElement("div");
+
+                        card.className = "card";
+
+                        card.innerHTML = `
+
+                <h3>${module.name}</h3>
+
+                <div class="meta">
+                    <strong>Code:</strong>
+                    ${module.code}
+                </div>
+
+                <div class="meta">
+                    <strong>Time:</strong>
+                    ${slotLabels[slot]}
+                </div>
+
+                <div class="meta">
+                    <strong>Venue:</strong>
+                    ${venue.name}
+                </div>
+
+                <div class="meta">
+                    <strong>Lecturer:</strong>
+                    ${lecturer.name}
+                </div>
+
+                <div class="meta">
+                    <strong>Courses:</strong>
+
+                    ${entry.courses
+                        .map((course) => {
+                            const [courseId, level] = course.split("-");
+
+                            const courseInfo = timetableData.courses[courseId];
+
+                            return `
+                            ${courseInfo.short_name}
+                            ${level}
+                        `;
+                        })
+                        .join(", ")}
+
+                </div>
+
+            `;
+
+                        container.appendChild(card);
+                    }
+                }
+
+                if (!found) {
+                    container.innerHTML = `
+            <div class="empty">
+                No matching schedule found.
+            </div>
+        `;
+                }
+            }
+
+            /*
+    API FOR DEVELOPERS
+*/
+
+            /*
+================================================================
+
+    TIMETABLE API
+
+    This API provides lightweight access to timetable data embedded
+    within this exported HTML document. It is intended for timetable
+    viewing, filtering, iframe embedding, and frontend integrations.
+
+    IMPORTANT:
+    - All data is publicly accessible on the client side.
+    - This is NOT a secure backend service.
+    - No authentication or encryption is implemented.
+    - The API is designed for read-only operations only.
+    - Data validity depends on the exported timetable source.
+
+    Recommended usage:
+    - Student timetable lookup
+    - Lecturer schedule lookup
+    - Institutional timetable portals
+    - Embedded timetable viewers
+
+================================================================
+*/
+
+            window.TimetableAPI = {
+                // GET FULL DAY SCHEDULE
+
+                getDaySchedule(day) {
+                    return timetableData.time_table[day] || {};
+                },
+
+                // GET MODULE INFO
+
+                getModule(moduleId) {
+                    return timetableData.modules[moduleId];
+                },
+
+                // GET VENUE INFO
+                getVenue(venueId) {
+                    return timetableData.venues[venueId];
+                },
+
+                // GET LECTURER INFO
+                getLecturer(lecturerId) {
+                    return timetableData.lecturers[lecturerId];
+                },
+
+                /*
+        GET COURSE TIMETABLE
+
+        Example:
+        TimetableAPI.getCourseSchedule("1")
+    */
+                getCourseSchedule(courseId, level = null) {
+                    const filtered = {};
+
+                    for (const day in timetableData.time_table) {
+                        const dayData = timetableData.time_table[day];
+
+                        const filteredDay = {};
+
+                        for (const slot in dayData) {
+                            const slotData = dayData[slot];
+
+                            const filteredSlot = {};
+
+                            for (const moduleId in slotData) {
+                                const entry = slotData[moduleId];
+
+                                const found = entry.courses.some((course) => {
+                                    const [id, lvl] = course.split("-");
+
+                                    if (level) {
+                                        return id === courseId && lvl === level;
+                                    }
+
+                                    return id === courseId;
+                                });
+
+                                if (found) {
+                                    filteredSlot[moduleId] = entry;
+                                }
+                            }
+
+                            if (Object.keys(filteredSlot).length) {
+                                filteredDay[slot] = filteredSlot;
+                            }
+                        }
+
+                        if (Object.keys(filteredDay).length) {
+                            filtered[day] = filteredDay;
+                        }
+                    }
+
+                    return filtered;
+                },
+
+                /*
+        GET LECTURER TIMETABLE
+
+        Example:
+        TimetableAPI.getLecturerSchedule("3")
+    */
+                getLecturerSchedule(lecturerId) {
+                    const filtered = {};
+
+                    for (const day in timetableData.time_table) {
+                        const dayData = timetableData.time_table[day];
+
+                        const filteredDay = {};
+
+                        for (const slot in dayData) {
+                            const slotData = dayData[slot];
+
+                            const filteredSlot = {};
+
+                            for (const moduleId in slotData) {
+                                const module = timetableData.modules[moduleId];
+
+                                if (module.lecturer === lecturerId) {
+                                    filteredSlot[moduleId] = slotData[moduleId];
+                                }
+                            }
+
+                            if (Object.keys(filteredSlot).length) {
+                                filteredDay[slot] = filteredSlot;
+                            }
+                        }
+
+                        if (Object.keys(filteredDay).length) {
+                            filtered[day] = filteredDay;
+                        }
+                    }
+
+                    return filtered;
+                },
+            };
+
+            /*
+    EVENTS
+
+    Dropdown change events trigger a re-render of the timetable 
+    based on the selected filters. The search input triggers a re-render on every 
+    input to filter the displayed schedule in real-time.
+*/
+
+            document
+                .getElementById("courseFilter")
+                .addEventListener("change", renderCurrentView);
+
+            document
+                .getElementById("levelFilter")
+                .addEventListener("change", renderCurrentView);
+
+            document
+                .getElementById("lecturerFilter")
+                .addEventListener("change", renderCurrentView);
+
+            document
+                .getElementById("daySelect")
+                .addEventListener("change", (e) => renderDay(e.target.value));
+
+            document
+                .getElementById("searchInput")
+                .addEventListener("input", () => {
+                    renderDay(document.getElementById("daySelect").value);
+                });
+
+            /*
+    INITIAL RENDER
+*/
+            function renderCurrentView() {
+                const day = document.getElementById("daySelect").value;
+
+                const courseId = document.getElementById("courseFilter").value;
+
+                const level = document.getElementById("levelFilter").value;
+
+                const lecturerId =
+                    document.getElementById("lecturerFilter").value;
+
+                let data = timetableData.time_table;
+
+                if (courseId) {
+                    data = TimetableAPI.getCourseSchedule(
+                        courseId,
+                        level || null,
+                    );
+                }
+
+                if (lecturerId) {
+                    data = TimetableAPI.getLecturerSchedule(lecturerId);
+                }
+
+                renderDayFromData(day, data);
+            }
+
+            populateLevels();
+            populateFilters();
+            renderDay("1");
+        </script>
+    </body>
+</html>

@@ -16,6 +16,7 @@ from windows.dialog_windows import (AddModuleWindow, AddModuleDataWindow, AddSub
                                     AddClassWindow, AddClassDataWindow, AddClassDataPrimaryWindow,
                                     AddVenueWindow, AddBlockWindow, AddBlockDataWindow, AddBreakWindow,
                                     ProjectsWindow, AddTertiaryVenueWindow)
+from developers import Developers
 from typing import Union, Optional
 import sys
 import functools
@@ -279,6 +280,10 @@ class AppWindow(Main):
         self.file_menu.addAction("Save", self.builder.timetable_save)
         self.file_menu.addAction("Save As", self.save_as)
         self.file_menu.addAction("Export", self.export)
+
+        if institution_type == Types.INSTITUTION_TERTIARY:
+            self.file_menu.addAction("Export html", self.export_html)
+
         self.file_menu.addAction("Exit", self.close)
 
         self.timetable_menu.addAction("Clear timetable", self.timetable_clear)
@@ -463,6 +468,17 @@ class AppWindow(Main):
         else:
             self.dialog_window = Export(self.builder, self)
             self.dialog_window.show()
+
+    def export_html(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Export Timetable", f"{self.builder.timetable_get_name()}.html",
+            "Html Files (*.html)")
+
+        if file_path:
+            with open(str(file_path), "w") as f:
+                f.write(Developers.get_timetable_html(self.builder.timetable_data_get()))
+            MessageBox(self).information("Export success", f"Html Timetable exported successfully! "
+                                                           f"\n{file_path}")
 
     def undo(self):
         loading_dialog = LoadingDialog(app_window)
