@@ -87,11 +87,13 @@ class AddModuleWindow(QDialog):
         self.module_lecturer = self.ui.module_lecturer
         self.module_slots_per_cycle = self.ui.slots_per_cycle
         self.module_slots_per_day = self.ui.slots_per_day
+        self.module_duration = self.ui.session_length
         self.save_btn = self.ui.module_save
 
         self.set_slot_max()
         self.save_btn.clicked.connect(self.save)
         self.ui.close_btn.clicked.connect(self.close)
+        self.module_slots_per_cycle.valueChanged.connect(self.update_values)
         self.populate_lecturers()
 
         if self.edit:
@@ -101,17 +103,26 @@ class AddModuleWindow(QDialog):
             self.module_lecturer.setCurrentText(self.builder.lecturer_get(module_data.lecturer).name)
             self.module_slots_per_cycle.setValue(module_data.time_slots)
             self.module_slots_per_day.setValue(module_data.slots_per_day)
+            self.module_duration.setValue(module_data.duration)
 
     def clear(self):
         self.module_name.clear()
         self.module_code.clear()
         self.module_slots_per_day.setValue(0)
         self.module_slots_per_cycle.setValue(0)
+        self.module_duration.setValue(1)
 
     def set_slot_max(self):
         self.module_slots_per_cycle.setMaximum(self.timetable_days_per_cycle *
                                                self.timetable_slots_per_day)
         self.module_slots_per_day.setMaximum(self.timetable_slots_per_day)
+
+    def update_values(self):
+        slots = self.module_slots_per_cycle.value()
+        if slots == 0 and self.module_slots_per_day.value() < 2:
+            self.module_slots_per_day.setValue(0)
+        else:
+            self.module_slots_per_day.setValue(1)
 
     def populate_lecturers(self):
         lecturers = self.builder.lecturer_get_all()
@@ -129,11 +140,12 @@ class AddModuleWindow(QDialog):
             if not self.edit:
                 self.builder.add_module(self.module_name.text(), self.module_code.text(),
                                         self.module_lecturer.currentData(), {}, [],
-                                        self.module_slots_per_cycle.value(), self.module_slots_per_day.value())
+                                        self.module_slots_per_cycle.value(), self.module_slots_per_day.value(),
+                                        self.module_duration.value())
             else:
                 self.builder.module_update(self.module_id, self.module_name.text(), self.module_code.text(),
                                            self.module_lecturer.currentData(), self.module_slots_per_cycle.value(),
-                                           self.module_slots_per_day.value())
+                                           self.module_slots_per_day.value(), self.module_duration.value())
         else:
             MessageBox(self).warning("Incomplete Input", "Please fill in all the required fields!")
             return

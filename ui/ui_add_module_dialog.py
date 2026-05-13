@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_dialogGmdZJV.ui'
+## Form generated from reading UI file 'add_module_dialognlOPXA.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -179,7 +179,7 @@ class Ui_AddModule(object):
         self.title.setStyleSheet(u"color: rgb(129, 129, 129);")
         self.title_2 = QLabel(self.frame)
         self.title_2.setObjectName(u"title_2")
-        self.title_2.setGeometry(QRect(140, 180, 101, 20))
+        self.title_2.setGeometry(QRect(140, 180, 121, 20))
         self.title_2.setFont(font1)
         self.title_2.setStyleSheet(u"color: rgb(129, 129, 129);")
         self.module_save = QPushButton(self.frame)
@@ -190,6 +190,16 @@ class Ui_AddModule(object):
 "background: #57954F;\n"
 "color: #F3F4F6;\n"
 "border-radius: 3px;")
+        self.title_3 = QLabel(self.frame)
+        self.title_3.setObjectName(u"title_3")
+        self.title_3.setGeometry(QRect(30, 250, 141, 20))
+        self.title_3.setFont(font1)
+        self.title_3.setStyleSheet(u"color: rgb(129, 129, 129);")
+        self.session_length = QSpinBox(self.frame)
+        self.session_length.setObjectName(u"session_length")
+        self.session_length.setGeometry(QRect(30, 280, 101, 30))
+        self.session_length.setMinimumSize(QSize(0, 30))
+        self.session_length.setMinimum(1)
 
         self.verticalLayout_3.addWidget(self.frame)
 
@@ -217,8 +227,9 @@ class Ui_AddModule(object):
         self.module_name.setPlaceholderText(QCoreApplication.translate("AddModule", u"Module name", None))
         self.module_code.setPlaceholderText(QCoreApplication.translate("AddModule", u"Module code", None))
         self.module_lecturer.setPlaceholderText(QCoreApplication.translate("AddModule", u"Lecturer", None))
-        self.title.setText(QCoreApplication.translate("AddModule", u"Periods Per Cycle", None))
-        self.title_2.setText(QCoreApplication.translate("AddModule", u"Periods Per Day", None))
+        self.title.setText(QCoreApplication.translate("AddModule", u"Sessions Per Cycle", None))
+        self.title_2.setText(QCoreApplication.translate("AddModule", u"Max Sessions Per Day", None))
         self.module_save.setText(QCoreApplication.translate("AddModule", u"Save", None))
+        self.title_3.setText(QCoreApplication.translate("AddModule", u"Session length (In periods)", None))
     # retranslateUi
 

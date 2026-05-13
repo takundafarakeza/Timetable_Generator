@@ -705,11 +705,11 @@ class ModulesTable(QTableWidget):
     def set_action_handler(self, handler):
         self.parent_callback = handler
 
-    def add_item(self, module_id, name, code, lecturer, courses, venues, time_slots, slots_per_day):
+    def add_item(self, module_id, name, code, lecturer, courses, venues, time_slots, slots_per_day, duration):
         row = self.rowCount()
         color = self.colors[Utils.scale_down(6, row) - 1]
         self.insertRow(row)
-        self.setRowHeight(row, 50)
+        self.setRowHeight(row, 60)
 
         color_container = QWidget()
         layout = QVBoxLayout(color_container)
@@ -742,7 +742,7 @@ class ModulesTable(QTableWidget):
         venues = QLabel(f"{venues}")
         self.setCellWidget(row, 4, venues)
 
-        time_slots = QLabel(f"Periods: {time_slots}\nPer day: {slots_per_day}")
+        time_slots = QLabel(f"Periods: {time_slots}\nDay Max: {slots_per_day}\nDuration: {duration}")
         self.setCellWidget(row, 5, time_slots)
 
         action_widget = QWidget()

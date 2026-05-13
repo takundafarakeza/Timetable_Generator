@@ -73,6 +73,7 @@ class Utils:
         base_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
         if not base_path or not os.path.exists(base_path):
             base_path = os.getenv('APPDATA')
+        base_path = os.path.join(base_path, "Timetable_Generator")
         Path(base_path).mkdir(parents=True, exist_ok=True)
         return base_path
 
@@ -83,7 +84,7 @@ class Utils:
         return app_path
 
     @staticmethod
-    def get_log_path(app_name="Timetable_Generator"):
+    def get_log_path():
         app_path = os.path.join(Utils.get_appdata_path(), "logs")
         Path(app_path).mkdir(parents=True, exist_ok=True)
         return app_path

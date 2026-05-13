@@ -392,7 +392,7 @@ class TertiarySchool(QObject):
             demand = module_demand[m_id]
             scheduled = False
 
-            if len(m[Types.LECTURER]) > 0 or m[Types.LECTURER] != "unavailable":
+            if len(m[Types.LECTURER]) > 0 and m[Types.LECTURER] != "unavailable":
                 if len(m[Types.COURSES]) > 0:
                     if len(m[Types.VENUES]) == 0:
                         for v in venues:
@@ -422,12 +422,44 @@ class TertiarySchool(QObject):
                        if len(m[Types.COURSES]) > 0}
         all_lecturers = {m[Types.LECTURER] for m in modules.values() if len(m[Types.COURSES]) > 0}
 
+        start = {}
+
+        for m_id, m in modules.items():
+            if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:
+                duration = m[Types.DURATION]
+
+                for d in days:
+                    for s in range(self.time_table_data.slots_per_day - duration + 1):
+                        for v in m[Types.VENUES]:
+                            start[m_id, d, s, v] = model.NewBoolVar(f"start_{m_id}_{d}_{s}_{v}")
+
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:
                 for d in days:
                     for s in slots:
                         for v in m[Types.VENUES]:
                             x[m_id, d, s, v] = model.NewBoolVar(f"x_{m_id}_{d}_{s}_{v}")
+
+        for m_id, m in modules.items():
+
+            if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:
+                duration = m[Types.DURATION]
+
+                for d in days:
+                    for s in slots:
+                        for v in m[Types.VENUES]:
+
+                            if (m_id, d, s, v) not in x:
+                                continue
+
+                            covering_starts = []
+
+                            for k in range(max(0, s - duration + 1), s + 1):
+                                if (m_id, d, k, v) in start:
+                                    covering_starts.append(
+                                        start[m_id, d, k, v]
+                                    )
+                            model.Add(x[m_id, d, s, v] == sum(covering_starts))
 
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.COURSES]) > 0:
@@ -449,22 +481,22 @@ class TertiarySchool(QObject):
 
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.COURSES]) > 0:
-                max_per_day = m["slots_per_day"]
+                max_per_day = m[Types.SLOTS_PER_DAY]
                 for d in days:
                     model.Add(sum(
-                        x[m_id, d, s, v] for s in slots
-                        for v in m[Types.VENUES] if (m_id, d, s, v) in x
+                        x[m_id, d, s, v] for s in range(self.time_table_data.slots_per_day - m[Types.DURATION] + 1)
+                        for v in m[Types.VENUES] if (m_id, d, s, v) in start
                     ) <= max_per_day)
 
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.COURSES]) > 0:
-                total = m["time_slots"]
+                total = m[Types.TIME_SLOTS]
                 model.Add(sum(
-                    x[m_id, d, s, v]
+                    start[m_id, d, s, v]
                     for d in days
-                    for s in slots
+                    for s in range(self.time_table_data.slots_per_day - m[Types.DURATION] + 1)
                     for v in m[Types.VENUES]
-                    if (m_id, d, s, v) in x
+                    if (m_id, d, s, v) in start
                 ) == total)
 
         for course in all_courses:

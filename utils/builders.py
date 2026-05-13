@@ -1771,10 +1771,10 @@ class TertiaryBuilder(QObject):
     # ======================================== MODULES =================================== #
 
     def add_module(self, name: str, code: str, lecturer: str, courses: dict, venues: list,
-                   time_slots: int, slots_per_day: int):
+                   time_slots: int, slots_per_day: int, duration: int):
         module_id = str(self._time_table_data[Types.SEQUENCE][Types.MODULES] + 1)
         self._time_table_data[Types.MODULES][module_id] = (
-            Formats.format_module(name, code, lecturer, courses, venues, time_slots, slots_per_day)
+            Formats.format_module(name, code, lecturer, courses, venues, time_slots, slots_per_day, duration)
         )
         self._time_table_data[Types.SEQUENCE][Types.MODULES] = int(module_id)
         self.set_unsaved()
@@ -1824,13 +1824,14 @@ class TertiaryBuilder(QObject):
         return True
 
     def module_update(self, module_id: str, name: str, code: str, lecturer: str,
-                      time_slots: int, slots_per_day: int):
+                      time_slots: int, slots_per_day: int, duration: int):
         module = self._time_table_data[Types.MODULES][module_id]
-        module["name"] = name
-        module["code"] = code
-        module["lecturer"] = lecturer
-        module["time_slots"] = time_slots
-        module["slots_per_day"] = slots_per_day
+        module[Types.NAME] = name
+        module[Types.CODE] = code
+        module[Types.LECTURER] = lecturer
+        module[Types.TIME_SLOTS] = time_slots
+        module[Types.SLOTS_PER_DAY] = slots_per_day
+        module[Types.DURATION] = duration
         self.set_unsaved()
 
     def module_add_course(self, course_id: str, module_id: str, level: str, course_module_code: str):
@@ -1889,8 +1890,9 @@ class TertiaryBuilder(QObject):
                           modules_data[module][Types.LECTURER],
                           modules_data[module][Types.COURSES],
                           modules_data[module][Types.VENUES],
-                          modules_data[module]["time_slots"],
-                          modules_data[module]["slots_per_day"])
+                          modules_data[module][Types.TIME_SLOTS],
+                          modules_data[module][Types.SLOTS_PER_DAY],
+                          modules_data[module][Types.DURATION])
                    for module in modules_data]
         return modules
 
@@ -1901,8 +1903,10 @@ class TertiaryBuilder(QObject):
                       module_data[Types.LECTURER],
                       module_data[Types.COURSES],
                       module_data[Types.VENUES],
-                      module_data["time_slots"],
-                      module_data["slots_per_day"])
+                      module_data[Types.TIME_SLOTS],
+                      module_data[Types.SLOTS_PER_DAY],
+                      module_data[Types.DURATION])
+
 
     def module_count(self):
         return len(self._time_table_data[Types.MODULES])

@@ -751,7 +751,7 @@ class AppWindow(Main):
             self.modules_table.add_item(module.id, module.name, module.code,
                                         lecturer, courses,
                                         venues, module.time_slots,
-                                        module.slots_per_day)
+                                        module.slots_per_day, module.duration)
 
         courses_set = {course_ for course_ in courses_set}
         for course_ in courses_set:
@@ -780,7 +780,7 @@ class AppWindow(Main):
                     self.modules_table.add_item(module.id, module.name, module.code,
                                                 lecturer, courses,
                                                 venues, module.time_slots,
-                                                module.slots_per_day)
+                                                module.slots_per_day, module.duration)
         else:
             self.modules_populate()
 
@@ -808,7 +808,7 @@ class AppWindow(Main):
                         self.modules_table.add_item(module.id, module.name, module.code,
                                                     lecturer, courses,
                                                     venues, module.time_slots,
-                                                    module.slots_per_day)
+                                                    module.slots_per_day, module.duration)
                         break
         else:
             self.modules_populate()
@@ -1304,9 +1304,7 @@ class AppWindow(Main):
                             courses = modules[m][Types.COURSES]
 
                             lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
-                            print(lecturer_name)
                             lecturer_exists = self.builder.lecturer_get_by_name(lecturer_name)
-                            print(lecturer_exists)
                             lecturer = lecturer_exists if lecturer_exists else "unavailable"
 
                             venues_list = []
@@ -1325,7 +1323,7 @@ class AppWindow(Main):
 
                             self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
                                                     venues_list, modules[m][Types.TIME_SLOTS],
-                                                    modules[m][Types.SLOTS_PER_DAY])
+                                                    modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
 
                     else:
                         lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
@@ -1349,7 +1347,7 @@ class AppWindow(Main):
 
                         self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
                                                 venues_list, modules[m][Types.TIME_SLOTS],
-                                                modules[m][Types.SLOTS_PER_DAY])
+                                                modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
                 self.modules_populate()
                 MessageBox(self).information("Success", "Modules imported successfully.")
             else:
@@ -1439,10 +1437,10 @@ class AppWindow(Main):
                             confirmation = do_for_all
 
                         if confirmation[0]:
-                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL] == "Yes",
                                                    venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
                     else:
-                        self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                        self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL] == "Yes",
                                                venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
 
                 self.venues_populate()
@@ -1485,7 +1483,9 @@ class AppWindow(Main):
     def datas_merge(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
                                                    "", "Timetable (*tbl)")
-
+        loading_dialog = LoadingDialog(self)
+        loading_dialog.show()
+        app.processEvents()
         try:
             if file_path:
                 try:
@@ -1572,11 +1572,12 @@ class AppWindow(Main):
                                 confirmation = do_for_all
 
                             if confirmation[0]:
-                                self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                                self.builder.add_venue(name, venues[v][Types.CAPACITY],
+                                                       venues[v][Types.SPECIAL] == "Yes",
                                                        venues[v][Types.LOCATION],
                                                        venues[v][Types.LOCATION_DESCRIPTION])
                         else:
-                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL],
+                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL]  == "Yes",
                                                    venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
 
                 enrollments = timetable_data[Types.CAPACITIES]
@@ -1612,24 +1613,64 @@ class AppWindow(Main):
                                 confirmation = do_for_all
 
                             if confirmation[0]:
-                                self.builder.add_module(name, modules[m][Types.CODE], modules[m][Types.LECTURER],
-                                                        modules[m][Types.COURSES], modules[m][Types.VENUES],
-                                                        modules[m][Types.TIME_SLOTS],
-                                                        modules[m][Types.SLOTS_PER_DAY])
+                                courses = modules[m][Types.COURSES]
+
+                                lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
+                                lecturer_exists = self.builder.lecturer_get_by_name(lecturer_name)
+                                lecturer = lecturer_exists if lecturer_exists else "unavailable"
+
+                                venues_list = []
+                                venues = modules[m][Types.VENUES]
+
+                                for v in venues:
+                                    v_name = timetable_data[Types.VENUES][v][Types.NAME]
+                                    if self.builder.venue_exists(v_name):
+                                        venues_list.append(self.builder.venue_get_by_name(v_name))
+
+                                courses_list = {}
+                                for c in courses:
+                                    c_name = timetable_data[Types.COURSES][c][Types.NAME]
+                                    if self.builder.course_exists(c_name):
+                                        courses_list[self.builder.course_get_by_name(c_name)] = courses[c]
+
+                                self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
+                                                        venues_list, modules[m][Types.TIME_SLOTS],
+                                                        modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
+
                         else:
-                            self.builder.add_module(name, modules[m][Types.CODE], modules[m][Types.LECTURER],
-                                                    modules[m][Types.COURSES], modules[m][Types.VENUES],
-                                                    modules[m][Types.TIME_SLOTS], modules[m][Types.SLOTS_PER_DAY])
+                            lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
+                            lecturer_exists = self.builder.lecturer_get_by_name(lecturer_name)
+                            lecturer = lecturer_exists if lecturer_exists else "unavailable"
+
+                            venues_list = []
+                            venues = modules[m][Types.VENUES]
+
+                            for v in venues:
+                                v_name = timetable_data[Types.VENUES][v][Types.NAME]
+                                if self.builder.venue_exists(v_name):
+                                    venues_list.append(self.builder.venue_get_by_name(v_name))
+
+                            courses = modules[m][Types.COURSES]
+                            courses_list = {}
+                            for c in courses:
+                                c_name = timetable_data[Types.COURSES][c][Types.NAME]
+                                if self.builder.course_exists(c_name):
+                                    courses_list[self.builder.course_get_by_name(c_name)] = courses[c]
+
+                            self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
+                                                    venues_list, modules[m][Types.TIME_SLOTS],
+                                                    modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
 
                 self.modules_populate()
                 self.lecturers_populate()
                 self.modules_populate()
                 self.courses_populate()
+                self.venues_populate()
                 MessageBox(self).information("Success", "Timetable projects merged successfully.")
-
         except Exception as e:
             logger.critical(str(e))
             MessageBox(self).information("Error", f"An error occurred while trying to merge")
+        loading_dialog.close()
 
 
 def close_project():

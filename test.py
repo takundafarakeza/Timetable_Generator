@@ -1,95 +1,452 @@
-from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-import json
-import struct
-import os
+from ortools.sat.python import cp_model
 
 
-FLAG_ENCRYPTED = 0x01
-VERSION = 1
-MAGIC = b'TBLF'
+# =========================================================
+# SAMPLE DATA
+# =========================================================
+
+DAYS = 5
+SLOTS = 6
+
+days = range(DAYS)
+slots = range(SLOTS)
+
+modules = {
+    "1": {
+        "name": "Math101",
+
+        # shared by multiple courses
+        "courses": {
+            "CS": {"level": "1"},
+            "EE": {"level": "1"},
+        },
+
+        "venues": ["RoomA", "RoomB"],
+
+        # sessions per cycle/week
+        "sessions_per_cycle": 3,
+
+        # preferred maximum sessions/day
+        "max_sessions_per_day": 1,
+
+        # double period
+        "session_length": 2,
+
+        "lecturer": "L1",
+    },
+
+    "2": {
+        "name": "Physics101",
+
+        "courses": {
+            "CS": {"level": "1"},
+            "ME": {"level": "1"},
+        },
+
+        "venues": ["RoomA"],
+
+        "sessions_per_cycle": 2,
+        "max_sessions_per_day": 1,
+
+        # single period
+        "session_length": 1,
+
+        "lecturer": "L2",
+    },
+
+    "3": {
+        "name": "Programming",
+
+        "courses": {
+            "CS": {"level": "1"},
+        },
+
+        "venues": ["Lab1"],
+
+        "sessions_per_cycle": 2,
+        "max_sessions_per_day": 1,
+
+        # triple period
+        "session_length": 3,
+
+        "lecturer": "L1",
+    }
+}
 
 
-class FileLoader:
-    def __init__(self, file: str):
-        self.file_name = file
-
-    def save_file(self, payload: dict):
-        salt = os.urandom(16)
-        nonce = os.urandom(12)
-        key = derive_key(salt)
-
-        header = {
-            "file_type": "TimetableProject",
-            "schema_version": 1,
-            "encrypted": True,
-            "kdf": "scrypt",
-            "cypher": "AES-256-GCM"
-        }
-
-        header_bytes = json.dumps(header).encode("utf-8")
-        payload_bytes = json.dumps(payload).encode("utf-8")
-
-        aes_gcm = AESGCM(key)
-        encrypted = aes_gcm.encrypt(nonce, payload_bytes, header_bytes)
-
-        ciphertext = encrypted[:-16]
-        tag = encrypted[-16:]
-
-        with open(self.file_name, "wb") as f:
-            f.write(MAGIC)
-            f.write(struct.pack("B", VERSION))
-            f.write(struct.pack("B", FLAG_ENCRYPTED))
-            f.write(salt)
-            f.write(nonce)
-            f.write(struct.pack(">I", len(header_bytes)))
-            f.write(header_bytes)
-            f.write(struct.pack(">I", len(ciphertext)))
-            f.write(ciphertext)
-            f.write(tag)
-
-    def load_tbl(self) -> dict:
-        with open(self.file_name, "rb") as f:
-            magic = f.read(4)
-            if magic != MAGIC:
-                raise ValueError("Invalid file type")
-
-            version = struct.unpack("B", f.read(1))[0]
-            if version != VERSION:
-                raise ValueError(f"Unsupported version: {version}")
-
-            flags = struct.unpack("B", f.read(1))[0]
-            if not (flags & FLAG_ENCRYPTED):
-                raise ValueError("Expected encrypted file")
-
-            salt = f.read(16)
-            nonce = f.read(12)
-
-            header_len = struct.unpack(">I", f.read(4))[0]
-            header_bytes = f.read(header_len)
-
-            ciphertext_len = struct.unpack(">I", f.read(4))[0]
-            ciphertext = f.read(ciphertext_len)
-            tag = f.read(16)
-
-        key = derive_key(salt)
-        aesgcm = AESGCM(key)
-        payload_bytes = aesgcm.decrypt(nonce, ciphertext + tag, header_bytes)
-
-        return json.loads(payload_bytes.decode("utf-8"))
+courses = {
+    "CS-1": {"size": 60},
+    "EE-1": {"size": 40},
+    "ME-1": {"size": 35},
+}
 
 
-def derive_key(salt: bytes) -> bytes:
-    kdf = Scrypt(
-        salt=salt,
-        length=32,
-        n=2**14,
-        r=8,
-        p=1
+venues = {
+    "RoomA": {"capacity": 120},
+    "RoomB": {"capacity": 80},
+    "Lab1": {"capacity": 40},
+}
+
+
+# =========================================================
+# MODEL
+# =========================================================
+
+model = cp_model.CpModel()
+
+
+# =========================================================
+# DERIVED SETS
+# =========================================================
+
+all_venues = set(venues.keys())
+
+all_courses = set()
+
+for m in modules.values():
+    for c_name, c_data in m["courses"].items():
+        all_courses.add(f"{c_name}-{c_data['level']}")
+
+all_lecturers = {
+    m["lecturer"]
+    for m in modules.values()
+}
+
+
+# =========================================================
+# MODULE DEMANDS
+# =========================================================
+
+module_demand = {}
+
+for m_id, m in modules.items():
+
+    total = 0
+
+    for c_name, c_data in m["courses"].items():
+
+        course_key = f"{c_name}-{c_data['level']}"
+
+        total += courses[course_key]["size"]
+
+    module_demand[m_id] = total
+
+
+# =========================================================
+# VARIABLES
+# =========================================================
+
+# start variables:
+# start[module, day, slot, venue]
+#
+# means:
+# session STARTS here
+
+start = {}
+
+# occupied variables:
+# x[module, day, slot, venue]
+#
+# means:
+# module occupies this slot
+
+x = {}
+
+# soft overflow variables
+overflow = {}
+
+
+# =========================================================
+# CREATE START VARIABLES
+# =========================================================
+
+for m_id, m in modules.items():
+
+    duration = m["session_length"]
+
+    demand = module_demand[m_id]
+
+    for d in days:
+
+        # valid starting positions only
+        for s in range(SLOTS - duration + 1):
+
+            for v in m["venues"]:
+
+                # capacity filtering
+                if venues[v]["capacity"] >= demand:
+
+                    start[m_id, d, s, v] = model.NewBoolVar(
+                        f"start_{m_id}_{d}_{s}_{v}"
+                    )
+
+
+# =========================================================
+# CREATE OCCUPIED VARIABLES
+# =========================================================
+
+for m_id, m in modules.items():
+
+    demand = module_demand[m_id]
+
+    for d in days:
+        for s in slots:
+            for v in m["venues"]:
+
+                if venues[v]["capacity"] >= demand:
+
+                    x[m_id, d, s, v] = model.NewBoolVar(
+                        f"x_{m_id}_{d}_{s}_{v}"
+                    )
+
+
+# =========================================================
+# LINK START -> OCCUPIED SLOTS
+# =========================================================
+
+for m_id, m in modules.items():
+
+    duration = m["session_length"]
+
+    for d in days:
+        for s in slots:
+            for v in m["venues"]:
+
+                if (m_id, d, s, v) not in x:
+                    continue
+
+                covering_starts = []
+
+                # all possible starts that cover slot s
+                for k in range(
+                        max(0, s - duration + 1),
+                        s + 1
+                ):
+
+                    if (m_id, d, k, v) in start:
+
+                        covering_starts.append(
+                            start[m_id, d, k, v]
+                        )
+
+                model.Add(
+                    x[m_id, d, s, v] == sum(covering_starts)
+                )
+
+
+# =========================================================
+# ONE VENUE PER MODULE SLOT
+# =========================================================
+
+for m_id, m in modules.items():
+
+    for d in days:
+        for s in slots:
+
+            model.Add(
+                sum(
+                    x[m_id, d, s, v]
+                    for v in m["venues"]
+                    if (m_id, d, s, v) in x
+                ) <= 1
+            )
+
+
+# =========================================================
+# VENUE CLASHES
+# =========================================================
+
+for d in days:
+    for s in slots:
+        for v in all_venues:
+
+            model.Add(
+                sum(
+                    x[m_id, d, s, v]
+
+                    for m_id, m in modules.items()
+
+                    if (m_id, d, s, v) in x
+                ) <= 1
+            )
+
+
+# =========================================================
+# SESSIONS PER CYCLE
+# =========================================================
+
+for m_id, m in modules.items():
+
+    total_sessions = m["sessions_per_cycle"]
+
+    model.Add(
+
+        sum(
+
+            start[m_id, d, s, v]
+
+            for d in days
+            for s in range(SLOTS - m["session_length"] + 1)
+            for v in m["venues"]
+
+            if (m_id, d, s, v) in start
+
+        ) == total_sessions
     )
-    return kdf.derive("90$9{|BOs~}!BZY".encode("utf-8"))
 
 
-file_loader = FileLoader(r"C:\Users\TAKUNDA\AppData\Roaming\Timetable_Generator\timetables\MSU_v2.tbl")
-print(file_loader.load_tbl())
+# =========================================================
+# SOFT MAX SESSIONS PER DAY
+# =========================================================
+
+for m_id, m in modules.items():
+
+    max_daily = m["max_sessions_per_day"]
+
+    for d in days:
+
+        overflow[m_id, d] = model.NewIntVar(
+            0,
+            SLOTS,
+            f"overflow_{m_id}_{d}"
+        )
+
+        daily_sessions = sum(
+
+            start[m_id, d, s, v]
+
+            for s in range(SLOTS - m["session_length"] + 1)
+            for v in m["venues"]
+
+            if (m_id, d, s, v) in start
+        )
+
+        model.Add(
+            daily_sessions <= max_daily + overflow[m_id, d]
+        )
+
+
+# =========================================================
+# COURSE CLASHES
+# =========================================================
+
+for course in all_courses:
+
+    c_name, c_level = course.split("-")
+
+    for d in days:
+        for s in slots:
+
+            model.Add(
+
+                sum(
+
+                    x[m_id, d, s, v]
+
+                    for m_id, m in modules.items()
+
+                    if (
+                            c_name in m["courses"]
+                            and
+                            m["courses"][c_name]["level"] == c_level
+                    )
+
+                    for v in m["venues"]
+
+                    if (m_id, d, s, v) in x
+
+                ) <= 1
+            )
+
+
+# =========================================================
+# LECTURER CLASHES
+# =========================================================
+
+for lecturer in all_lecturers:
+
+    for d in days:
+        for s in slots:
+
+            model.Add(
+
+                sum(
+
+                    x[m_id, d, s, v]
+
+                    for m_id, m in modules.items()
+
+                    if m["lecturer"] == lecturer
+
+                    for v in m["venues"]
+
+                    if (m_id, d, s, v) in x
+
+                ) <= 1
+            )
+
+
+# =========================================================
+# OBJECTIVE
+# =========================================================
+
+# minimize daily overflow violations
+
+model.Minimize(
+
+    sum(
+        overflow[m_id, d]
+
+        for m_id in modules
+        for d in days
+    )
+)
+
+
+# =========================================================
+# SOLVE
+# =========================================================
+
+solver = cp_model.CpSolver()
+
+solver.parameters.max_time_in_seconds = 30
+
+status = solver.Solve(model)
+
+
+# =========================================================
+# OUTPUT
+# =========================================================
+
+if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+
+    print("\nTIMETABLE\n")
+
+    for m_id, m in modules.items():
+
+        print(f"\n{m['name']}")
+
+        for d in days:
+
+            for s in range(SLOTS - m["session_length"] + 1):
+
+                for v in m["venues"]:
+
+                    if (
+                            (m_id, d, s, v) in start
+                            and
+                            solver.Value(start[m_id, d, s, v])
+                    ):
+
+                        end_slot = s + m["session_length"] - 1
+
+                        print(
+                            f"  Day {d} | "
+                            f"Slots {s}-{end_slot} | "
+                            f"Venue {v} | "
+                            f"Lecturer {m['lecturer']}"
+                        )
+
+else:
+    print("No feasible solution found.")
 

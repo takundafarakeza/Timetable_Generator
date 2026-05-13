@@ -327,7 +327,7 @@ QWidget#container {
              <string notr="true">color: rgb(129, 129, 129);</string>
             </property>
             <property name="text">
-             <string>Periods Per Cycle</string>
+             <string>Sessions Per Cycle</string>
             </property>
            </widget>
            <widget class="QLabel" name="title_2">
@@ -335,7 +335,7 @@ QWidget#container {
              <rect>
               <x>140</x>
               <y>180</y>
-              <width>101</width>
+              <width>121</width>
               <height>20</height>
              </rect>
             </property>
@@ -349,7 +349,7 @@ QWidget#container {
              <string notr="true">color: rgb(129, 129, 129);</string>
             </property>
             <property name="text">
-             <string>Periods Per Day</string>
+             <string>Max Sessions Per Day</string>
             </property>
            </widget>
            <widget class="QPushButton" name="module_save">
@@ -372,6 +372,47 @@ border-radius: 3px;</string>
             </property>
             <property name="text">
              <string>Save</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="title_3">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>250</y>
+              <width>141</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(129, 129, 129);</string>
+            </property>
+            <property name="text">
+             <string>Session length (In periods)</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="session_length">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>280</y>
+              <width>101</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="minimum">
+             <number>1</number>
             </property>
            </widget>
           </widget>

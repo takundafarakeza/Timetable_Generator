@@ -15,6 +15,7 @@ class Types:
     BLOCK_SLOTS = "block_slots"
     SLOTS = "slots"
     DAYS = "days"
+    DURATION = "duration"
 
     SUBJECTS = "subjects"
     SUBJECT = "subject"
