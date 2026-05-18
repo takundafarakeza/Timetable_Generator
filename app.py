@@ -283,6 +283,7 @@ class AppWindow(Main):
 
         if institution_type == Types.INSTITUTION_TERTIARY:
             self.file_menu.addAction("Export html", self.export_html)
+            self.file_menu.addAction("Export Js API", self.export_js)
 
         self.file_menu.addAction("Exit", self.close)
 
@@ -471,13 +472,24 @@ class AppWindow(Main):
 
     def export_html(self):
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Export Timetable", f"{self.builder.timetable_get_name()}.html",
+            self, "Export HTML Timetable", f"{self.builder.timetable_get_name()}.html",
             "Html Files (*.html)")
 
         if file_path:
             with open(str(file_path), "w") as f:
                 f.write(Developers.get_timetable_html(self.builder.timetable_data_get()))
             MessageBox(self).information("Export success", f"Html Timetable exported successfully! "
+                                                           f"\n{file_path}")
+
+    def export_js(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Export Js API", f"{self.builder.timetable_get_name()}_api.js",
+            "JavaScript Files (*.js)")
+
+        if file_path:
+            with open(str(file_path), "w") as f:
+                f.write(Developers.get_js_api(self.builder.timetable_data_get()))
+            MessageBox(self).information("Export success", f"JavaScript Timetable API exported successfully! "
                                                            f"\n{file_path}")
 
     def undo(self):
