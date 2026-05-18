@@ -12,6 +12,7 @@ from typing import Optional, Union
 from widgets import RecentItem, TimeTable, MessageBox, FramelessWindow
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 import functools
 
 
@@ -104,7 +105,19 @@ class Viewer(QWidget):
                                                                           ).short_name}-{c.split('-')[1]}"
                                                for c in timetable_data[day][slot][event][Types.COURSES]]
                                     courses = ", ".join(courses)
-                                    timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
+
+                                    module_names = ""
+                                    module_data = self.builder.module_get(event)
+                                    module_courses = module_data.courses
+
+                                    for module_course in module_courses:
+                                        course_module_code = module_courses[module_course][Types.COURSE_MODULE_CODE]
+                                        if module_data.code != course_module_code:
+                                            module_c = self.builder.module_get_by_code(course_module_code)
+                                            module_names += f"{module_c.name}, and "
+                                    module_names += module_data.name
+
+                                    timetable.add_item(i, module_names, courses, venue)
                                     filter_data.append((event, self.builder.module_get(event).name))
                         else:
                             timetable.add_item(i, timetable_data[day][slot], "", "")
@@ -176,7 +189,19 @@ class Viewer(QWidget):
                                                                               ).short_name}-{c.split('-')[1]}"
                                                    for c in timetable_data[day][slot][event][Types.COURSES]]
                                         courses = ", ".join(courses)
-                                        timetable.add_item(i, self.builder.module_get(event).name, courses, venue)
+
+                                        module_names = ""
+                                        module_data = self.builder.module_get(event)
+                                        module_courses = module_data.courses
+
+                                        for module_course in module_courses:
+                                            course_module_code = module_courses[module_course][Types.COURSE_MODULE_CODE]
+                                            if module_data.code != course_module_code:
+                                                module_c = self.builder.module_get_by_code(course_module_code)
+                                                module_names += f"{module_c.name}, and "
+                                        module_names += module_data.name
+
+                                        timetable.add_item(i, module_names, courses, venue)
                         else:
                             timetable.add_item(i, timetable_data[day][slot], "", "")
         except Exception as e:
@@ -409,10 +434,113 @@ class Main(FramelessWindow):
     #         self.projects_list.addItem(icon, project)
 
 
+class StartUp(QMainWindow):
+    project_open = Signal(str, str)
+    project_create = Signal(str, str)
+
+    def __init__(self):
+        super().__init__()
+        self.ui = ui_startup.Ui_StartUp()
+        self.ui.setupUi(self)
+        self.boarding = None
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.central_cnt = self.ui.central_container
+
+        self.prefs_btn = self.ui.prefs_btn
+        self.web_btn = self.ui.online_btn
+        self.close_btn = self.ui.close_btn
+        self.minimize_btn = self.ui.minimize_btn
+        self.quit_btn = self.ui.quit_btn
+
+        self.search_txt = self.ui.projects_search_txt
+        self.projects_table = self.ui.recent_layout
+        self.create_project_btn = self.ui.create_new_project_btn
+        self.open_project_btn = self.ui.open_project_btn
+        self.import_project_btn = self.ui.import_project_btn
+        self.recent_refresh_btn = self.ui.recent_projects_refresh_btn
+        self.recent_clear_btn = self.ui.recents_clear_btn
+
+        self.close_btn.clicked.connect(self.close)
+        self.quit_btn.clicked.connect(self.close)
+        self.minimize_btn.clicked.connect(self.showMinimized)
+        self.prefs_btn.clicked.connect(self.show_prefs)
+        self.web_btn.clicked.connect(self.visit_web)
+        self.search_txt.textChanged.connect(self.search_recent)
+        self.create_project_btn.clicked.connect(self.boarding_show)
+        self.recent_refresh_btn.clicked.connect(self.populate_recent)
+        self.recent_clear_btn.clicked.connect(self.recent_clear)
+
+        self.populate_recent()
+
+    def boarding_show(self):
+        self.boarding = Boarding(self)
+        self.boarding.show()
+
+    def show_prefs(self):
+        pass
+
+    def visit_web(self):
+        pass
+
+    def create_project(self):
+        ...
+
+    def populate_recent(self):
+        try:
+            self.clear_recent_layout()
+            recent = Settings().get_recent_files()
+
+            if not len(recent) > 0:
+                self.ui.recent_status_txt.show()
+            else:
+                self.ui.recent_status_txt.hide()
+                for name, path in recent:
+                    self.show_recent(name, path)
+        except Exception as e:
+            logger.critical(str(e))
+
+    def manage_recent(self, name: str, action: str):
+        ...
+
+    def clear_recent_layout(self):
+        for i in range(self.projects_table.count() - 1):
+            w = self.projects_table.takeAt(1).widget()
+            w.setParent(None)
+
+    def show_recent(self, name: str, path: str):
+        self.projects_table.addWidget(RecentItem(
+            self.ui.recents_container, name, path, callback=self.manage_recent
+        ))
+
+    def search_recent(self):
+        recent = []
+        search_text = self.search_txt.text()
+        self.clear_recent_layout()
+
+        if len(recent) == 0:
+            self.projects_table.hide()
+            self.ui.recent_status_txt.show()
+        else:
+
+            if search_text:
+                pass
+            else:
+                self.projects_table.show()
+                self.ui.recent_status_txt.hide()
+
+                for name, path in recent:
+                    self.show_recent(name, path)
+
+    def recent_clear(self):
+        Settings().clear_recent()
+        self.populate_recent()
+
+
 class Boarding(QMainWindow):
     create = Signal(tuple)
 
-    def __init__(self):
+    def __init__(self, startup: StartUp):
         super().__init__()
         self.ui = ui_boarding.Ui_Boarding()
         self.ui.setupUi(self)
@@ -453,6 +581,7 @@ class Boarding(QMainWindow):
         self.next_btn.clicked.connect(self.set_next)
         self.back_btn.clicked.connect(self.set_back)
         self.create_btn.clicked.connect(self.get_data)
+        self.create.connect(startup.create_project)
 
         self.highlight(-1)
 
@@ -520,102 +649,6 @@ class Boarding(QMainWindow):
         self.days_per_cycle.setValue(0)
         self.daily_slots.setValue(0)
         self.slot_length.setValue(0)
-
-
-class StartUp(QMainWindow):
-    project_open = Signal(str, str)
-    project_create = Signal(str, str)
-
-    def __init__(self):
-        super().__init__()
-        self.ui = ui_startup.Ui_StartUp()
-        self.ui.setupUi(self)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.boarding = Boarding()
-        self.central_cnt = self.ui.central_container
-
-        self.prefs_btn = self.ui.prefs_btn
-        self.web_btn = self.ui.online_btn
-        self.close_btn = self.ui.close_btn
-        self.minimize_btn = self.ui.minimize_btn
-        self.quit_btn = self.ui.quit_btn
-
-        self.search_txt = self.ui.projects_search_txt
-        self.projects_table = self.ui.recent_layout
-        self.create_project_btn = self.ui.create_new_project_btn
-        self.open_project_btn = self.ui.open_project_btn
-        self.import_project_btn = self.ui.import_project_btn
-        self.recent_refresh_btn = self.ui.recent_projects_refresh_btn
-        self.recent_clear_btn = self.ui.recents_clear_btn
-
-        self.close_btn.clicked.connect(self.close)
-        self.quit_btn.clicked.connect(self.close)
-        self.minimize_btn.clicked.connect(self.showMinimized)
-        self.prefs_btn.clicked.connect(self.show_prefs)
-        self.web_btn.clicked.connect(self.visit_web)
-        self.search_txt.textChanged.connect(self.search_recent)
-        self.create_project_btn.clicked.connect(self.boarding.show)
-        self.recent_refresh_btn.clicked.connect(self.populate_recent)
-        self.recent_clear_btn.clicked.connect(self.recent_clear)
-
-        self.populate_recent()
-
-    def show_prefs(self):
-        pass
-
-    def visit_web(self):
-        pass
-
-    def populate_recent(self):
-        try:
-            self.clear_recent_layout()
-            recent = Settings().get_recent_files()
-
-            if not len(recent) > 0:
-                self.ui.recent_status_txt.show()
-            else:
-                self.ui.recent_status_txt.hide()
-                for name, path in recent:
-                    self.show_recent(name, path)
-        except Exception as e:
-            logger.critical(str(e))
-
-    def manage_recent(self, name: str, action: str):
-        ...
-
-    def clear_recent_layout(self):
-        for i in range(self.projects_table.count() - 1):
-            w = self.projects_table.takeAt(1).widget()
-            w.setParent(None)
-
-    def show_recent(self, name: str, path: str):
-        self.projects_table.addWidget(RecentItem(
-            self.ui.recents_container, name, path, callback=self.manage_recent
-        ))
-
-    def search_recent(self):
-        recent = []
-        search_text = self.search_txt.text()
-        self.clear_recent_layout()
-
-        if len(recent) == 0:
-            self.projects_table.hide()
-            self.ui.recent_status_txt.show()
-        else:
-
-            if search_text:
-                pass
-            else:
-                self.projects_table.show()
-                self.ui.recent_status_txt.hide()
-
-                for name, path in recent:
-                    self.show_recent(name, path)
-
-    def recent_clear(self):
-        Settings().clear_recent()
-        self.populate_recent()
 
 
 class Export(QDialog):
@@ -1064,49 +1097,68 @@ class TertiaryExport(QDialog):
                         for col, event in enumerate(timetable_data[day][slot]):
                             event_data = timetable_data[day][slot][event]
                             if (event_data[Types.VENUE] in self.available_venues and
-                                    sum([c in self.available_courses for c in event_data[Types.COURSES]]) ==
-                                    len(event_data[Types.COURSES]) and self.builder.module_get(event).lecturer in
+                                    sum([c.split("-")[0] in self.available_courses for c in event_data[Types.COURSES]])
+                                    == len(event_data[Types.COURSES]) and self.builder.module_get(event).lecturer in
                                     self.available_lecturers):
-
                                 venue = self.builder.venue_get(timetable_data[day][slot][event][Types.VENUE]).name
                                 courses = [f"{self.builder.course_get(c.split('-')[0]
                                                                       ).short_name}-{c.split('-')[1]}"
                                            for c in timetable_data[day][slot][event][Types.COURSES]]
                                 courses = ", ".join(courses)
-                                module = self.builder.module_get(event).code if export_codes else (
-                                    self.builder.module_get(event).name)
 
-                                export_data[day][slot_i + 2][col + 2] = (f"{module}"
+                                module_names = ""
+                                module_data = self.builder.module_get(event)
+                                module_courses = module_data.courses
+
+                                for module_course in module_courses:
+                                    course_module_code = module_courses[module_course][Types.COURSE_MODULE_CODE]
+                                    if module_data.code != course_module_code:
+                                        module_c = self.builder.module_get_by_code(course_module_code)
+                                        module_names += f"{module_c.code if export_codes else module_c.name + ","} and "
+
+                                module = module_data.code if export_codes else module_data.name
+                                module_names += module
+
+                                export_data[day][slot_i + 2][col + 2] = (f"{module_names}"
                                                                          f":   {courses}: {venue}")
                     else:
                         export_data[day][slot_i + 2][2] = timetable_data[day][slot]
 
-            vertical_header = []
             slots = self.builder.timetable_slots()
 
-            for slot in range(self.builder.timetable_get_slots_per_day()):
-                slot = str(slot + 1)
-                slot_item = slot if slot not in slots else slots[slot]
-                vertical_header.append(slot_item)
+            work_sheet = work_book.create_sheet(self.builder.timetable_get_name().replace(" ", "_"))
+            work_sheet.append(["Day / Period"])
+            cell = work_sheet.cell(row=1, column=1)
+            cell.font = self.header_font
+            cell.alignment = self.center
+            cell.border = self.border
 
-            for day in export_data:
-                days = self.builder.timetable_days()
-                work_sheet = work_book.create_sheet(days[day] if day in days else f"Day {day}")
-                work_sheet.append(["Period"])
-                cell = work_sheet.cell(row=1, column=1)
+            for slot in range(self.builder.timetable_get_slots_per_day()):
+                slot_name = str(slot + 1)
+                slot_item = slot_name if slot_name not in slots else slots[slot_name]
+                cell = work_sheet.cell(row=1, column=slot + 2)
                 cell.font = self.header_font
                 cell.alignment = self.center
                 cell.border = self.border
+                work_sheet.cell(row=1, column=slot + 2, value=slot_item)
 
-                for row in range(2, len(vertical_header) + 2):
-                    work_sheet.append([slots[str(row - 1)]] if str(row - 1) in slots else [str(row - 1)])
-                    cell = work_sheet.cell(row=row, column=1)
-                    cell.font = self.header_font
-                    cell.alignment = self.center
-                    cell.border = self.border
+            for day in export_data:
+                days = self.builder.timetable_days()
+                work_sheet.column_dimensions[get_column_letter(int(day) + 1)].width = 50
+                cell = work_sheet.cell(row=int(day) + 1, column=1)
+                cell.font = self.header_font
+                cell.alignment = self.center
+                cell.border = self.border
+                work_sheet.cell(row=int(day) + 1, column=1,
+                                value=days[day] if day in self.builder.timetable_days() else str(int(day) + 1))
+
                 for slot in export_data[day]:
+                    slot_events = ""
                     for col in export_data[day][slot]:
-                        work_sheet.cell(row=slot, column=col, value=export_data[day][slot][col])
+                        slot_events += f"{export_data[day][slot][col]}\n"
+                    cell = work_sheet.cell(row=int(day) + 1, column=int(slot))
+                    cell.alignment = Alignment(wrap_text=True)
+                    work_sheet.cell(row=int(day) + 1, column=int(slot), value=slot_events)
 
             save_name = self.builder.timetable_get_name().replace(" ", "_") + ".xlsx"
             file_path, _ = QFileDialog.getSaveFileName(
@@ -1119,5 +1171,5 @@ class TertiaryExport(QDialog):
 
         except Exception as e:
             logger.critical(str(e))
-            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
-    
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred. Make "
+                                               "sure the file being replaced is not open in another program.")

@@ -188,30 +188,84 @@ QSpinBox:up-arrow{
 	width: 24px;
 }
 
-                            QTableWidget {
-                                border: none;
-                            }
-                            QHeaderView::section {
-                                background-color: #EBECEF;
-                                padding: 3px;
-                                border: none;
-                                font-weight: bold;
-                            }
-                            
-                            QHeaderView::section:horizontal {
-                                border-right: 1px solid #D3D4D6;
-                                border-bottom: 1px solid #D3D4D6;
-                            }
-                            
-                            QHeaderView::section:vertical {
-                                border-right: 1px solid #D3D4D6;
-                                border-bottom: 1px solid #D3D4D6;
-                            }
-                            
-                            QTableWidget::item {
-                                border-bottom: 1px solid #E3E4E6;
-                                padding: 3px;
-                            }</string>
+QTimeEdit{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
+QTimeEdit:down-button{
+	background: transparent;
+}
+
+QTimeEdit:up-button{
+	background: transparent;
+}
+
+QTimeEdit:down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QTimeEdit:up-arrow{
+	image: url(':/icons/icons/drop_up.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QTimeEdit{
+	border: 1px solid #D3D4D6;
+	border-radius: 5px;
+	padding-left: 5px;
+	background: #FBFCFE;
+}
+
+QTimeEdit:down-button{
+	background: transparent;
+}
+
+QTimeEdit:up-button{
+	background: transparent;
+}
+
+QTimeEdit:down-arrow{
+	image: url(':/icons/icons/drop_down.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QTimeEdit:up-arrow{
+	image: url(':/icons/icons/drop_up.svg');
+	height: 24px;
+	width: 24px;
+}
+
+QTableWidget {
+    border: none;
+}
+QHeaderView::section {
+    backgroun d -color: #EBECEF;
+    padding: 3px;
+	border: none;
+	font-weight: bold;
+}
+
+QHeaderView::section:horizontal {
+    border-right: 1px solid  #D3D4D6;
+    border-bottom: 1px solid  #D3D4D6;
+}
+
+QHeaderView::section:vertical {
+    border-right: 1px solid  #D3D4D6;
+    border-bottom: 1px solid  #D3D4D6;
+}
+
+QTableWidget::item{
+    border-bottom: 1px solid  #E3E4E6;
+    padding: 3px;
+}</string>
   </property>
   <widget class="QWidget" name="main_container">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -895,7 +949,7 @@ color: #F3F4F6;</string>
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Courses</string>
+                <string>Programs</string>
                </property>
                <property name="icon">
                 <iconset resource="../assets/icons.qrc">
@@ -1305,12 +1359,12 @@ QFrame#bottom QPushButton{
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#primary_btn{
+                             <string notr="true">QFrame#venues_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#primary_btn:hover{
+QFrame#venues_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -1422,12 +1476,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#secondary_btn{
+                             <string notr="true">QFrame#subjects_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#secondary_btn:hover{
+QFrame#subjects_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -1539,12 +1593,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#secondary_btn{
+                             <string notr="true">QFrame#modules_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#secondary_btn:hover{
+QFrame#modules_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -1656,12 +1710,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#tertiary_btn{
+                             <string notr="true">QFrame#courses_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#tertiary_btn:hover{
+QFrame#courses_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -1773,12 +1827,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#tertiary_btn{
+                             <string notr="true">QFrame#classes_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#tertiary_btn:hover{
+QFrame#classes_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -1890,12 +1944,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#tertiary_btn{
+                             <string notr="true">QFrame#lecturers_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#tertiary_btn:hover{
+QFrame#lecturers_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -2130,12 +2184,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#tertiary_btn{
+                             <string notr="true">QFrame#teachers_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#tertiary_btn:hover{
+QFrame#teachers_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -2370,12 +2424,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QFrame#tertiary_btn{
+                             <string notr="true">QFrame#blocks_card{
 	border: 1px solid #E3E4E6;
 	border-radius: 10px;
 }
 
-QFrame#tertiary_btn:hover{
+QFrame#blocks_card:hover{
 	border: 3px solid #DBEAFE;
 	background: #DBEAFE;
 }</string>
@@ -2766,7 +2820,7 @@ border-radius: 3px;}</string>
                             <x>20</x>
                             <y>10</y>
                             <width>250</width>
-                            <height>311</height>
+                            <height>281</height>
                            </rect>
                           </property>
                           <property name="editTriggers">
@@ -2804,7 +2858,7 @@ border-radius: 3px;}</string>
                             <x>300</x>
                             <y>10</y>
                             <width>250</width>
-                            <height>311</height>
+                            <height>291</height>
                            </rect>
                           </property>
                           <property name="editTriggers">
@@ -2866,6 +2920,82 @@ border-radius: 3px;}</string>
                             <width>14</width>
                             <height>14</height>
                            </size>
+                          </property>
+                         </widget>
+                         <widget class="QPushButton" name="name_times_btn">
+                          <property name="geometry">
+                           <rect>
+                            <x>130</x>
+                            <y>320</y>
+                            <width>131</width>
+                            <height>30</height>
+                           </rect>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>0</width>
+                            <height>30</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generate only the changes made to the school data without changing the existing timetable.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">#name_times_btn{padding: 5px;
+background: #2F69B2;
+color: #F3F4F6;
+border-radius: 3px;}</string>
+                          </property>
+                          <property name="text">
+                           <string>Name Slots and Days</string>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>14</width>
+                            <height>14</height>
+                           </size>
+                          </property>
+                         </widget>
+                         <widget class="QTimeEdit" name="name_start_time_txt">
+                          <property name="geometry">
+                           <rect>
+                            <x>20</x>
+                            <y>320</y>
+                            <width>101</width>
+                            <height>30</height>
+                           </rect>
+                          </property>
+                          <property name="time">
+                           <time>
+                            <hour>8</hour>
+                            <minute>0</minute>
+                            <second>0</second>
+                           </time>
+                          </property>
+                         </widget>
+                         <widget class="QLabel" name="dp_txt_2">
+                          <property name="geometry">
+                           <rect>
+                            <x>20</x>
+                            <y>299</y>
+                            <width>81</width>
+                            <height>21</height>
+                           </rect>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>30</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true"/>
+                          </property>
+                          <property name="text">
+                           <string>Start time:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                           </property>
                          </widget>
                         </widget>

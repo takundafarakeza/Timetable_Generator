@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_venue_dialogaAgShb.ui'
+## Form generated from reading UI file 'add_venue_dialogvDAgpL.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QLabel,
+    QLineEdit, QPushButton, QSizePolicy, QTextEdit,
+    QVBoxLayout, QWidget)
 import icons_rc
 
 class Ui_AddVenue(object):
@@ -156,7 +156,7 @@ class Ui_AddVenue(object):
         self.frame.setFrameShadow(QFrame.Shadow.Plain)
         self.venue_name = QLineEdit(self.frame)
         self.venue_name.setObjectName(u"venue_name")
-        self.venue_name.setGeometry(QRect(30, 40, 241, 30))
+        self.venue_name.setGeometry(QRect(30, 30, 241, 30))
         self.venue_name.setMinimumSize(QSize(0, 30))
         self.venue_save = QPushButton(self.frame)
         self.venue_save.setObjectName(u"venue_save")
@@ -168,24 +168,17 @@ class Ui_AddVenue(object):
 "border-radius: 3px;")
         self.venue_latitude = QLineEdit(self.frame)
         self.venue_latitude.setObjectName(u"venue_latitude")
-        self.venue_latitude.setGeometry(QRect(80, 240, 20, 30))
+        self.venue_latitude.setGeometry(QRect(30, 80, 111, 30))
         self.venue_latitude.setMinimumSize(QSize(0, 30))
         self.venue_latitude.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.venue_longitude = QLineEdit(self.frame)
         self.venue_longitude.setObjectName(u"venue_longitude")
-        self.venue_longitude.setGeometry(QRect(50, 240, 20, 30))
+        self.venue_longitude.setGeometry(QRect(160, 80, 111, 30))
         self.venue_longitude.setMinimumSize(QSize(0, 30))
         self.venue_longitude.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.venue_location_description = QTextEdit(self.frame)
         self.venue_location_description.setObjectName(u"venue_location_description")
-        self.venue_location_description.setGeometry(QRect(20, 240, 20, 21))
-        self.venue_capacity = QLineEdit(self.frame)
-        self.venue_capacity.setObjectName(u"venue_capacity")
-        self.venue_capacity.setGeometry(QRect(30, 90, 241, 30))
-        self.venue_capacity.setMinimumSize(QSize(0, 30))
-        self.venue_specialised = QCheckBox(self.frame)
-        self.venue_specialised.setObjectName(u"venue_specialised")
-        self.venue_specialised.setGeometry(QRect(30, 140, 141, 20))
+        self.venue_location_description.setGeometry(QRect(30, 130, 241, 61))
 
         self.verticalLayout_3.addWidget(self.frame)
 
@@ -210,7 +203,5 @@ class Ui_AddVenue(object):
         self.venue_latitude.setPlaceholderText(QCoreApplication.translate("AddVenue", u"Latitude", None))
         self.venue_longitude.setPlaceholderText(QCoreApplication.translate("AddVenue", u"Longitude", None))
         self.venue_location_description.setPlaceholderText(QCoreApplication.translate("AddVenue", u"Location description", None))
-        self.venue_capacity.setPlaceholderText(QCoreApplication.translate("AddVenue", u"Venue capacity", None))
-        self.venue_specialised.setText(QCoreApplication.translate("AddVenue", u"Specialised venue", None))
     # retranslateUi
 

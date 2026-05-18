@@ -1,7 +1,4 @@
 class Developers:
-    def __init__(self):
-        pass
-
     @staticmethod
     def get_timetable_html(timetable: dict):
         html_data = """
@@ -143,7 +140,7 @@ class Developers:
             <select id="daySelect"></select>
 
             <select id="courseFilter">
-                <option value="">All Courses</option>
+                <option value="">All Programs</option>
             </select>
 
             <select id="levelFilter">
@@ -186,7 +183,7 @@ class Developers:
 
                     courseSelect.appendChild(option);
                 }
-                
+
                 if (Object.keys(timetableData.days).length === 0) {
                     for (const day in timetableData.time_table) {
                         const option = document.createElement("option");
@@ -198,7 +195,6 @@ class Developers:
                             .getElementById("daySelect")
                             .appendChild(option);
                     }
-
                 } else {
                     for (const day in timetableData.days) {
                         const dayData = timetableData.days[day];
@@ -280,15 +276,15 @@ class Developers:
         html_data += f"const timetableData = {timetable}; \n"
 
         html_data += """
-        
 /*
     SLOT LABELS
 */
 
-    const slotLabels = timetableData.slots;
-    document.getElementById("tbl-title").textContent = `${timetableData.time_table_name}`;
+            const slotLabels = timetableData.slots;
+            document.getElementById("tbl-title").textContent =
+                `${timetableData.time_table_name}`;
 
-/*
+            /*
     MAIN RENDER FUNCTION
 */
 
@@ -305,10 +301,10 @@ class Developers:
 
                 if (!dayData) {
                     container.innerHTML = `
-            <div class="empty">
-                No timetable data available.
-            </div>
-        `;
+                        <div class="empty">
+                            No timetable data available.
+                        </div>
+                    `;
 
                     return;
                 }
@@ -328,12 +324,30 @@ class Developers:
 
                         const venue = timetableData.venues[entry.venue];
 
+                        module_courses = module.courses;
+                        var modules_names = "";
+                        var modules_codes = "";
+
+                        for (courseId in module_courses) {
+                            var course_module_code =
+                                module_courses[courseId].course_module_code;
+                            if (course_module_code != module.code) {
+                                m_id =
+                                    TimetableAPI.getModuleByCode(
+                                        course_module_code,
+                                    );
+                                m_name = TimetableAPI.getModule(m_id);
+                                modules_names += m_name.name + ", and ";
+                                modules_codes += m_name.code + ", ";
+                            }
+                        }
+
                         const textBlob = `
-                ${module.name}
-                ${module.code}
-                ${lecturer.name}
-                ${venue.name}
-            `.toLowerCase();
+                            ${modules_names + module.name}
+                            ${module.code}
+                            ${lecturer.name}
+                            ${venue.name}
+                        `.toLowerCase();
 
                         if (searchText && !textBlob.includes(searchText)) {
                             continue;
@@ -347,47 +361,48 @@ class Developers:
 
                         card.innerHTML = `
 
-                <h3>${module.name}</h3>
+                        <h3>${modules_names + module.name}</h3>
 
-                <div class="meta">
-                    <strong>Code:</strong>
-                    ${module.code}
-                </div>
+                        <div class="meta">
+                            <strong>Code:</strong>
+                            ${modules_codes + module.code}
+                        </div>
 
-                <div class="meta">
-                    <strong>Time:</strong>
-                    ${slotLabels[slot] || "Slot " + slot}
-                </div>
+                        <div class="meta">
+                            <strong>Time:</strong>
+                            ${slotLabels[slot] || "Slot " + slot}
+                        </div>
 
-                <div class="meta">
-                    <strong>Venue:</strong>
-                    ${venue.name}
-                </div>
+                        <div class="meta">
+                            <strong>Venue:</strong>
+                            ${venue.name}
+                        </div>
 
-                <div class="meta">
-                    <strong>Lecturer:</strong>
-                    ${lecturer.name}
-                </div>
+                        <div class="meta">
+                            <strong>Lecturer:</strong>
+                            ${lecturer.name}
+                        </div>
 
-                <div class="meta">
-                    <strong>Courses:</strong>
+                        <div class="meta">
+                            <strong>Programs:</strong>
 
-                    ${entry.courses
-                        .map((course) => {
-                            const [courseId, level] = course.split("-");
+                            ${entry.courses
+                                .map((course) => {
+                                    const [courseId, level] = course.split("-");
 
-                            const courseInfo = timetableData.courses[courseId];
+                                    const courseInfo =
+                                        timetableData.courses[courseId];
 
-                            return `
-                            ${courseInfo.short_name}
-                            ${level}
+                                    return `
+                                    ${courseInfo.short_name}
+                                    ${level}
+                                `;
+                                })
+                                .join(", ")}
+
+                        </div>
+
                         `;
-                        })
-                        .join(", ")}
-
-                </div>
-
-            `;
 
                         container.appendChild(card);
                     }
@@ -438,12 +453,30 @@ class Developers:
 
                         const venue = timetableData.venues[entry.venue];
 
+                        module_courses = module.courses;
+                        var modules_names = "";
+                        var modules_codes = "";
+
+                        for (courseId in module_courses) {
+                            var course_module_code =
+                                module_courses[courseId].course_module_code;
+                            if (course_module_code != module.code) {
+                                m_id =
+                                    TimetableAPI.getModuleByCode(
+                                        course_module_code,
+                                    );
+                                m_name = TimetableAPI.getModule(m_id);
+                                modules_names += m_name.name + ", and ";
+                                modules_codes += m_name.code + ", ";
+                            }
+                        }
+
                         const textBlob = `
-                ${module.name}
-                ${module.code}
-                ${lecturer.name}
-                ${venue.name}
-            `.toLowerCase();
+                            ${modules_names + module.name}
+                            ${module.code}
+                            ${lecturer.name}
+                            ${venue.name}
+                        `.toLowerCase();
 
                         if (searchText && !textBlob.includes(searchText)) {
                             continue;
@@ -457,12 +490,12 @@ class Developers:
 
                         card.innerHTML = `
 
-                <h3>${module.name}</h3>
+                        <h3>${modules_names + module.name}</h3>
 
-                <div class="meta">
-                    <strong>Code:</strong>
-                    ${module.code}
-                </div>
+                        <div class="meta">
+                            <strong>Code:</strong>
+                            ${modules_codes + module.code}
+                        </div>
 
                 <div class="meta">
                     <strong>Time:</strong>
@@ -480,7 +513,7 @@ class Developers:
                 </div>
 
                 <div class="meta">
-                    <strong>Courses:</strong>
+                    <strong>Programs:</strong>
 
                     ${entry.courses
                         .map((course) => {
@@ -552,6 +585,15 @@ class Developers:
 
                 getModule(moduleId) {
                     return timetableData.modules[moduleId];
+                },
+
+                getModuleByCode(module_code) {
+                    for (moduleId in timetableData.modules) {
+                        module_det = timetableData.modules[moduleId];
+                        if (module_det.code == module_code) {
+                            return moduleId;
+                        }
+                    }
                 },
 
                 // GET VENUE INFO
@@ -677,12 +719,12 @@ class Developers:
 
             document
                 .getElementById("daySelect")
-                .addEventListener("change", (e) => renderDay(e.target.value));
+                .addEventListener("change", (e) => renderCurrentView());
 
             document
                 .getElementById("searchInput")
                 .addEventListener("input", () => {
-                    renderDay(document.getElementById("daySelect").value);
+                    renderCurrentView();
                 });
 
             /*
@@ -709,6 +751,8 @@ class Developers:
 
                 if (lecturerId) {
                     data = TimetableAPI.getLecturerSchedule(lecturerId);
+                    document.getElementById("courseFilter").selectedIndex = 0;
+                    document.getElementById("levelFilter").selectedIndex = 0;
                 }
 
                 renderDayFromData(day, data);
@@ -720,5 +764,11 @@ class Developers:
         </script>
     </body>
 </html>
+
         """
-        return html_data
+        return html_data\
+
+
+    @staticmethod
+    def get_js_api(timetable: dict):
+        pass

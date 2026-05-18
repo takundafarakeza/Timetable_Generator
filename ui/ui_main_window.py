@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowkdHQCC.ui'
+## Form generated from reading UI file 'main_windowLaDazL.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -18,8 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QPushButton, QSizePolicy, QSpacerItem, QSpinBox,
-    QStackedWidget, QTableWidget, QTableWidgetItem, QToolButton,
-    QVBoxLayout, QWidget)
+    QStackedWidget, QTableWidget, QTableWidgetItem, QTimeEdit,
+    QToolButton, QVBoxLayout, QWidget)
 
 from widgets.custom_widgets import (ButtonFrame, SearchableComboBox)
 from widgets.widgets import TitleBar
@@ -201,31 +201,85 @@ class Ui_MainWindow(object):
 "	width: 24px;\n"
 "}\n"
 "\n"
-"                            QTableWidget {\n"
-"                                border: none;\n"
-"                            }\n"
-"                            QHeaderView::section {\n"
-"                                background-color: #EBECEF;\n"
-"                                padding: 3px;\n"
-"                                border: none;\n"
-"                                font-weight: bold;\n"
-"                            }\n"
-"                            \n"
-"                            QHeaderView::section:horizontal {\n"
-"                                border-right: 1px solid #D3D4D6;\n"
-"                                border-bottom: 1px solid #D3D4D6;\n"
-"                            }\n"
-"                            \n"
-"                            QHeaderView::section:vertical {\n"
-"                                border-right: 1px solid #D3D4D6;\n"
-"                                border-bottom: 1px solid #D3D4D6;\n"
-"                            }\n"
-"      "
-                        "                      \n"
-"                            QTableWidget::item {\n"
-"                                border-bottom: 1px solid #E3E4E6;\n"
-"                                padding: 3px;\n"
-"                            }")
+"QTimeEdit{\n"
+"	border: 1px solid #D3D4D6;\n"
+"	border-radius: 5px;\n"
+"	padding-left: 5px;\n"
+"	background: #FBFCFE;\n"
+"}\n"
+"\n"
+"QTimeEdit:down-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QTimeEdit:up-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QTimeEdit:down-arrow{\n"
+"	image: url(':/icons/icons/drop_down.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
+"}\n"
+"\n"
+"QTimeEdit:up-arrow{\n"
+"	image: url(':/icons/icons/drop_up.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
+"}\n"
+"\n"
+"QTimeEdit{\n"
+"	border: 1px solid #D3D4D6;\n"
+"	border-radius: 5px;\n"
+"	padding-left: 5px;\n"
+"	background: #FBFCFE;\n"
+"}\n"
+"\n"
+"QTimeEdit:down-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QTimeEdit:up-button{\n"
+"	background: transparent;\n"
+"}\n"
+"\n"
+"QTimeEdit:down-arrow{\n"
+"	image: url(':/icons/icons/drop_down.svg');\n"
+"	height: 24px;\n"
+"	width: 24px;\n"
+"}\n"
+"\n"
+"QTimeEdit:up-arrow{\n"
+"	image: url(':/icons/icons/drop_up.svg');\n"
+"	height: 24px;\n"
+"	"
+                        "width: 24px;\n"
+"}\n"
+"\n"
+"QTableWidget {\n"
+"    border: none;\n"
+"}\n"
+"QHeaderView::section {\n"
+"    backgroun d -color: #EBECEF;\n"
+"    padding: 3px;\n"
+"	border: none;\n"
+"	font-weight: bold;\n"
+"}\n"
+"\n"
+"QHeaderView::section:horizontal {\n"
+"    border-right: 1px solid  #D3D4D6;\n"
+"    border-bottom: 1px solid  #D3D4D6;\n"
+"}\n"
+"\n"
+"QHeaderView::section:vertical {\n"
+"    border-right: 1px solid  #D3D4D6;\n"
+"    border-bottom: 1px solid  #D3D4D6;\n"
+"}\n"
+"\n"
+"QTableWidget::item{\n"
+"    border-bottom: 1px solid  #E3E4E6;\n"
+"    padding: 3px;\n"
+"}")
         self.main_container = QWidget(MainWindow)
         self.main_container.setObjectName(u"main_container")
         self.verticalLayout = QVBoxLayout(self.main_container)
@@ -627,12 +681,12 @@ class Ui_MainWindow(object):
         self.venues_card.setObjectName(u"venues_card")
         self.venues_card.setMinimumSize(QSize(280, 50))
         self.venues_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.venues_card.setStyleSheet(u"QFrame#primary_btn{\n"
+        self.venues_card.setStyleSheet(u"QFrame#venues_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#primary_btn:hover{\n"
+"QFrame#venues_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -671,12 +725,12 @@ class Ui_MainWindow(object):
         self.subjects_card.setObjectName(u"subjects_card")
         self.subjects_card.setMinimumSize(QSize(280, 50))
         self.subjects_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.subjects_card.setStyleSheet(u"QFrame#secondary_btn{\n"
+        self.subjects_card.setStyleSheet(u"QFrame#subjects_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#secondary_btn:hover{\n"
+"QFrame#subjects_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -711,12 +765,12 @@ class Ui_MainWindow(object):
         self.modules_card.setObjectName(u"modules_card")
         self.modules_card.setMinimumSize(QSize(280, 50))
         self.modules_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.modules_card.setStyleSheet(u"QFrame#secondary_btn{\n"
+        self.modules_card.setStyleSheet(u"QFrame#modules_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#secondary_btn:hover{\n"
+"QFrame#modules_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -747,12 +801,12 @@ class Ui_MainWindow(object):
         self.courses_card.setObjectName(u"courses_card")
         self.courses_card.setMinimumSize(QSize(280, 50))
         self.courses_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.courses_card.setStyleSheet(u"QFrame#tertiary_btn{\n"
+        self.courses_card.setStyleSheet(u"QFrame#courses_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#tertiary_btn:hover{\n"
+"QFrame#courses_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -785,12 +839,12 @@ class Ui_MainWindow(object):
         self.classes_card.setObjectName(u"classes_card")
         self.classes_card.setMinimumSize(QSize(280, 50))
         self.classes_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.classes_card.setStyleSheet(u"QFrame#tertiary_btn{\n"
+        self.classes_card.setStyleSheet(u"QFrame#classes_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#tertiary_btn:hover{\n"
+"QFrame#classes_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -821,12 +875,12 @@ class Ui_MainWindow(object):
         self.lecturers_card.setObjectName(u"lecturers_card")
         self.lecturers_card.setMinimumSize(QSize(280, 50))
         self.lecturers_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.lecturers_card.setStyleSheet(u"QFrame#tertiary_btn{\n"
+        self.lecturers_card.setStyleSheet(u"QFrame#lecturers_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#tertiary_btn:hover{\n"
+"QFrame#lecturers_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -893,12 +947,12 @@ class Ui_MainWindow(object):
         self.teachers_card.setObjectName(u"teachers_card")
         self.teachers_card.setMinimumSize(QSize(280, 50))
         self.teachers_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.teachers_card.setStyleSheet(u"QFrame#tertiary_btn{\n"
+        self.teachers_card.setStyleSheet(u"QFrame#teachers_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#tertiary_btn:hover{\n"
+"QFrame#teachers_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -963,12 +1017,12 @@ class Ui_MainWindow(object):
         self.blocks_card.setObjectName(u"blocks_card")
         self.blocks_card.setMinimumSize(QSize(280, 50))
         self.blocks_card.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.blocks_card.setStyleSheet(u"QFrame#tertiary_btn{\n"
+        self.blocks_card.setStyleSheet(u"QFrame#blocks_card{\n"
 "	border: 1px solid #E3E4E6;\n"
 "	border-radius: 10px;\n"
 "}\n"
 "\n"
-"QFrame#tertiary_btn:hover{\n"
+"QFrame#blocks_card:hover{\n"
 "	border: 3px solid #DBEAFE;\n"
 "	background: #DBEAFE;\n"
 "}")
@@ -1110,7 +1164,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem1 = QTableWidgetItem()
         self.slot_edit_table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         self.slot_edit_table.setObjectName(u"slot_edit_table")
-        self.slot_edit_table.setGeometry(QRect(20, 10, 250, 311))
+        self.slot_edit_table.setGeometry(QRect(20, 10, 250, 281))
         self.slot_edit_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed)
         self.slot_edit_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.slot_edit_table.setShowGrid(False)
@@ -1125,7 +1179,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem3 = QTableWidgetItem()
         self.day_edit_table.setHorizontalHeaderItem(1, __qtablewidgetitem3)
         self.day_edit_table.setObjectName(u"day_edit_table")
-        self.day_edit_table.setGeometry(QRect(300, 10, 250, 311))
+        self.day_edit_table.setGeometry(QRect(300, 10, 250, 291))
         self.day_edit_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed)
         self.day_edit_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.day_edit_table.setShowGrid(False)
@@ -1143,6 +1197,25 @@ class Ui_MainWindow(object):
         icon19.addFile(u":/icons/icons/plus.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.add_break_btn.setIcon(icon19)
         self.add_break_btn.setIconSize(QSize(14, 14))
+        self.name_times_btn = QPushButton(self.cfg_cnt)
+        self.name_times_btn.setObjectName(u"name_times_btn")
+        self.name_times_btn.setGeometry(QRect(130, 320, 131, 30))
+        self.name_times_btn.setMinimumSize(QSize(0, 30))
+        self.name_times_btn.setStyleSheet(u"#name_times_btn{padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;}")
+        self.name_times_btn.setIconSize(QSize(14, 14))
+        self.name_start_time_txt = QTimeEdit(self.cfg_cnt)
+        self.name_start_time_txt.setObjectName(u"name_start_time_txt")
+        self.name_start_time_txt.setGeometry(QRect(20, 320, 101, 30))
+        self.name_start_time_txt.setTime(QTime(8, 0, 0))
+        self.dp_txt_2 = QLabel(self.cfg_cnt)
+        self.dp_txt_2.setObjectName(u"dp_txt_2")
+        self.dp_txt_2.setGeometry(QRect(20, 299, 81, 21))
+        self.dp_txt_2.setMaximumSize(QSize(16777215, 30))
+        self.dp_txt_2.setStyleSheet(u"")
+        self.dp_txt_2.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.verticalLayout_32.addWidget(self.cfg_cnt)
 
@@ -1991,7 +2064,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.courses_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Courses", None))
 #endif // QT_CONFIG(tooltip)
-        self.courses_btn.setText(QCoreApplication.translate("MainWindow", u"Courses", None))
+        self.courses_btn.setText(QCoreApplication.translate("MainWindow", u"Programs", None))
 #if QT_CONFIG(tooltip)
         self.classes_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Classes", None))
 #endif // QT_CONFIG(tooltip)
@@ -2151,6 +2224,11 @@ class Ui_MainWindow(object):
         self.add_break_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Add timetable Break, Lunch or Study.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.add_break_btn.setText(QCoreApplication.translate("MainWindow", u"  Add School Break", None))
+#if QT_CONFIG(tooltip)
+        self.name_times_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Generate only the changes made to the school data without changing the existing timetable.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.name_times_btn.setText(QCoreApplication.translate("MainWindow", u"Name Slots and Days", None))
+        self.dp_txt_2.setText(QCoreApplication.translate("MainWindow", u"Start time:", None))
         self.dash_timetable_status.setText(QCoreApplication.translate("MainWindow", u"Ready to generate", None))
         self.modules_course_filter.setCurrentText("")
         self.modules_course_filter.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Filter Courses", None))

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from PySide6.QtCore import QStandardPaths, QCoreApplication
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 from pathlib import Path
@@ -153,6 +154,30 @@ class Utils:
         file = open(file_path, "w")
         file.close()
         return file_path
+
+    @staticmethod
+    def generate_slot_names(start_time="08:00", period_minutes=120, slots_per_day=4):
+        slots = []
+
+        current = datetime.strptime(start_time, "%H:%M")
+
+        for i in range(1, slots_per_day + 1):
+            end = current + timedelta(minutes=period_minutes)
+
+            slots.append(
+                f"{current.strftime('%H:%M')} - "
+                f"{end.strftime('%H:%M')}"
+            )
+            current = end
+
+        return slots
+
+    @staticmethod
+    def generate_day_names(day_count):
+        if day_count == 5:
+            return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+        else:
+            return [f"Day {i + 1}" for i in range(day_count)]
 
 
 class Settings:

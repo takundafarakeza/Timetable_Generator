@@ -1396,7 +1396,8 @@ class TertiaryBuilder(QObject):
                                       self._time_table_data[Types.MODULES][module_id][Types.COURSES],
                                       self._time_table_data[Types.MODULES][module_id][Types.VENUES],
                                       self._time_table_data[Types.MODULES][module_id]["time_slots"],
-                                      self._time_table_data[Types.MODULES][module_id]["slots_per_day"])
+                                      self._time_table_data[Types.MODULES][module_id]["slots_per_day"],
+                                      self._time_table_data[Types.MODULES][module_id][Types.DURATION])
         self._patches[module_id] = patch
 
     def timetable_remove_patch(self, module_id):
@@ -1509,11 +1510,11 @@ class TertiaryBuilder(QObject):
         return self._time_table_data[Types.TIME_SLOT_LENGTH]
 
     def timetable_name_slot(self, slot_number: str, slot_name: str):
-        self._time_table_data[Types.SLOTS][slot_number] = slot_name
+        self._time_table_data[Types.SLOTS][str(slot_number)] = slot_name
         self.set_unsaved()
 
     def timetable_name_day(self, day_number: str, day_name: str):
-        self._time_table_data[Types.DAYS][day_number] = day_name
+        self._time_table_data[Types.DAYS][str(day_number)] = day_name
         self.set_unsaved()
 
     def timetable_slots(self):
@@ -1786,7 +1787,15 @@ class TertiaryBuilder(QObject):
         modules = self._time_table_data[Types.MODULES]
 
         for module in modules:
-            if modules[module][Types.NAME] == name:
+            if modules[module][Types.NAME].lower() == name.lower():
+                return True
+        return False
+
+    def module_code_exits(self, code: str):
+        modules = self.module_get_all()
+
+        for module in modules:
+            if module.code == code:
                 return True
         return False
 
@@ -1910,6 +1919,18 @@ class TertiaryBuilder(QObject):
                       module_data[Types.SLOTS_PER_DAY],
                       module_data[Types.DURATION])
 
+    def module_get_by_code(self, module_code: str):
+        modules_data = self._time_table_data[Types.MODULES]
+        for module in modules_data:
+            if modules_data[module][Types.CODE].strip().lower() == module_code.strip().lower():
+                return Module(module, modules_data[module][Types.NAME],
+                              modules_data[module][Types.CODE],
+                              modules_data[module][Types.LECTURER],
+                              modules_data[module][Types.COURSES],
+                              modules_data[module][Types.VENUES],
+                              modules_data[module][Types.TIME_SLOTS],
+                              modules_data[module][Types.SLOTS_PER_DAY],
+                              modules_data[module][Types.DURATION])
 
     def module_count(self):
         return len(self._time_table_data[Types.MODULES])

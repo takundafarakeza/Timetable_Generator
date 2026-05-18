@@ -27,7 +27,6 @@ class StartUpWindow(StartUp):
     def __init__(self):
         super().__init__()
         self.open_project_btn.clicked.connect(self.open_project)
-        self.boarding.create.connect(self.create_project)
         self.import_project_btn.clicked.connect(self.import_project)
 
     def open_project(self):
@@ -86,7 +85,7 @@ class StartUpWindow(StartUp):
                 )
                 builder = builder(file_path, file_loader=file_loader)
                 project_name = Utils.project_path_to_name(file_path)
-                print(project_name, file_path)
+
                 settings.add_recent_file(project_name, file_path)
                 app_window.set_builder(builder)
                 self.populate_recent()
@@ -230,6 +229,7 @@ class AppWindow(Main):
         self.ui.courses_add_btn.clicked.connect(self.courses_add)
         self.ui.classes_add_btn.clicked.connect(self.classes_add)
         self.ui.venues_add_btn.clicked.connect(self.venues_add)
+        self.ui.name_times_btn.clicked.connect(self.name_slots_and_days)
 
     """
     =============================================================
@@ -707,6 +707,19 @@ class AppWindow(Main):
 
     def change_day_name(self, day_id, day_name: str):
         self.builder.timetable_name_day(day_id, day_name)
+
+    def name_slots_and_days(self):
+        start_time = self.ui.name_start_time_txt.text()
+        slot_names = Utils.generate_slot_names(start_time, self.builder.timetable_get_time_slot_length(),
+                                               self.builder.timetable_get_slots_per_day())
+        day_names = Utils.generate_day_names(self.builder.timetable_get_days_per_cycle())
+        for slot_id, slot_name in enumerate(slot_names):
+            self.change_slot_name(slot_id + 1, slot_name)
+
+        for day_id, day_name in enumerate(day_names):
+            self.change_day_name(day_id + 1, day_name)
+
+        self.populate_slots_days()
 
     def add_enrollment_table_item(self, c_name, level, course_id, enrollment):
         row = self.ui.enrollment_table.rowCount()

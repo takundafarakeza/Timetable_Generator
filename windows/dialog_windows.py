@@ -180,6 +180,7 @@ class AddModuleDataWindow(QDialog):
         self.module_venue_add_btn = self.ui.module_add_venue_btn
 
         self.module_course_level.lineEdit().setPlaceholderText("Level")
+        self.module_course_level.lineEdit().setValidator(QDoubleValidator())
         self.module_course_select.lineEdit().setPlaceholderText("Course")
         self.module_venue_select.lineEdit().setPlaceholderText("Venue")
         self.ui.module_save.clicked.connect(self.save)
@@ -246,12 +247,18 @@ class AddModuleDataWindow(QDialog):
         module_courses = self.builder.module_get(self.module_id).courses
 
         if course in module_courses:
-            MessageBox(self).warning("Already Exits", "This program is already added!")
+            MessageBox(self).warning("Already Exists", "This program is already added!")
             return
         else:
-            course_module_code = (self.ui.module_course_module_code.text() if
-                                  self.ui.module_course_module_code.text() else
-                                  self.builder.module_get(self.module_id).code)
+            if self.ui.module_course_module_code.text():
+                course_module_code = self.ui.module_course_module_code.text().strip().upper()
+
+                if not self.builder.module_code_exits(course_module_code):
+                    MessageBox(self).warning("Does not exist", "A module with the specified code does not "
+                                                               "exist!")
+                    return
+            else:
+                course_module_code = self.builder.module_get(self.module_id).code
 
             if self.builder.module_add_course(course, self.module_id, self.module_course_level.currentText(),
                                               course_module_code):
@@ -1258,6 +1265,9 @@ class AddVenueWindow(QDialog):
         self.venue_longitude.setValidator(QDoubleValidator())
         self.venue_description = self.ui.venue_location_description
         self.save_btn = self.ui.venue_save
+        self.venue_latitude.setText(str(0))
+        self.venue_longitude.setText(str(0))
+        self.venue_description.setText("Na")
 
         if self.edit:
             venue = self.builder.venue_get(venue_id)
