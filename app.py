@@ -472,7 +472,7 @@ class AppWindow(Main):
 
     def export_html(self):
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Export HTML Timetable", f"{self.builder.timetable_get_name()}.html",
+            self, "Export HTML Timetable", f"{self.builder.timetable_get_name().replace(" ", "_")}.html",
             "Html Files (*.html)")
 
         if file_path:
@@ -483,7 +483,7 @@ class AppWindow(Main):
 
     def export_js(self):
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Export Js API", f"{self.builder.timetable_get_name()}_api.js",
+            self, "Export Js API", f"{self.builder.timetable_get_name().replace(" ", "_")}_api.js",
             "JavaScript Files (*.js)")
 
         if file_path:
