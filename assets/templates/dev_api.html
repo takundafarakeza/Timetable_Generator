@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TimetableAPI Documentation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 0;
+        }
+
+        header {
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 50px;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            margin-top: 40px;
+            color: #93c5fd;
+        }
+
+        p {
+            color: #cbd5e1;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        code {
+            background: #0f172a;
+            padding: 2px 6px;
+            border-radius: 5px;
+            color: #facc15;
+        }
+
+        pre {
+            background: #020617;
+            padding: 20px;
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+        }
+
+        .method {
+            color: #38bdf8;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #1d4ed8;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .warning {
+            background: #7c2d12;
+            border-left: 5px solid #fb923c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .good {
+            background: #14532d;
+            border-left: 5px solid #4ade80;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #334155;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table th {
+            background: #1e40af;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding: 30px 0;
+            color: #94a3b8;
+            text-align: center;
+            border-top: 1px solid #334155;
+        }
+
+        .top-box {
+            background: linear-gradient(
+                135deg,
+                #1e3a8a,
+                #0f172a
+            );
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+        }
+
+        .endpoint {
+            margin-top: 40px;
+        }
+
+        .return-box {
+            background: #111827;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #374151;
+        }
+
+        a {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="top-box">
+        <h1>TimetableAPI</h1>
+
+        <p>
+            Lightweight timetable SDK for timetable querying,
+            filtering, analytics, exports, dashboards and
+            integrations.
+        </p>
+
+        <div class="good">
+            Designed for schools, colleges, universities,
+            timetable viewers, analytics dashboards and custom
+            timetable rendering systems.
+        </div>
+
+        <p>
+            Current Version:
+            <code>1.0.0</code>
+        </p>
+    </header>
+
+    <section>
+        <h2>Getting Started</h2>
+
+        <div class="card">
+
+            <p>
+                Include your timetable export:
+            </p>
+
+<pre><code>&lt;script src="timetable.js"&gt;&lt;/script&gt;</code></pre>
+
+            <p>
+                The API will automatically become available globally:
+            </p>
+
+<pre><code>window.TimetableAPI</code></pre>
+
+        </div>
+    </section>
+
+    <section>
+        <h2>Basic Example</h2>
+
+        <div class="card">
+
+<pre><code>const mondaySchedule =
+    TimetableAPI.getDaySchedule(1);
+
+console.log(mondaySchedule);</code></pre>
+
+        </div>
+    </section>
+
+    <section>
+        <h2>Available Methods</h2>
+
+        <div class="warning">
+            All IDs are strings unless otherwise specified.
+        </div>
+
+        <!-- ======================= -->
+        <!-- METADATA -->
+        <!-- ======================= -->
+
+        <div class="endpoint">
+
+            <div class="method">
+                getMetadata()
+                <span class="tag">METADATA</span>
+            </div>
+
+            <p>
+                Returns timetable metadata and configuration.
+            </p>
+
+<pre><code>const metadata =
+    TimetableAPI.getMetadata();</code></pre>
+
+            <div class="return-box">
+                Returns:
+<pre><code>{
+    name,
+    institution,
+    type,
+    slot_length,
+    days_per_cycle,
+    slots_per_day
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- BASIC LOOKUPS -->
+        <!-- ======================= -->
+
+        <div class="endpoint">
+
+            <div class="method">
+                getDay(dayId)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Returns day name from day ID.
+            </p>
+
+<pre><code>TimetableAPI.getDay(1);
+
+// "Monday"</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getSlot(slotId)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Returns slot time range.
+            </p>
+
+<pre><code>TimetableAPI.getSlot(2);
+
+// "10:00 - 12:00"</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getCourse(courseId)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Returns course information.
+            </p>
+
+<pre><code>TimetableAPI.getCourse("1");</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getModule(moduleId)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Returns module information.
+            </p>
+
+<pre><code>TimetableAPI.getModule("12");</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getModuleByCode(moduleCode)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Finds module ID by module code.
+            </p>
+
+<pre><code>TimetableAPI.getModuleByCode("HCSCI233");</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getVenue(venueId)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Returns venue information.
+            </p>
+
+<pre><code>TimetableAPI.getVenue("2");</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getLecturer(lecturerId)
+                <span class="tag">LOOKUP</span>
+            </div>
+
+            <p>
+                Returns lecturer information.
+            </p>
+
+<pre><code>TimetableAPI.getLecturer("7");</code></pre>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- SCHEDULES -->
+        <!-- ======================= -->
+
+        <h2>Schedule Queries</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getDaySchedule(day)
+                <span class="tag">SCHEDULE</span>
+            </div>
+
+            <p>
+                Returns full timetable schedule for a day.
+            </p>
+
+<pre><code>TimetableAPI.getDaySchedule(1);</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getSlotSchedule(day, slot)
+                <span class="tag">SCHEDULE</span>
+            </div>
+
+            <p>
+                Returns all timetable entries for a slot.
+            </p>
+
+<pre><code>TimetableAPI.getSlotSchedule(1, 2);</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getCourseSchedule(courseId, level = null)
+                <span class="tag">SCHEDULE</span>
+            </div>
+
+            <p>
+                Returns timetable filtered by course.
+            </p>
+
+<pre><code>TimetableAPI.getCourseSchedule("1");
+
+TimetableAPI.getCourseSchedule(
+    "1",
+    "2.1"
+);</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getLecturerSchedule(lecturerId)
+                <span class="tag">SCHEDULE</span>
+            </div>
+
+            <p>
+                Returns lecturer timetable.
+            </p>
+
+<pre><code>TimetableAPI.getLecturerSchedule("4");</code></pre>
+
+        </div>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getVenueSchedule(venueId)
+                <span class="tag">SCHEDULE</span>
+            </div>
+
+            <p>
+                Returns venue timetable.
+            </p>
+
+<pre><code>TimetableAPI.getVenueSchedule("2");</code></pre>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- FREE VENUES -->
+        <!-- ======================= -->
+
+        <h2>Venue Utilities</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getFreeVenues(day, slot)
+                <span class="tag">UTILITY</span>
+            </div>
+
+            <p>
+                Returns all venues that are free during
+                a specific slot.
+            </p>
+
+<pre><code>TimetableAPI.getFreeVenues(1, 2);</code></pre>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- COURSE MODULES -->
+        <!-- ======================= -->
+
+        <h2>Course Utilities</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getCourseModules(courseId, level = null)
+                <span class="tag">UTILITY</span>
+            </div>
+
+            <p>
+                Returns modules associated with a course.
+            </p>
+
+<pre><code>TimetableAPI.getCourseModules("1");
+
+TimetableAPI.getCourseModules(
+    "1",
+    "2.1"
+);</code></pre>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- SEARCH -->
+        <!-- ======================= -->
+
+        <h2>Search</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                searchModules(query)
+                <span class="tag">SEARCH</span>
+            </div>
+
+            <p>
+                Search modules by name or module code.
+            </p>
+
+<pre><code>TimetableAPI.searchModules("security");
+
+TimetableAPI.searchModules("HCSCI");</code></pre>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- FORMATTERS -->
+        <!-- ======================= -->
+
+        <h2>Formatting</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                formatEntry(moduleId, entry)
+                <span class="tag">FORMATTER</span>
+            </div>
+
+            <p>
+                Converts raw timetable entries into
+                human-readable structures.
+            </p>
+
+<pre><code>TimetableAPI.formatEntry(
+    moduleId,
+    entry
+);</code></pre>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- FLAT -->
+        <!-- ======================= -->
+
+        <h2>Flat Schedule</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                getFlatSchedule()
+                <span class="tag">ANALYTICS</span>
+            </div>
+
+            <p>
+                Returns a flattened schedule structure
+                ideal for:
+            </p>
+
+            <ul>
+                <li>React applications</li>
+                <li>Vue applications</li>
+                <li>Analytics</li>
+                <li>Charts</li>
+                <li>Exports</li>
+                <li>Filtering systems</li>
+                <li>Dashboards</li>
+            </ul>
+
+<pre><code>const schedule =
+    TimetableAPI.getFlatSchedule();</code></pre>
+
+            <div class="return-box">
+
+<pre><code>[
+    {
+        day: "Monday",
+        slot: "08:00 - 10:00",
+        module_code: "HCSCI132",
+        lecturer: "Mrs N. Sarai",
+        venue: "Lab 1"
+    }
+]</code></pre>
+
+            </div>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- RAW -->
+        <!-- ======================= -->
+
+        <h2>Advanced Usage</h2>
+
+        <div class="endpoint">
+
+            <div class="method">
+                data
+                <span class="tag">ADVANCED</span>
+            </div>
+
+            <p>
+                Direct raw access to timetable data.
+            </p>
+
+<pre><code>TimetableAPI.data</code></pre>
+
+            <div class="warning">
+                Raw access is intended for advanced users
+                who need direct timetable structures.
+            </div>
+
+        </div>
+
+        <!-- ======================= -->
+        <!-- VERSION -->
+        <!-- ======================= -->
+
+        <h2>Versioning</h2>
+
+        <div class="card">
+
+            <p>
+                Current API version:
+            </p>
+
+<pre><code>TimetableAPI.version</code></pre>
+
+            <p>
+                Example:
+            </p>
+
+<pre><code>"1.0.0"</code></pre>
+
+        </div>
+
+    </section>
+
+    <footer>
+        TimetableAPI Documentation • Version 1.0.0
+    </footer>
+
+</div>
+
+</body>
+</html>

@@ -771,4 +771,331 @@ class Developers:
 
     @staticmethod
     def get_js_api(timetable: dict):
-        pass
+        js_api = f"const timetableData = {timetable};" + """
+window.TimetableAPI = {
+    version: "1.0.0",
+
+    // RAW DATA ACCESS (ADVANCED USERS)
+    data: timetableData,
+
+    // =========================
+    // METADATA
+    // =========================
+
+    getMetadata() {
+        return {
+            name: timetableData.time_table_name,
+            institution: timetableData.institution_name,
+            type: timetableData.institution_type,
+            slot_length: timetableData.time_slot_length,
+            days_per_cycle: timetableData.days_per_cycle,
+            slots_per_day: timetableData.slots_per_day,
+        };
+    },
+
+    // =========================
+    // BASIC LOOKUPS
+    // =========================
+
+    getDay(dayId) {
+        return timetableData.days[dayId];
+    },
+
+    getSlot(slotId) {
+        return timetableData.slots[slotId];
+    },
+
+    getCourse(courseId) {
+        return timetableData.courses[courseId];
+    },
+
+    getModule(moduleId) {
+        return timetableData.modules[moduleId];
+    },
+
+    getVenue(venueId) {
+        return timetableData.venues[venueId];
+    },
+
+    getLecturer(lecturerId) {
+        return timetableData.lecturers[lecturerId];
+    },
+
+    getModuleByCode(moduleCode) {
+        for (const moduleId in timetableData.modules) {
+            const module = timetableData.modules[moduleId];
+
+            if (module.code === moduleCode) {
+                return moduleId;
+            }
+        }
+
+        return null;
+    },
+
+    // =========================
+    // SCHEDULE GETTERS
+    // =========================
+
+    getDaySchedule(day) {
+        return timetableData.time_table[day] || {};
+    },
+
+    getSlotSchedule(day, slot) {
+        return timetableData.time_table?.[day]?.[slot] || {};
+    },
+
+    getCourseSchedule(courseId, level = null) {
+        const filtered = {};
+
+        for (const day in timetableData.time_table) {
+            const dayData = timetableData.time_table[day];
+
+            const filteredDay = {};
+
+            for (const slot in dayData) {
+                const slotData = dayData[slot];
+
+                const filteredSlot = {};
+
+                for (const moduleId in slotData) {
+                    const entry = slotData[moduleId];
+
+                    const found = entry.courses.some((course) => {
+                        const [id, lvl] = course.split("-");
+
+                        if (level) {
+                            return id === courseId && lvl === level;
+                        }
+
+                        return id === courseId;
+                    });
+
+                    if (found) {
+                        filteredSlot[moduleId] = entry;
+                    }
+                }
+
+                if (Object.keys(filteredSlot).length) {
+                    filteredDay[slot] = filteredSlot;
+                }
+            }
+
+            if (Object.keys(filteredDay).length) {
+                filtered[day] = filteredDay;
+            }
+        }
+
+        return filtered;
+    },
+
+    getLecturerSchedule(lecturerId) {
+        const filtered = {};
+
+        for (const day in timetableData.time_table) {
+            const dayData = timetableData.time_table[day];
+
+            const filteredDay = {};
+
+            for (const slot in dayData) {
+                const slotData = dayData[slot];
+
+                const filteredSlot = {};
+
+                for (const moduleId in slotData) {
+                    const module = timetableData.modules[moduleId];
+
+                    if (module.lecturer === lecturerId) {
+                        filteredSlot[moduleId] = slotData[moduleId];
+                    }
+                }
+
+                if (Object.keys(filteredSlot).length) {
+                    filteredDay[slot] = filteredSlot;
+                }
+            }
+
+            if (Object.keys(filteredDay).length) {
+                filtered[day] = filteredDay;
+            }
+        }
+
+        return filtered;
+    },
+
+    getVenueSchedule(venueId) {
+        const filtered = {};
+
+        for (const day in timetableData.time_table) {
+            const dayData = timetableData.time_table[day];
+
+            const filteredDay = {};
+
+            for (const slot in dayData) {
+                const slotData = dayData[slot];
+
+                const filteredSlot = {};
+
+                for (const moduleId in slotData) {
+                    const entry = slotData[moduleId];
+
+                    if (entry.venue === venueId) {
+                        filteredSlot[moduleId] = entry;
+                    }
+                }
+
+                if (Object.keys(filteredSlot).length) {
+                    filteredDay[slot] = filteredSlot;
+                }
+            }
+
+            if (Object.keys(filteredDay).length) {
+                filtered[day] = filteredDay;
+            }
+        }
+
+        return filtered;
+    },
+
+    // =========================
+    // FREE VENUES
+    // =========================
+
+    getFreeVenues(day, slot) {
+        const usedVenues = new Set();
+
+        const slotData = timetableData.time_table?.[day]?.[slot] || {};
+
+        for (const moduleId in slotData) {
+            usedVenues.add(slotData[moduleId].venue);
+        }
+
+        const freeVenues = {};
+
+        for (const venueId in timetableData.venues) {
+            if (!usedVenues.has(venueId)) {
+                freeVenues[venueId] = timetableData.venues[venueId];
+            }
+        }
+
+        return freeVenues;
+    },
+
+    // =========================
+    // COURSE MODULES
+    // =========================
+
+    getCourseModules(courseId, level = null) {
+        const modules = {};
+
+        for (const moduleId in timetableData.modules) {
+            const module = timetableData.modules[moduleId];
+
+            for (const cid in module.courses) {
+                const details = module.courses[cid];
+
+                if (cid === courseId) {
+                    if (!level || details.level === level) {
+                        modules[moduleId] = module;
+                    }
+                }
+            }
+        }
+
+        return modules;
+    },
+
+    // =========================
+    // SEARCH
+    // =========================
+
+    searchModules(query) {
+        const results = {};
+
+        query = query.toLowerCase();
+
+        for (const moduleId in timetableData.modules) {
+            const module = timetableData.modules[moduleId];
+
+            if (
+                module.name.toLowerCase().includes(query) ||
+                module.code.toLowerCase().includes(query)
+            ) {
+                results[moduleId] = module;
+            }
+        }
+
+        return results;
+    },
+
+    // =========================
+    // FORMATTERS
+    // =========================
+
+    formatEntry(moduleId, entry) {
+        const module = timetableData.modules[moduleId];
+
+        const lecturer = timetableData.lecturers[module.lecturer];
+
+        const venue = timetableData.venues[entry.venue];
+
+        return {
+            module_id: moduleId,
+            module_name: module.name,
+            module_code: module.code,
+            lecturer: lecturer?.name || "Unknown",
+            venue: venue?.name || "Unknown",
+            courses: entry.courses,
+        };
+    },
+
+    // =========================
+    // FLAT SCHEDULE
+    // =========================
+
+    getFlatSchedule() {
+        const output = [];
+
+        for (const day in timetableData.time_table) {
+            const dayData = timetableData.time_table[day];
+
+            for (const slot in dayData) {
+                const slotData = dayData[slot];
+
+                for (const moduleId in slotData) {
+                    const entry = slotData[moduleId];
+
+                    const module = timetableData.modules[moduleId];
+
+                    const lecturer = timetableData.lecturers[module.lecturer];
+
+                    const venue = timetableData.venues[entry.venue];
+
+                    output.push({
+                        day_id: day,
+                        day: timetableData.days[day],
+
+                        slot_id: slot,
+                        slot: timetableData.slots[slot],
+
+                        module_id: moduleId,
+                        module_name: module.name,
+                        module_code: module.code,
+
+                        lecturer_id: module.lecturer,
+                        lecturer: lecturer?.name || "Unknown",
+
+                        venue_id: entry.venue,
+                        venue: venue?.name || "Unknown",
+
+                        courses: entry.courses,
+                    });
+                }
+            }
+        }
+
+        return output;
+    },
+};
+        """
+        return js_api
