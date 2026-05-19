@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>536</width>
+    <width>540</width>
     <height>403</height>
    </rect>
   </property>
@@ -155,7 +155,7 @@ QWidget#container {
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>501</width>
+             <width>505</width>
              <height>20</height>
             </size>
            </property>
@@ -268,7 +268,7 @@ QWidget#container {
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>270</y>
+                 <y>280</y>
                  <width>101</width>
                  <height>30</height>
                 </rect>
@@ -287,7 +287,7 @@ QWidget#container {
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>170</y>
+                 <y>180</y>
                  <width>101</width>
                  <height>20</height>
                 </rect>
@@ -328,7 +328,7 @@ QWidget#container {
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>120</y>
+                 <y>130</y>
                  <width>181</width>
                  <height>30</height>
                 </rect>
@@ -347,7 +347,7 @@ QWidget#container {
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>240</y>
+                 <y>250</y>
                  <width>141</width>
                  <height>20</height>
                 </rect>
@@ -369,7 +369,7 @@ QWidget#container {
                <property name="geometry">
                 <rect>
                  <x>120</x>
-                 <y>170</y>
+                 <y>180</y>
                  <width>121</width>
                  <height>20</height>
                 </rect>
@@ -391,7 +391,7 @@ QWidget#container {
                <property name="geometry">
                 <rect>
                  <x>120</x>
-                 <y>200</y>
+                 <y>210</y>
                  <width>111</width>
                  <height>30</height>
                 </rect>
@@ -409,8 +409,8 @@ QWidget#container {
               <widget class="QPushButton" name="module_save">
                <property name="geometry">
                 <rect>
-                 <x>170</x>
-                 <y>270</y>
+                 <x>160</x>
+                 <y>280</y>
                  <width>81</width>
                  <height>30</height>
                 </rect>
@@ -432,7 +432,7 @@ border-radius: 3px;</string>
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>70</y>
+                 <y>75</y>
                  <width>121</width>
                  <height>30</height>
                 </rect>
@@ -451,7 +451,7 @@ border-radius: 3px;</string>
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>200</y>
+                 <y>210</y>
                  <width>101</width>
                  <height>30</height>
                 </rect>
@@ -469,7 +469,7 @@ border-radius: 3px;</string>
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_3">
+             <widget class="QFrame" name="lock_frame">
               <property name="frameShape">
                <enum>QFrame::Shape::StyledPanel</enum>
               </property>
@@ -478,7 +478,7 @@ border-radius: 3px;</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <widget class="QTableWidget" name="tableWidget">
+                <widget class="QTableWidget" name="locked_slots_table">
                  <attribute name="horizontalHeaderDefaultSectionSize">
                   <number>230</number>
                  </attribute>
@@ -494,7 +494,7 @@ border-radius: 3px;</string>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>50</height>
+                   <height>100</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -503,6 +503,148 @@ border-radius: 3px;</string>
                  <property name="frameShadow">
                   <enum>QFrame::Shadow::Raised</enum>
                  </property>
+                 <widget class="QPushButton" name="module_lock_btn">
+                  <property name="geometry">
+                   <rect>
+                    <x>210</x>
+                    <y>60</y>
+                    <width>30</width>
+                    <height>30</height>
+                   </rect>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::StrongFocus</enum>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LayoutDirection::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">padding: 5px;
+background: #2F69B2;
+color: #F3F4F6;
+border-radius: 3px;</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../assets/icons.qrc">
+                    <normaloff>:/icons/icons/plus.svg</normaloff>:/icons/icons/plus.svg</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>14</width>
+                    <height>14</height>
+                   </size>
+                  </property>
+                 </widget>
+                 <widget class="QComboBox" name="module_lock_slot_select">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>60</y>
+                    <width>201</width>
+                    <height>30</height>
+                   </rect>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="editable">
+                   <bool>false</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>Slot</string>
+                  </property>
+                 </widget>
+                 <widget class="QComboBox" name="module_lock_day_select">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>20</y>
+                    <width>201</width>
+                    <height>30</height>
+                   </rect>
+                  </property>
+                  <property name="editable">
+                   <bool>false</bool>
+                  </property>
+                  <property name="currentText">
+                   <string/>
+                  </property>
+                  <property name="placeholderText">
+                   <string>Day</string>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>1.1</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>1.2</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>2.1</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>2.2</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>3.1</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>3.2</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>4.1</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>4.2</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>5.1</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>5.2</string>
+                   </property>
+                  </item>
+                 </widget>
+                 <widget class="QLabel" name="max_locks_txt">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>161</width>
+                    <height>16</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Max locks:</string>
+                  </property>
+                 </widget>
                 </widget>
                </item>
               </layout>
@@ -519,6 +661,16 @@ border-radius: 3px;</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>module_save</tabstop>
+  <tabstop>module_name</tabstop>
+  <tabstop>module_code</tabstop>
+  <tabstop>slots_per_cycle</tabstop>
+  <tabstop>slots_per_day</tabstop>
+  <tabstop>session_length</tabstop>
+  <tabstop>module_lecturer</tabstop>
+  <tabstop>locked_slots_table</tabstop>
+ </tabstops>
  <resources>
   <include location="../assets/icons.qrc"/>
  </resources>
