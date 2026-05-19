@@ -1481,10 +1481,12 @@ class AppWindow(Main):
 
                         if confirmation[0]:
                             self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL] == "Yes",
-                                                   venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
+                                                   venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION],
+                                                   venues[v][Types.AVAILABLE_DAYS])
                     else:
                         self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL] == "Yes",
-                                               venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
+                                               venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION],
+                                               venues[v][Types.AVAILABLE_DAYS])
 
                 self.venues_populate()
                 MessageBox(self).information("Success", "Venues imported successfully.")
@@ -1618,10 +1620,13 @@ class AppWindow(Main):
                                 self.builder.add_venue(name, venues[v][Types.CAPACITY],
                                                        venues[v][Types.SPECIAL] == "Yes",
                                                        venues[v][Types.LOCATION],
-                                                       venues[v][Types.LOCATION_DESCRIPTION])
-                        else:
-                            self.builder.add_venue(name, venues[v][Types.CAPACITY], venues[v][Types.SPECIAL]  == "Yes",
-                                                   venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION])
+                                                       venues[v][Types.LOCATION_DESCRIPTION],
+                                                       venues[v][Types.AVAILABLE_DAYS])
+                            else:
+                                self.builder.add_venue(name, venues[v][Types.CAPACITY],
+                                                       venues[v][Types.SPECIAL] == "Yes",
+                                                       venues[v][Types.LOCATION], venues[v][Types.LOCATION_DESCRIPTION],
+                                                       venues[v][Types.AVAILABLE_DAYS])
 
                 enrollments = timetable_data[Types.CAPACITIES]
 

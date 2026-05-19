@@ -483,7 +483,7 @@ class StartUp(QMainWindow):
     def visit_web(self):
         pass
 
-    def create_project(self):
+    def create_project(self, data: tuple):
         ...
 
     def populate_recent(self):
