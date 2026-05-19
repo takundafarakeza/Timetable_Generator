@@ -94,7 +94,6 @@ class AddModuleWindow(QDialog):
         self.save_btn.clicked.connect(self.save)
         self.ui.close_btn.clicked.connect(self.close)
         self.module_slots_per_cycle.valueChanged.connect(self.update_values)
-        self.ui.lock_frame.hide()
         self.populate_lecturers()
 
         if self.edit:
