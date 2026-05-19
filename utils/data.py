@@ -32,6 +32,7 @@ class VenueTertiary:
     special: str
     location: list
     location_description: str
+    available_days: list
 
 
 @dataclass

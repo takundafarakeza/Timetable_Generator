@@ -3,4 +3,4 @@ from .widgets import (RecentItem, TimeTable, ModulesTable, SubjectsTable,
                       CoursesTable, VenuesTable, MessageBox, BlocksTable, LoadingDialog,
                       GenerationDialog, ExitConfirm, TertiaryVenuesTable, CoursesEnrollmentTable,
                       DeficitConfirm, FramelessWindow, Confirmation)
-from .custom_widgets import ButtonFrame, RemovableTableItem
+from .custom_widgets import ButtonFrame, RemovableTableItem, DayCheckGroup

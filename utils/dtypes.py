@@ -32,6 +32,7 @@ class Types:
     SPECIAL = "special"
     LOCATION = "location"
     LOCATION_DESCRIPTION = "location_description"
+    AVAILABLE_DAYS = "available_days"
 
     TEACHER = "teacher"
     TEACHERS = "teachers"

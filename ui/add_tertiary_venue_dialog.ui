@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>351</height>
+    <width>309</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,8 +242,8 @@ QWidget#container {
            <widget class="QPushButton" name="venue_save">
             <property name="geometry">
              <rect>
-              <x>190</x>
-              <y>220</y>
+              <x>210</x>
+              <y>330</y>
               <width>81</width>
               <height>30</height>
              </rect>
@@ -265,7 +265,7 @@ border-radius: 3px;</string>
             <property name="geometry">
              <rect>
               <x>80</x>
-              <y>240</y>
+              <y>330</y>
               <width>20</width>
               <height>30</height>
              </rect>
@@ -287,7 +287,7 @@ border-radius: 3px;</string>
             <property name="geometry">
              <rect>
               <x>50</x>
-              <y>240</y>
+              <y>330</y>
               <width>20</width>
               <height>30</height>
              </rect>
@@ -309,7 +309,7 @@ border-radius: 3px;</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>240</y>
+              <y>330</y>
               <width>20</width>
               <height>21</height>
              </rect>
@@ -349,6 +349,39 @@ border-radius: 3px;</string>
             <property name="text">
              <string>Specialised venue</string>
             </property>
+           </widget>
+           <widget class="QFrame" name="frame_2">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>170</y>
+              <width>241</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Shape::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Shadow::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="available_days_layout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+            </layout>
            </widget>
           </widget>
          </item>

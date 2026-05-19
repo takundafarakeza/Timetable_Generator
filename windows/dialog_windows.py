@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QDoubleValidator
 from typing import Union
-from widgets import RemovableTableItem, MessageBox, ProjectItem
+from widgets import RemovableTableItem, MessageBox, ProjectItem, DayCheckGroup
 from functools import partial
 from utils.builders import PrimaryBuilder, SecondaryBuilder, TertiaryBuilder
 from utils import Types, Utils
@@ -1352,6 +1352,8 @@ class AddTertiaryVenueWindow(QDialog):
         self.venue_latitude.hide()
         self.venue_description.hide()
         self.save_btn = self.ui.venue_save
+        self.day_check_table = DayCheckGroup()
+        self.ui.available_days_layout.addWidget(self.day_check_table)
 
         if self.edit:
             venue = self.builder.venue_get(venue_id)
@@ -1366,6 +1368,7 @@ class AddTertiaryVenueWindow(QDialog):
         self.save_btn.clicked.connect(self.save)
         self.venue_capacity.returnPressed.connect(self.save)
         self.venue_name.returnPressed.connect(self.save)
+        self.populate_days()
 
     def close(self):
         self.venue_name.clear()
@@ -1375,6 +1378,33 @@ class AddTertiaryVenueWindow(QDialog):
         self.venue_capacity.clear()
         self.venue_special.setChecked(False)
         super().close()
+
+    def populate_days(self):
+        if not self.edit:
+            timetable_days = self.builder.timetable_days()
+            for day in range(1, self.builder.timetable_get_days_per_cycle() + 1):
+                day = str(day)
+                if day in timetable_days:
+                    self.day_check_table.add_item(day, timetable_days[day])
+                else:
+                    self.day_check_table.add_item(day, timetable_days[day])
+        else:
+            venue_days = self.builder.venue_get(self.venue_id).available_days
+            timetable_days = self.builder.timetable_days()
+
+            for day in range(1, self.builder.timetable_get_days_per_cycle() + 1):
+                day = str(day)
+
+                if str(day) in venue_days:
+                    if day in timetable_days:
+                        self.day_check_table.add_item(day, timetable_days[day], True)
+                    else:
+                        self.day_check_table.add_item(day, timetable_days[day], True)
+                else:
+                    if day in timetable_days:
+                        self.day_check_table.add_item(day, timetable_days[day], False)
+                    else:
+                        self.day_check_table.add_item(day, timetable_days[day], False)
 
     def validate(self):
         return self.venue_name.text() and self.venue_capacity.text()
@@ -1392,7 +1422,8 @@ class AddTertiaryVenueWindow(QDialog):
             if not self.edit:
                 try:
                     if not self.builder.venue_exists(venue_name):
-                        self.builder.add_venue(venue_name, venue_capacity, venue_special, [0, 0])
+                        self.builder.add_venue(venue_name, venue_capacity, venue_special, [0, 0], "",
+                                               self.day_check_table.get_available_days())
                         self.saved.emit(Types.VENUES)
                         self.close()
                     else:
@@ -1406,6 +1437,8 @@ class AddTertiaryVenueWindow(QDialog):
                     self.builder.venue_change_data(self.venue_id, Types.NAME, venue_name)
                     self.builder.venue_change_data(self.venue_id, Types.CAPACITY, venue_capacity)
                     self.builder.venue_change_data(self.venue_id, Types.SPECIAL, "Yes" if venue_special else "No")
+                    self.builder.venue_change_data(self.venue_id, Types.AVAILABLE_DAYS,
+                                                   self.day_check_table.get_available_days())
                     # self.builder.venue_change_data(self.venue_id, "location", venue_location)
                     # self.builder.venue_change_data(self.venue_id, "location_description", venue_description)
                     self.saved.emit(Types.VENUES)

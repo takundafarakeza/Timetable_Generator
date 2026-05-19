@@ -1716,11 +1716,14 @@ class TertiaryBuilder(QObject):
     # =================================== VENUES  ================================ #
 
     def add_venue(self, name: str, capacity: int, special: bool, location: list,
-                  location_description: str = "Na"):
+                  location_description: str = "Na", available_days: list = None):
+        if available_days is None:
+            available_days = []
         venue_id = str(self._time_table_data[Types.SEQUENCE][Types.VENUES] + 1)
         special = "Yes" if special else "No"
         self._time_table_data[Types.VENUES][venue_id] = (
-            Formats.format_venue_tertiary(name, capacity, special, location, location_description)
+            Formats.format_venue_tertiary(name, capacity, special, location,
+                                          location_description, available_days)
         )
         self._time_table_data[Types.SEQUENCE][Types.VENUES] = int(venue_id)
         self.set_unsaved()
@@ -1760,14 +1763,16 @@ class TertiaryBuilder(QObject):
                                 venues_data[venue]["capacity"],
                                 venues_data[venue]["special"],
                                 venues_data[venue]["location"],
-                                venues_data[venue]["location_description"])
+                                venues_data[venue]["location_description"],
+                                venues_data[venue][Types.AVAILABLE_DAYS])
                   for venue in venues_data]
         return venues
 
     def venue_get(self, venue_id: str):
         venue_data = self._time_table_data[Types.VENUES][venue_id]
         return VenueTertiary(venue_id, venue_data["name"], venue_data["capacity"], venue_data["special"],
-                             venue_data["location"], venue_data["location_description"])
+                             venue_data["location"], venue_data["location_description"],
+                             venue_data[Types.AVAILABLE_DAYS])
 
     def venue_count(self):
         return len(self._time_table_data[Types.VENUES]) - 1

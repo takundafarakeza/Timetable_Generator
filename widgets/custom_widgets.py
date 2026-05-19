@@ -1,6 +1,9 @@
-from PySide6.QtWidgets import QFrame, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QComboBox, QCompleter
+from PySide6.QtWidgets import (QFrame, QWidget, QHBoxLayout, QVBoxLayout,
+                               QLabel, QPushButton, QComboBox, QCompleter,
+                               QTableWidget, QCheckBox)
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtCore import Signal, QSize, QRect, Qt
+from functools import partial
 
 
 class RemovableTableItem(QWidget):
@@ -93,3 +96,70 @@ class SearchableComboBox(QComboBox):
         self.setCompleter(completer)
 
         self.lineEdit().textEdited.connect(completer.complete)
+
+
+class DayCheckGroup(QTableWidget):
+    def __init__(self):
+        super().__init__(0, 1)
+
+        self.setHorizontalHeaderLabels(["Available days"])
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.setShowGrid(False)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.parent_callback = None
+
+        self.setColumnWidth(0, 240)
+
+        self.setStyleSheet("""
+                            QTableWidget {
+                                border: none;
+                            }
+                            QHeaderView::section {
+                                background-color: #EBECEF;
+                                padding: 3px;
+                                border: none;
+                                font-weight: bold;
+                            }
+
+                            QHeaderView::section:horizontal {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QHeaderView::section:vertical {
+                                border-right: 1px solid #D3D4D6;
+                                border-bottom: 1px solid #D3D4D6;
+                            }
+
+                            QTableWidget::item {
+                                border-bottom: 1px solid #E3E4E6;
+                                padding: 3px;
+                            }
+                        """)
+        self.verticalHeader().setVisible(False)
+        self.days = {}
+
+    def get_available_days(self):
+        available = []
+        for day in self.days:
+            if self.days[day] == "available":
+                available.append(day)
+        return available
+
+    def remove_add_day(self, day, checked):
+        if checked == Qt.CheckState.Checked:
+            self.days[day] = "available"
+        else:
+            self.days[day] = "unavailable"
+
+    def add_item(self, day_id, day_name, available=True):
+        row = self.rowCount()
+        self.insertRow(row)
+        self.setRowHeight(row, 30)
+
+        day = QCheckBox(day_name)
+        self.days[day_id] = "available" if available else "unavailable"
+        day.setChecked(available)
+        day.checkStateChanged.connect(partial(self.remove_add_day, day_id))
+        self.setCellWidget(row, 0, day)

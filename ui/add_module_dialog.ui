@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>400</height>
+    <width>536</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,31 +132,61 @@ QWidget#container {
           <height>30</height>
          </size>
         </property>
-        <widget class="QPushButton" name="close_btn">
-         <property name="geometry">
-          <rect>
-           <x>260</x>
-           <y>0</y>
-           <width>33</width>
-           <height>30</height>
-          </rect>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
          </property>
-         <property name="focusPolicy">
-          <enum>Qt::FocusPolicy::NoFocus</enum>
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string/>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-         <property name="icon">
-          <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+         <property name="rightMargin">
+          <number>0</number>
          </property>
-         <property name="iconSize">
-          <size>
-           <width>10</width>
-           <height>10</height>
-          </size>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>501</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="close_btn">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::FocusPolicy::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>10</width>
+             <height>10</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
@@ -179,6 +209,12 @@ QWidget#container {
          </property>
          <item>
           <widget class="QLabel" name="label">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -213,208 +249,266 @@ QWidget#container {
            <property name="frameShadow">
             <enum>QFrame::Shadow::Plain</enum>
            </property>
-           <widget class="QLineEdit" name="module_name">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>30</y>
-              <width>231</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Module name</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="module_code">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>80</y>
-              <width>121</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Module code</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="module_lecturer">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>130</y>
-              <width>181</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="placeholderText">
-             <string>Lecturer</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="slots_per_cycle">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>210</y>
-              <width>101</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="slots_per_day">
-            <property name="geometry">
-             <rect>
-              <x>140</x>
-              <y>210</y>
-              <width>111</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-           </widget>
-           <widget class="QLabel" name="title">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>180</y>
-              <width>101</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Sessions Per Cycle</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="title_2">
-            <property name="geometry">
-             <rect>
-              <x>140</x>
-              <y>180</y>
-              <width>121</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Max Sessions Per Day</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="module_save">
-            <property name="geometry">
-             <rect>
-              <x>190</x>
-              <y>280</y>
-              <width>81</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">padding: 5px;
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QFrame" name="frame_2">
+              <property name="minimumSize">
+               <size>
+                <width>250</width>
+                <height>315</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Shape::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Shadow::Raised</enum>
+              </property>
+              <widget class="QSpinBox" name="session_length">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>270</y>
+                 <width>101</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+              </widget>
+              <widget class="QLabel" name="title">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>170</y>
+                 <width>101</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(129, 129, 129);</string>
+               </property>
+               <property name="text">
+                <string>Sessions Per Cycle</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="module_name">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>20</y>
+                 <width>231</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="placeholderText">
+                <string>Module name</string>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="module_lecturer">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>120</y>
+                 <width>181</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="placeholderText">
+                <string>Lecturer</string>
+               </property>
+              </widget>
+              <widget class="QLabel" name="title_3">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>240</y>
+                 <width>141</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(129, 129, 129);</string>
+               </property>
+               <property name="text">
+                <string>Session length (In periods)</string>
+               </property>
+              </widget>
+              <widget class="QLabel" name="title_2">
+               <property name="geometry">
+                <rect>
+                 <x>120</x>
+                 <y>170</y>
+                 <width>121</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(129, 129, 129);</string>
+               </property>
+               <property name="text">
+                <string>Max Sessions Per Day</string>
+               </property>
+              </widget>
+              <widget class="QSpinBox" name="slots_per_day">
+               <property name="geometry">
+                <rect>
+                 <x>120</x>
+                 <y>200</y>
+                 <width>111</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="module_save">
+               <property name="geometry">
+                <rect>
+                 <x>170</x>
+                 <y>270</y>
+                 <width>81</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">padding: 5px;
 background: #57954F;
 color: #F3F4F6;
 border-radius: 3px;</string>
-            </property>
-            <property name="text">
-             <string>Save</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="title_3">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>250</y>
-              <width>141</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(129, 129, 129);</string>
-            </property>
-            <property name="text">
-             <string>Session length (In periods)</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="session_length">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>280</y>
-              <width>101</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-           </widget>
+               </property>
+               <property name="text">
+                <string>Save</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="module_code">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>70</y>
+                 <width>121</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="placeholderText">
+                <string>Module code</string>
+               </property>
+              </widget>
+              <widget class="QSpinBox" name="slots_per_cycle">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>200</y>
+                 <width>101</width>
+                 <height>30</height>
+                </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QFrame" name="frame_3">
+              <property name="frameShape">
+               <enum>QFrame::Shape::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Shadow::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <widget class="QTableWidget" name="tableWidget">
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>230</number>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>Locked Slots</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="frame_4">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -425,14 +519,6 @@ border-radius: 3px;</string>
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>module_save</tabstop>
-  <tabstop>module_code</tabstop>
-  <tabstop>module_lecturer</tabstop>
-  <tabstop>slots_per_cycle</tabstop>
-  <tabstop>slots_per_day</tabstop>
-  <tabstop>module_name</tabstop>
- </tabstops>
  <resources>
   <include location="../assets/icons.qrc"/>
  </resources>

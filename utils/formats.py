@@ -115,6 +115,6 @@ class Formats:
 
     @staticmethod
     def format_venue_tertiary(name: str, capacity: int, special: str, location: list,
-                              location_description: str):
+                              location_description: str, available_days: list):
         return {"name": name, "capacity": capacity, "special": special, "location": location,
-                "location_description": location_description}
+                "location_description": location_description, "available_days": available_days}

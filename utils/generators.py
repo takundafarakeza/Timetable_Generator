@@ -431,14 +431,16 @@ class TertiarySchool(QObject):
                 for d in days:
                     for s in range(self.time_table_data.slots_per_day - duration + 1):
                         for v in m[Types.VENUES]:
-                            start[m_id, d, s, v] = model.NewBoolVar(f"start_{m_id}_{d}_{s}_{v}")
+                            if str(d + 1) in venues[v][Types.AVAILABLE_DAYS]:
+                                start[m_id, d, s, v] = model.NewBoolVar(f"start_{m_id}_{d}_{s}_{v}")
 
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:
                 for d in days:
                     for s in slots:
                         for v in m[Types.VENUES]:
-                            x[m_id, d, s, v] = model.NewBoolVar(f"x_{m_id}_{d}_{s}_{v}")
+                            if str(d + 1) in venues[v][Types.AVAILABLE_DAYS]:
+                                x[m_id, d, s, v] = model.NewBoolVar(f"x_{m_id}_{d}_{s}_{v}")
 
         for m_id, m in modules.items():
 
@@ -483,10 +485,18 @@ class TertiarySchool(QObject):
             if m_id not in skip_list and len(m[Types.COURSES]) > 0:
                 max_per_day = m[Types.SLOTS_PER_DAY]
                 for d in days:
-                    model.Add(sum(
-                        x[m_id, d, s, v] for s in range(self.time_table_data.slots_per_day - m[Types.DURATION] + 1)
-                        for v in m[Types.VENUES] if (m_id, d, s, v) in start
-                    ) <= max_per_day)
+                    model.Add(
+                        sum(
+                            start[m_id, d, s, v]
+                            for s in range(
+                                self.time_table_data.slots_per_day
+                                - m[Types.DURATION]
+                                + 1
+                            )
+                            for v in m[Types.VENUES]
+                            if (m_id, d, s, v) in start
+                        ) <= max_per_day
+                    )
 
         for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.COURSES]) > 0:
@@ -540,11 +550,12 @@ class TertiarySchool(QObject):
                     for d in days:
                         for s in slots:
                             for v in m[Types.VENUES]:
-                                if solver.Value(x[m_id, d, s, v]):
-                                    courses = []
-                                    for c_ in m[Types.COURSES]:
-                                        courses.append(f"{c_}-{m[Types.COURSES][c_][Types.LEVEL]}")
-                                    time_table[f"{d + 1}"][f"{s + 1}"][m_id] = {Types.VENUE: v, Types.COURSES: courses}
+                                if (m_id, d, s, v) in x:
+                                    if solver.Value(x[m_id, d, s, v]):
+                                        courses = []
+                                        for c_ in m[Types.COURSES]:
+                                            courses.append(f"{c_}-{m[Types.COURSES][c_][Types.LEVEL]}")
+                                        time_table[f"{d + 1}"][f"{s + 1}"][m_id] = {Types.VENUE: v, Types.COURSES: courses}
             report = self.generation_messages[status]
             if len(un_scheduled) > 0:
                 report += f"\nSome modules were not scheduled and the following are the reasons:\n\n{un_scheduled}"
