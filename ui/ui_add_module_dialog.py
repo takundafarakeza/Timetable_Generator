@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_dialogVYcqOl.ui'
+## Form generated from reading UI file 'add_module_dialogFysbQN.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -16,16 +16,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QFrame,
-    QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QSpacerItem, QSpinBox, QVBoxLayout,
-    QWidget)
+    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QSpacerItem, QSpinBox,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 import icons_rc
 
 class Ui_AddModule(object):
     def setupUi(self, AddModule):
         if not AddModule.objectName():
             AddModule.setObjectName(u"AddModule")
-        AddModule.resize(276, 403)
+        AddModule.resize(538, 401)
         AddModule.setStyleSheet(u"* {\n"
 "	background: transparent;\n"
 "	border: none;\n"
@@ -119,7 +119,7 @@ class Ui_AddModule(object):
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.horizontalSpacer = QSpacerItem(241, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer = QSpacerItem(503, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
@@ -223,6 +223,69 @@ class Ui_AddModule(object):
 
         self.horizontalLayout.addWidget(self.frame_2)
 
+        self.lock_frame = QFrame(self.frame)
+        self.lock_frame.setObjectName(u"lock_frame")
+        self.lock_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.lock_frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_4 = QVBoxLayout(self.lock_frame)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.locked_slots_table = QTableWidget(self.lock_frame)
+        if (self.locked_slots_table.columnCount() < 1):
+            self.locked_slots_table.setColumnCount(1)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.locked_slots_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.locked_slots_table.setObjectName(u"locked_slots_table")
+        self.locked_slots_table.horizontalHeader().setDefaultSectionSize(230)
+
+        self.verticalLayout_4.addWidget(self.locked_slots_table)
+
+        self.frame_4 = QFrame(self.lock_frame)
+        self.frame_4.setObjectName(u"frame_4")
+        self.frame_4.setMinimumSize(QSize(0, 100))
+        self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
+        self.module_lock_btn = QPushButton(self.frame_4)
+        self.module_lock_btn.setObjectName(u"module_lock_btn")
+        self.module_lock_btn.setGeometry(QRect(210, 60, 30, 30))
+        self.module_lock_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.module_lock_btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.module_lock_btn.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.module_lock_btn.setStyleSheet(u"padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;")
+        icon1 = QIcon()
+        icon1.addFile(u":/icons/icons/plus.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.module_lock_btn.setIcon(icon1)
+        self.module_lock_btn.setIconSize(QSize(14, 14))
+        self.module_lock_slot_select = QComboBox(self.frame_4)
+        self.module_lock_slot_select.setObjectName(u"module_lock_slot_select")
+        self.module_lock_slot_select.setGeometry(QRect(0, 60, 201, 30))
+        self.module_lock_slot_select.setMinimumSize(QSize(0, 30))
+        self.module_lock_slot_select.setEditable(False)
+        self.module_lock_day_select = QComboBox(self.frame_4)
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.setObjectName(u"module_lock_day_select")
+        self.module_lock_day_select.setGeometry(QRect(0, 20, 201, 30))
+        self.module_lock_day_select.setEditable(False)
+        self.max_locks_txt = QLabel(self.frame_4)
+        self.max_locks_txt.setObjectName(u"max_locks_txt")
+        self.max_locks_txt.setGeometry(QRect(0, 0, 161, 16))
+
+        self.verticalLayout_4.addWidget(self.frame_4)
+
+
+        self.horizontalLayout.addWidget(self.lock_frame)
+
 
         self.verticalLayout_3.addWidget(self.frame)
 
@@ -238,6 +301,7 @@ class Ui_AddModule(object):
         QWidget.setTabOrder(self.slots_per_cycle, self.slots_per_day)
         QWidget.setTabOrder(self.slots_per_day, self.session_length)
         QWidget.setTabOrder(self.session_length, self.module_lecturer)
+        QWidget.setTabOrder(self.module_lecturer, self.locked_slots_table)
 
         self.retranslateUi(AddModule)
 
@@ -255,5 +319,23 @@ class Ui_AddModule(object):
         self.title_2.setText(QCoreApplication.translate("AddModule", u"Max Sessions Per Day", None))
         self.module_save.setText(QCoreApplication.translate("AddModule", u"Save", None))
         self.module_code.setPlaceholderText(QCoreApplication.translate("AddModule", u"Module code", None))
+        ___qtablewidgetitem = self.locked_slots_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("AddModule", u"Locked Slots", None));
+        self.module_lock_btn.setText("")
+        self.module_lock_slot_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Slot", None))
+        self.module_lock_day_select.setItemText(0, QCoreApplication.translate("AddModule", u"1.1", None))
+        self.module_lock_day_select.setItemText(1, QCoreApplication.translate("AddModule", u"1.2", None))
+        self.module_lock_day_select.setItemText(2, QCoreApplication.translate("AddModule", u"2.1", None))
+        self.module_lock_day_select.setItemText(3, QCoreApplication.translate("AddModule", u"2.2", None))
+        self.module_lock_day_select.setItemText(4, QCoreApplication.translate("AddModule", u"3.1", None))
+        self.module_lock_day_select.setItemText(5, QCoreApplication.translate("AddModule", u"3.2", None))
+        self.module_lock_day_select.setItemText(6, QCoreApplication.translate("AddModule", u"4.1", None))
+        self.module_lock_day_select.setItemText(7, QCoreApplication.translate("AddModule", u"4.2", None))
+        self.module_lock_day_select.setItemText(8, QCoreApplication.translate("AddModule", u"5.1", None))
+        self.module_lock_day_select.setItemText(9, QCoreApplication.translate("AddModule", u"5.2", None))
+
+        self.module_lock_day_select.setCurrentText("")
+        self.module_lock_day_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Day", None))
+        self.max_locks_txt.setText(QCoreApplication.translate("AddModule", u"Max locks:", None))
     # retranslateUi
 
