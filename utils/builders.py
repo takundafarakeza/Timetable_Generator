@@ -110,7 +110,8 @@ class PrimaryBuilder(QObject):
         self._time_table_data[Types.CLASSES] = {}
         self._time_table_data[Types.SUBJECTS] = {}
         self._time_table_data[Types.VENUES] = {"unavailable": {"name": "Unavailable", "location": [0, 0],
-                                                               "location_description": "Unavailable"}}
+                                                               "location_description": "Unavailable",
+                                                               "available_days": []}}
         self._time_table_data[Types.SEQUENCE] = {
             Types.CLASSES: 0,
             Types.SUBJECTS: 0,
@@ -1355,10 +1356,17 @@ class TertiaryBuilder(QObject):
         self._time_table_data[Types.MODULES] = {}
         self._time_table_data[Types.VENUES] = {"unavailable": {"name": "Unavailable", "capacity": 0, "special": "Yes",
                                                                "location": [0, 0],
-                                                               "location_description": "Unavailable"}}
+                                                               "location_description": "Unavailable",
+                                                               "available_days": []}}
         self._time_table_data[Types.LECTURERS] = {"unavailable": {"name": "Unavailable"}}
         self._time_table_data[Types.CAPACITIES] = {}
         self._time_table_data[Types.TIMETABLE] = self.timetable_init_timetable()
+
+        for time_slot in range(data.slots_per_day):
+            self._time_table_data[Types.SLOTS][str(f"{time_slot + 1}")] = f"Slot {time_slot + 1}"
+
+        for day in range(data.days_per_cycle):
+            self._time_table_data[Types.DAYS][str(f"{day + 1}")] = f"Day {day + 1}"
 
     def timetable_init_timetable(self):
         try:
@@ -1515,6 +1523,14 @@ class TertiaryBuilder(QObject):
 
     def timetable_name_day(self, day_number: str, day_name: str):
         self._time_table_data[Types.DAYS][str(day_number)] = day_name
+        self.set_unsaved()
+
+    def timetable_set_slots(self, slots: dict):
+        self._time_table_data[Types.SLOTS] = slots
+        self.set_unsaved()
+
+    def timetable_set_days(self, days: dict):
+        self._time_table_data[Types.DAYS] = days
         self.set_unsaved()
 
     def timetable_slots(self):
@@ -1759,13 +1775,17 @@ class TertiaryBuilder(QObject):
 
     def venue_get_all(self):
         venues_data = self._time_table_data[Types.VENUES]
-        venues = [VenueTertiary(venue, venues_data[venue]["name"],
-                                venues_data[venue]["capacity"],
-                                venues_data[venue]["special"],
-                                venues_data[venue]["location"],
-                                venues_data[venue]["location_description"],
-                                venues_data[venue][Types.AVAILABLE_DAYS])
-                  for venue in venues_data]
+        venues = []
+        for venue in venues_data:
+            if "available_days" not in venues_data[venue].keys():
+                venues_data[venue]["available_days"] = []
+            venue = VenueTertiary(venue, venues_data[venue]["name"],
+                                  venues_data[venue]["capacity"],
+                                  venues_data[venue]["special"],
+                                  venues_data[venue]["location"],
+                                  venues_data[venue]["location_description"],
+                                  venues_data[venue][Types.AVAILABLE_DAYS])
+            venues.append(venue)
         return venues
 
     def venue_get(self, venue_id: str):

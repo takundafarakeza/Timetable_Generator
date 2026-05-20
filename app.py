@@ -188,6 +188,7 @@ class AppWindow(Main):
         self.set_generated(True)
         self.set_saved(True)
         self.settings_btn.hide()
+        self.ui.name_start_time_txt.setDisplayFormat("HH:mm")
 
         self._init_signals()
 
@@ -684,10 +685,12 @@ class AppWindow(Main):
 
     def timetable_change_slots_per_day(self):
         self.builder.timetable_change_header(Types.SLOTS_PER_DAY, self.ui.cfg_daily_slots.value())
+        self.name_slots_and_days()
         self.populate_slots()
 
     def timetable_change_days_per_cycle(self):
         self.builder.timetable_change_header(Types.DAYS_PER_CYCLE, self.ui.cfg_days_per_cycle.value())
+        self.name_slots_and_days()
         self.populate_days()
 
     def add_slot_table_item(self, slot_id, slot_name):
@@ -723,15 +726,20 @@ class AppWindow(Main):
         self.builder.timetable_name_day(day_id, day_name)
 
     def name_slots_and_days(self):
-        start_time = self.ui.name_start_time_txt.text()
+        start_time = self.ui.name_start_time_txt.time().toString("HH:mm")
         slot_names = Utils.generate_slot_names(start_time, self.builder.timetable_get_time_slot_length(),
                                                self.builder.timetable_get_slots_per_day())
         day_names = Utils.generate_day_names(self.builder.timetable_get_days_per_cycle())
+        slots = {}
+        days = {}
+
         for slot_id, slot_name in enumerate(slot_names):
-            self.change_slot_name(slot_id + 1, slot_name)
+            slots[str(slot_id + 1)] = slot_name
+        self.builder.timetable_set_slots(slots)
 
         for day_id, day_name in enumerate(day_names):
-            self.change_day_name(day_id + 1, day_name)
+            days[str(day_id + 1)] = day_name
+        self.builder.timetable_set_days(days)
 
         self.populate_slots_days()
 

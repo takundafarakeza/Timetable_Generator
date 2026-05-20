@@ -116,6 +116,7 @@ class AddModuleWindow(QDialog):
         self.module_slots_per_cycle.setMaximum(self.timetable_days_per_cycle *
                                                self.timetable_slots_per_day)
         self.module_slots_per_day.setMaximum(self.timetable_slots_per_day)
+        self.module_duration.setMaximum(self.timetable_slots_per_day)
 
     def update_values(self):
         slots = self.module_slots_per_cycle.value()
@@ -133,9 +134,14 @@ class AddModuleWindow(QDialog):
 
     def validate(self):
         return (self.module_name.text() and self.module_code.text()
-                and self.module_lecturer.currentText() != "Lecturer")
+                and self.module_lecturer.currentText() != "Lecturer"
+                and self.module_lecturer.currentData())
 
     def save(self):
+        if not self.module_lecturer.currentData():
+            MessageBox(self).warning("Incomplete Input", "Please select a valid lecturer!")
+            return
+
         if self.validate():
             if not self.edit:
                 self.builder.add_module(self.module_name.text(), self.module_code.text(),
@@ -1380,8 +1386,12 @@ class AddTertiaryVenueWindow(QDialog):
         super().close()
 
     def populate_days(self):
+        timetable_days = self.builder.timetable_days()
+        if len(timetable_days) <= 0:
+            MessageBox(self).warning(self, "Please name the days and slots first!")
+            self.close()
+
         if not self.edit:
-            timetable_days = self.builder.timetable_days()
             for day in range(1, self.builder.timetable_get_days_per_cycle() + 1):
                 day = str(day)
                 if day in timetable_days:
@@ -1390,8 +1400,6 @@ class AddTertiaryVenueWindow(QDialog):
                     self.day_check_table.add_item(day, timetable_days[day])
         else:
             venue_days = self.builder.venue_get(self.venue_id).available_days
-            timetable_days = self.builder.timetable_days()
-
             for day in range(1, self.builder.timetable_get_days_per_cycle() + 1):
                 day = str(day)
 
