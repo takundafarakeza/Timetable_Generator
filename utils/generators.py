@@ -435,6 +435,20 @@ class TertiarySchool(QObject):
                                 start[m_id, d, s, v] = model.NewBoolVar(f"start_{m_id}_{d}_{s}_{v}")
 
         for m_id, m in modules.items():
+            if (len(m[Types.FIXED_SESSIONS]) > 0 and m_id not in skip_list and
+                    len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0):
+                for fixed_session in m[Types.FIXED_SESSIONS]:
+                    d = int(fixed_session["day"]) - 1
+                    s = int(fixed_session["slot"]) - 1
+                    model.Add(
+                        sum(
+                            start[m_id, d, s, v]
+                            for v in m[Types.VENUES]
+                            if (m_id, d, s, v) in start
+                        ) == 1
+                    )
+
+        for m_id, m in modules.items():
             if m_id not in skip_list and len(m[Types.VENUES]) > 0 and len(m[Types.COURSES]) > 0:
                 for d in days:
                     for s in slots:

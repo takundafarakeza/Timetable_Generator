@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_module_data_dialogMhCcfU.ui'
+## Form generated from reading UI file 'add_module_data_dialognTyZjO.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -25,7 +25,7 @@ class Ui_AddModule(object):
     def setupUi(self, AddModule):
         if not AddModule.objectName():
             AddModule.setObjectName(u"AddModule")
-        AddModule.resize(695, 506)
+        AddModule.resize(917, 506)
         AddModule.setStyleSheet(u"* {\n"
 "	background: transparent;\n"
 "	border: none;\n"
@@ -161,7 +161,7 @@ class Ui_AddModule(object):
         self.frame.setFrameShadow(QFrame.Shadow.Plain)
         self.module_save = QPushButton(self.frame)
         self.module_save.setObjectName(u"module_save")
-        self.module_save.setGeometry(QRect(590, 380, 81, 30))
+        self.module_save.setGeometry(QRect(810, 390, 81, 30))
         self.module_save.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.module_save.setStyleSheet(u"padding: 5px;\n"
 "background: #57954F;\n"
@@ -183,7 +183,7 @@ class Ui_AddModule(object):
         self.module_add_course_btn.setIconSize(QSize(14, 14))
         self.module_venue_select = QComboBox(self.frame)
         self.module_venue_select.setObjectName(u"module_venue_select")
-        self.module_venue_select.setGeometry(QRect(370, 320, 251, 30))
+        self.module_venue_select.setGeometry(QRect(330, 320, 251, 30))
         self.module_venue_select.setMinimumSize(QSize(0, 30))
         self.module_venue_select.setEditable(True)
         self.module_venues_table = QTableWidget(self.frame)
@@ -192,7 +192,7 @@ class Ui_AddModule(object):
         __qtablewidgetitem = QTableWidgetItem()
         self.module_venues_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
         self.module_venues_table.setObjectName(u"module_venues_table")
-        self.module_venues_table.setGeometry(QRect(370, 30, 301, 261))
+        self.module_venues_table.setGeometry(QRect(330, 30, 301, 261))
         self.module_venues_table.horizontalHeader().setDefaultSectionSize(260)
         self.module_courses_table = QTableWidget(self.frame)
         if (self.module_courses_table.columnCount() < 1):
@@ -204,7 +204,7 @@ class Ui_AddModule(object):
         self.module_courses_table.horizontalHeader().setDefaultSectionSize(260)
         self.module_add_venue_btn = QPushButton(self.frame)
         self.module_add_venue_btn.setObjectName(u"module_add_venue_btn")
-        self.module_add_venue_btn.setGeometry(QRect(640, 320, 30, 30))
+        self.module_add_venue_btn.setGeometry(QRect(600, 320, 30, 30))
         self.module_add_venue_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.module_add_venue_btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.module_add_venue_btn.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
@@ -239,6 +239,62 @@ class Ui_AddModule(object):
         self.module_course_module_code = QLineEdit(self.frame)
         self.module_course_module_code.setObjectName(u"module_course_module_code")
         self.module_course_module_code.setGeometry(QRect(30, 240, 281, 30))
+        self.lock_frame = QFrame(self.frame)
+        self.lock_frame.setObjectName(u"lock_frame")
+        self.lock_frame.setGeometry(QRect(640, 20, 261, 351))
+        self.lock_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.lock_frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_4 = QVBoxLayout(self.lock_frame)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.locked_slots_table = QTableWidget(self.lock_frame)
+        if (self.locked_slots_table.columnCount() < 1):
+            self.locked_slots_table.setColumnCount(1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.locked_slots_table.setHorizontalHeaderItem(0, __qtablewidgetitem2)
+        self.locked_slots_table.setObjectName(u"locked_slots_table")
+        self.locked_slots_table.horizontalHeader().setDefaultSectionSize(230)
+
+        self.verticalLayout_4.addWidget(self.locked_slots_table)
+
+        self.frame_4 = QFrame(self.lock_frame)
+        self.frame_4.setObjectName(u"frame_4")
+        self.frame_4.setMinimumSize(QSize(0, 100))
+        self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
+        self.module_add_lock_btn = QPushButton(self.frame_4)
+        self.module_add_lock_btn.setObjectName(u"module_add_lock_btn")
+        self.module_add_lock_btn.setGeometry(QRect(210, 60, 30, 30))
+        self.module_add_lock_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.module_add_lock_btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.module_add_lock_btn.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.module_add_lock_btn.setStyleSheet(u"padding: 5px;\n"
+"background: #2F69B2;\n"
+"color: #F3F4F6;\n"
+"border-radius: 3px;")
+        self.module_add_lock_btn.setIcon(icon1)
+        self.module_add_lock_btn.setIconSize(QSize(14, 14))
+        self.module_lock_slot_select = QComboBox(self.frame_4)
+        self.module_lock_slot_select.setObjectName(u"module_lock_slot_select")
+        self.module_lock_slot_select.setGeometry(QRect(0, 60, 201, 30))
+        self.module_lock_slot_select.setMinimumSize(QSize(0, 30))
+        self.module_lock_slot_select.setEditable(False)
+        self.module_lock_day_select = QComboBox(self.frame_4)
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.addItem("")
+        self.module_lock_day_select.setObjectName(u"module_lock_day_select")
+        self.module_lock_day_select.setGeometry(QRect(0, 20, 201, 30))
+        self.module_lock_day_select.setEditable(False)
+
+        self.verticalLayout_4.addWidget(self.frame_4)
+
 
         self.verticalLayout_3.addWidget(self.frame)
 
@@ -283,5 +339,22 @@ class Ui_AddModule(object):
         self.module_name.setText(QCoreApplication.translate("AddModule", u"Module name", None))
         self.module_course_module_code.setText("")
         self.module_course_module_code.setPlaceholderText(QCoreApplication.translate("AddModule", u"Program custom module code (Optional)", None))
+        ___qtablewidgetitem2 = self.locked_slots_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("AddModule", u"Locked Slots", None));
+        self.module_add_lock_btn.setText("")
+        self.module_lock_slot_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Slot", None))
+        self.module_lock_day_select.setItemText(0, QCoreApplication.translate("AddModule", u"1.1", None))
+        self.module_lock_day_select.setItemText(1, QCoreApplication.translate("AddModule", u"1.2", None))
+        self.module_lock_day_select.setItemText(2, QCoreApplication.translate("AddModule", u"2.1", None))
+        self.module_lock_day_select.setItemText(3, QCoreApplication.translate("AddModule", u"2.2", None))
+        self.module_lock_day_select.setItemText(4, QCoreApplication.translate("AddModule", u"3.1", None))
+        self.module_lock_day_select.setItemText(5, QCoreApplication.translate("AddModule", u"3.2", None))
+        self.module_lock_day_select.setItemText(6, QCoreApplication.translate("AddModule", u"4.1", None))
+        self.module_lock_day_select.setItemText(7, QCoreApplication.translate("AddModule", u"4.2", None))
+        self.module_lock_day_select.setItemText(8, QCoreApplication.translate("AddModule", u"5.1", None))
+        self.module_lock_day_select.setItemText(9, QCoreApplication.translate("AddModule", u"5.2", None))
+
+        self.module_lock_day_select.setCurrentText("")
+        self.module_lock_day_select.setPlaceholderText(QCoreApplication.translate("AddModule", u"Day", None))
     # retranslateUi
 

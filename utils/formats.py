@@ -43,11 +43,16 @@ class Formats:
     @staticmethod
     def format_module(name: str, code: str, lecturer: str,
                       courses: dict, venues: list,
-                      time_slots: int, slots_per_day: int, duration: int):
+                      time_slots: int, slots_per_day: int, duration: int,
+                      fixed_sessions: list):
         return {"name": name, "code": code, "lecturer": lecturer,
                 "courses": courses, "venues": venues,
                 "time_slots": time_slots, "slots_per_day": slots_per_day,
-                "duration": duration}
+                "duration": duration, "fixed_sessions": fixed_sessions}
+
+    @staticmethod
+    def format_static_session(day, slot):
+        return {"day": day, "slot": slot}
 
     @staticmethod
     def format_patch_primary(class_name: str, venue: str,

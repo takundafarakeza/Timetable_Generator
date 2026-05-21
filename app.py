@@ -1374,7 +1374,8 @@ class AppWindow(Main):
 
                             self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
                                                     venues_list, modules[m][Types.TIME_SLOTS],
-                                                    modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
+                                                    modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION],
+                                                    modules[m][Types.FIXED_SESSIONS])
 
                     else:
                         lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
@@ -1398,7 +1399,8 @@ class AppWindow(Main):
 
                         self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
                                                 venues_list, modules[m][Types.TIME_SLOTS],
-                                                modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
+                                                modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION],
+                                                modules[m][Types.FIXED_SESSIONS])
                 self.modules_populate()
                 MessageBox(self).information("Success", "Modules imported successfully.")
             else:
@@ -1534,8 +1536,16 @@ class AppWindow(Main):
                 MessageBox(self).warning("Nothing found", "No enrollments were found in this file.")
 
     def datas_merge(self):
+
         file_path, _ = QFileDialog.getOpenFileName(self, "Select the tbl project file",
                                                    "", "Timetable (*tbl)")
+
+        confirmation = Confirmation.confirm(self, "Warning",
+                                            f"This is a very dangerous process which may result in data damage. "
+                                            f"We advise keeping the original file backed up before merging. Continue?")
+        if not confirmation[1]:
+            return
+
         loading_dialog = LoadingDialog(self)
         loading_dialog.show()
         app.processEvents()
@@ -1691,7 +1701,8 @@ class AppWindow(Main):
 
                                 self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
                                                         venues_list, modules[m][Types.TIME_SLOTS],
-                                                        modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
+                                                        modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION],
+                                                        modules[m][Types.FIXED_SESSIONS])
 
                         else:
                             lecturer_name = timetable_data[Types.LECTURERS][modules[m][Types.LECTURER]][Types.NAME]
@@ -1715,7 +1726,8 @@ class AppWindow(Main):
 
                             self.builder.add_module(name, modules[m][Types.CODE], lecturer, courses_list,
                                                     venues_list, modules[m][Types.TIME_SLOTS],
-                                                    modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION])
+                                                    modules[m][Types.SLOTS_PER_DAY], modules[m][Types.DURATION],
+                                                    modules[m][Types.FIXED_SESSIONS])
 
                 self.modules_populate()
                 self.lecturers_populate()

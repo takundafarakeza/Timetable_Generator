@@ -147,7 +147,7 @@ class AddModuleWindow(QDialog):
                 self.builder.add_module(self.module_name.text(), self.module_code.text(),
                                         self.module_lecturer.currentData(), {}, [],
                                         self.module_slots_per_cycle.value(), self.module_slots_per_day.value(),
-                                        self.module_duration.value())
+                                        self.module_duration.value(), [])
             else:
                 self.builder.module_update(self.module_id, self.module_name.text(), self.module_code.text(),
                                            self.module_lecturer.currentData(), self.module_slots_per_cycle.value(),
@@ -184,6 +184,10 @@ class AddModuleDataWindow(QDialog):
         self.module_venues_table = self.ui.module_venues_table
         self.module_venue_select = self.ui.module_venue_select
         self.module_venue_add_btn = self.ui.module_add_venue_btn
+        self.module_locks_table = self.ui.locked_slots_table
+        self.module_lock_day_select = self.ui.module_lock_day_select
+        self.module_lock_slot_select = self.ui.module_lock_slot_select
+        self.module_lock_add_btn = self.ui.module_add_lock_btn
 
         self.module_course_level.lineEdit().setPlaceholderText("Level")
         self.module_course_level.lineEdit().setValidator(QDoubleValidator())
@@ -193,13 +197,18 @@ class AddModuleDataWindow(QDialog):
         self.ui.close_btn.clicked.connect(self.save)
         self.ui.module_add_course_btn.clicked.connect(self.add_course)
         self.ui.module_add_venue_btn.clicked.connect(self.add_venue)
+        self.module_lock_add_btn.clicked.connect(self.add_lock)
         self.module_courses_table.setShowGrid(False)
         self.module_venues_table.setShowGrid(False)
+        self.module_locks_table.setShowGrid(False)
 
         self.venues_populate()
         self.venues_select_populate()
         self.courses_populate()
         self.courses_select_populate()
+        self.locks_populate()
+        self.locks_select_populate()
+        self.locks_populate()
 
     def clear(self):
         self.module_course_level.clear()
@@ -236,6 +245,27 @@ class AddModuleDataWindow(QDialog):
                 self.venues_select_populate()
             else:
                 MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def add_lock(self):
+        day = self.module_lock_day_select.currentData()
+        slot = self.module_lock_slot_select.currentData()
+
+        if not isinstance(day, int):
+            MessageBox(self).warning("Invalid day", "Please select a valid day!")
+            return
+
+        if not isinstance(slot, int):
+            MessageBox(self).warning("Invalid slot", "Please select a valid slot!")
+            return
+
+        added, report = self.builder.module_add_fixed_session(self.module_id, day, slot)
+
+        if added:
+            self.locks_populate()
+            self.locks_select_populate()
+            return
+        else:
+            MessageBox(self).critical("Error", report)
 
     def add_course(self):
 
@@ -306,6 +336,35 @@ class AddModuleDataWindow(QDialog):
             item.remove_btn.clicked.connect(remove_func)
             self.module_venues_table.setCellWidget(row, 0, item)
 
+    def locks_populate(self):
+        locks = self.builder.module_get_fixed_sessions(self.module_id)
+        self.module_locks_table.clearContents()
+        self.module_locks_table.setRowCount(0)
+
+        for idx, lock in enumerate(locks):
+            row = self.module_locks_table.rowCount()
+            self.module_locks_table.insertRow(row)
+            self.module_locks_table.setRowHeight(row, 50)
+            item = RemovableTableItem()
+            item.set_header(f"Day: {lock['day']}")
+            item.set_text(f"Slot: {lock['slot']}")
+            remove_func = partial(self.delete_lock, self.module_id, idx)
+            item.remove_btn.clicked.connect(remove_func)
+            self.module_locks_table.setCellWidget(row, 0, item)
+
+    def locks_select_populate(self):
+        self.module_lock_day_select.clear()
+        self.module_lock_slot_select.clear()
+
+        days = range(self.builder.timetable_get_days_per_cycle())
+        slots = range(self.builder.timetable_get_slots_per_day())
+
+        for day in days:
+            self.module_lock_day_select.addItem(f"Day {day + 1}", day + 1)
+
+        for slot in slots:
+            self.module_lock_slot_select.addItem(f"Slot {slot + 1}", slot + 1)
+
     def courses_populate(self):
         courses = self.builder.module_get(self.module_id).courses
         courses = [(self.builder.course_get(course), courses[course][Types.LEVEL]) for course in courses]
@@ -327,6 +386,17 @@ class AddModuleDataWindow(QDialog):
         try:
             self.builder.module_remove_venue(module_id, venue_id)
             self.venues_populate()
+        except Exception as e:
+            logger.critical(str(e))
+            MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")
+
+    def delete_lock(self, module_id, idx):
+        try:
+            removed, report = self.builder.module_remove_fixed_session(module_id, idx)
+            if not removed:
+                MessageBox(self).warning("Error", report)
+                return
+            self.locks_populate()
         except Exception as e:
             logger.critical(str(e))
             MessageBox(self).critical("Error", "This is embarrassing! An unexpected error occurred.")

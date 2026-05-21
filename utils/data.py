@@ -53,6 +53,7 @@ class Module:
     time_slots: int
     slots_per_day: int
     duration: int
+    fixed_session: list
 
 
 @dataclass

@@ -89,3 +89,10 @@ def derive_key(salt: bytes) -> bytes:
     return kdf.derive("90$9{|BOs~}!BZY".encode("utf-8"))
 
 
+# loader = FileLoader(r"C:\Users\TAKUNDA\AppData\Roaming\Timetable_Generator\timetables\First_Semester_Midlands_State_University.tbl")
+# data = loader.load_tbl()
+#
+# for mid, module in data["modules"].items():
+#     module["fixed_sessions"] = []
+#
+# loader.save_file(data)

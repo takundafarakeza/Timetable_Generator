@@ -8,8 +8,10 @@ from .data import (Class, Venue, VenueTertiary, Subject, Teacher, Lecturer, Cour
 from widgets import DeficitConfirm
 from .generators import PrimarySchool, SecondarySchool, TertiarySchool
 from widgets import GenerationDialog, MessageBox
+from collections import defaultdict
 from .loader import FileLoader
 import json
+import copy
 
 
 class PrimaryBuilder(QObject):
@@ -1403,9 +1405,10 @@ class TertiaryBuilder(QObject):
                                       self._time_table_data[Types.MODULES][module_id][Types.LECTURER],
                                       self._time_table_data[Types.MODULES][module_id][Types.COURSES],
                                       self._time_table_data[Types.MODULES][module_id][Types.VENUES],
-                                      self._time_table_data[Types.MODULES][module_id]["time_slots"],
-                                      self._time_table_data[Types.MODULES][module_id]["slots_per_day"],
-                                      self._time_table_data[Types.MODULES][module_id][Types.DURATION])
+                                      self._time_table_data[Types.MODULES][module_id][Types.TIME_SLOTS],
+                                      self._time_table_data[Types.MODULES][module_id][Types.SLOTS_PER_DAY],
+                                      self._time_table_data[Types.MODULES][module_id][Types.DURATION],
+                                      self._time_table_data[Types.MODULES][module_id][Types.FIXED_SESSIONS])
         self._patches[module_id] = patch
 
     def timetable_remove_patch(self, module_id):
@@ -1800,10 +1803,11 @@ class TertiaryBuilder(QObject):
     # ======================================== MODULES =================================== #
 
     def add_module(self, name: str, code: str, lecturer: str, courses: dict, venues: list,
-                   time_slots: int, slots_per_day: int, duration: int):
+                   time_slots: int, slots_per_day: int, duration: int, fixed_sessions: list):
         module_id = str(self._time_table_data[Types.SEQUENCE][Types.MODULES] + 1)
         self._time_table_data[Types.MODULES][module_id] = (
-            Formats.format_module(name, code, lecturer, courses, venues, time_slots, slots_per_day, duration)
+            Formats.format_module(name, code, lecturer, courses, venues,
+                                  time_slots, slots_per_day, duration, fixed_sessions)
         )
         self._time_table_data[Types.SEQUENCE][Types.MODULES] = int(module_id)
         self.set_unsaved()
@@ -1929,7 +1933,8 @@ class TertiaryBuilder(QObject):
                           modules_data[module][Types.VENUES],
                           modules_data[module][Types.TIME_SLOTS],
                           modules_data[module][Types.SLOTS_PER_DAY],
-                          modules_data[module][Types.DURATION])
+                          modules_data[module][Types.DURATION],
+                          modules_data[module][Types.FIXED_SESSIONS])
                    for module in modules_data]
         return modules
 
@@ -1942,7 +1947,8 @@ class TertiaryBuilder(QObject):
                       module_data[Types.VENUES],
                       module_data[Types.TIME_SLOTS],
                       module_data[Types.SLOTS_PER_DAY],
-                      module_data[Types.DURATION])
+                      module_data[Types.DURATION],
+                      module_data[Types.FIXED_SESSIONS])
 
     def module_get_by_code(self, module_code: str):
         modules_data = self._time_table_data[Types.MODULES]
@@ -1955,7 +1961,8 @@ class TertiaryBuilder(QObject):
                               modules_data[module][Types.VENUES],
                               modules_data[module][Types.TIME_SLOTS],
                               modules_data[module][Types.SLOTS_PER_DAY],
-                              modules_data[module][Types.DURATION])
+                              modules_data[module][Types.DURATION],
+                              modules_data[module][Types.FIXED_SESSIONS])
 
     def module_count(self):
         return len(self._time_table_data[Types.MODULES])
@@ -2011,3 +2018,353 @@ class TertiaryBuilder(QObject):
 
     def lecturer_count(self):
         return len(self._time_table_data[Types.LECTURERS]) - 1
+
+    # SESSION LOCK MANAGEMENT
+
+    # =========================
+    # FIXED SESSION HELPERS
+    # =========================
+
+    @staticmethod
+    def _normalize_fixed_session(fixed_session):
+        if isinstance(fixed_session, dict):
+            return int(fixed_session["day"]), int(fixed_session["slot"])
+
+        if isinstance(fixed_session, (tuple, list)) and len(fixed_session) >= 2:
+            return int(fixed_session[0]), int(fixed_session[1])
+
+        raise ValueError(f"Invalid fixed session format: {fixed_session!r}")
+
+    @staticmethod
+    def _occupied_slots(start_slot: int, duration: int):
+        return list(range(start_slot, start_slot + duration))
+
+    @staticmethod
+    def _intervals_overlap(a_slots, b_slots) -> bool:
+        return not (a_slots[-1] < b_slots[0] or b_slots[-1] < a_slots[0])
+
+    def _module_demand(self, module_id: str) -> int:
+        module = self._time_table_data[Types.MODULES][module_id]
+        capacities = self._time_table_data[Types.CAPACITIES]
+
+        total = 0
+        for c_id in module[Types.COURSES]:
+            level = module[Types.COURSES][c_id][Types.LEVEL]
+            total += int(capacities[c_id][level][Types.CAPACITY])
+        return total
+
+    def _candidate_venues_for_module_day(self, module_id: str, day: int):
+
+        module = self._time_table_data[Types.MODULES][module_id]
+        venues = self._time_table_data[Types.VENUES]
+        demand = self._module_demand(module_id)
+
+        if len(module[Types.VENUES]) > 0:
+            candidate_ids = list(module[Types.VENUES])
+        else:
+            candidate_ids = [
+                v_id for v_id, v in venues.items()
+                if v_id != "unavailable" and v.get(Types.SPECIAL, "No") == "No"
+            ]
+
+        filtered = []
+        for v_id in candidate_ids:
+            if v_id not in venues:
+                continue
+
+            v = venues[v_id]
+
+            available_days = v.get(Types.AVAILABLE_DAYS, [])
+            if len(available_days) > 0 and str(day) not in available_days:
+                continue
+
+            if int(v[Types.CAPACITY]) < demand:
+                continue
+
+            filtered.append(v_id)
+
+        return filtered
+
+    # =========================
+    # FIXED SESSION CRUD
+    # =========================
+
+    def module_get_fixed_sessions(self, module_id):
+        module = self._time_table_data[Types.MODULES][module_id]
+        return list(module.get(Types.FIXED_SESSIONS, []))
+
+    def module_add_fixed_session(self, module_id, day, slot):
+        try:
+            module = self._time_table_data[Types.MODULES][module_id]
+            module.setdefault(Types.FIXED_SESSIONS, [])
+
+            backup = copy.deepcopy(module[Types.FIXED_SESSIONS])
+
+            module[Types.FIXED_SESSIONS].append(
+                Formats.format_static_session(day, slot)
+            )
+
+            ok, report = self.validate_all_fixed_sessions()
+            if not ok:
+                module[Types.FIXED_SESSIONS] = backup
+                return False, report
+
+            self.set_unsaved()
+            self.set_not_generated()
+            return True, ""
+
+        except Exception as e:
+            logger.warning(str(e))
+            return False, str(e)
+
+    def module_remove_fixed_session(self, module_id, index):
+        try:
+            module = self._time_table_data[Types.MODULES][module_id]
+            sessions = module.get(Types.FIXED_SESSIONS, [])
+
+            if index < 0 or index >= len(sessions):
+                return False, "Invalid fixed session index."
+
+            backup = copy.deepcopy(sessions)
+            del sessions[index]
+
+            ok, report = self.validate_all_fixed_sessions()
+            if not ok:
+                module[Types.FIXED_SESSIONS] = backup
+                return False, report
+
+            self.set_unsaved()
+            self.set_not_generated()
+            return True, ""
+
+        except Exception as e:
+            logger.warning(str(e))
+            return False, str(e)
+
+    def module_update_fixed_session(self, module_id, index, day, slot):
+        try:
+            module = self._time_table_data[Types.MODULES][module_id]
+            sessions = module.get(Types.FIXED_SESSIONS, [])
+
+            if index < 0 or index >= len(sessions):
+                return False, "Invalid fixed session index."
+
+            backup = copy.deepcopy(sessions)
+            sessions[index] = Formats.format_static_session(day, slot)
+
+            ok, report = self.validate_all_fixed_sessions()
+            if not ok:
+                module[Types.FIXED_SESSIONS] = backup
+                return False, report
+
+            self.set_unsaved()
+            self.set_not_generated()
+            return True, ""
+
+        except Exception as e:
+            logger.warning(str(e))
+            return False, str(e)
+
+    # =========================
+    # FULL VALIDATION
+    # =========================
+
+    def validate_all_fixed_sessions(self):
+        errors = []
+
+        modules = self._time_table_data.get(Types.MODULES, {})
+        venues = self._time_table_data.get(Types.VENUES, {})
+
+        days_per_cycle = int(self._time_table_data[Types.DAYS_PER_CYCLE])
+        slots_per_day = int(self._time_table_data[Types.SLOTS_PER_DAY])
+
+        lecturer_usage = {}
+        course_usage = {}
+
+        # Keep per-day session data for venue feasibility
+        sessions_by_day = defaultdict(list)
+
+        for m_id, m in modules.items():
+            fixed_sessions = list(m.get(Types.FIXED_SESSIONS, []))
+
+            if len(m.get(Types.COURSES, {})) == 0:
+                if len(fixed_sessions) > 0:
+                    errors.append(f"{m[Types.NAME]} has fixed sessions but no courses assigned.")
+                continue
+
+            lecturer = m.get(Types.LECTURER, "")
+            if not lecturer or lecturer == Types.UNAVAILABLE:
+                if len(fixed_sessions) > 0:
+                    errors.append(f"{m[Types.NAME]} has fixed sessions but no lecturer assigned.")
+                continue
+
+            duration = int(m[Types.DURATION])
+            max_per_day = int(m[Types.SLOTS_PER_DAY])
+            total_required = int(m[Types.TIME_SLOTS])
+
+            if len(fixed_sessions) > total_required:
+                errors.append(
+                    f"{m[Types.NAME]} has {len(fixed_sessions)} fixed sessions, "
+                    f"but only {total_required} sessions per cycle are allowed."
+                )
+
+            daily_counter = defaultdict(int)
+            own_ranges_by_day = defaultdict(list)
+
+            for idx, fs in enumerate(fixed_sessions):
+                try:
+                    day, slot = self._normalize_fixed_session(fs)
+                except Exception as e:
+                    errors.append(f"{m[Types.NAME]} fixed session {idx + 1}: {str(e)}")
+                    continue
+
+                if day < 1 or day > days_per_cycle:
+                    errors.append(f"{m[Types.NAME]} fixed session {idx + 1}: invalid day {day}.")
+                    continue
+
+                if slot < 1 or slot > slots_per_day:
+                    errors.append(f"{m[Types.NAME]} fixed session {idx + 1}: invalid slot {slot}.")
+                    continue
+
+                end_slot = slot + duration - 1
+                if end_slot > slots_per_day:
+                    errors.append(
+                        f"{m[Types.NAME]} fixed session {idx + 1}: duration {duration} "
+                        f"does not fit from slot {slot}."
+                    )
+                    continue
+
+                occupied = self._occupied_slots(slot, duration)
+
+                # Self-overlap check
+                for existing in own_ranges_by_day[day]:
+                    if self._intervals_overlap(existing, occupied):
+                        errors.append(
+                            f"{m[Types.NAME]} has overlapping fixed sessions on day {day}."
+                        )
+                        break
+                own_ranges_by_day[day].append(occupied)
+
+                # Per-day limit
+                daily_counter[day] += 1
+                if daily_counter[day] > max_per_day:
+                    errors.append(
+                        f"{m[Types.NAME]} exceeds max sessions per day on day {day} "
+                        f"({daily_counter[day]} > {max_per_day})."
+                    )
+
+                # Venue candidates for this module/day
+                candidate_venues = self._candidate_venues_for_module_day(m_id, day)
+                if len(candidate_venues) == 0:
+                    errors.append(
+                        f"{m[Types.NAME]} has no valid venue on day {day}."
+                    )
+
+                sessions_by_day[day].append({
+                    "module_id": m_id,
+                    "module_name": m[Types.NAME],
+                    "day": day,
+                    "slot": slot,
+                    "duration": duration,
+                    "occupied_slots": occupied,
+                    "lecturer": lecturer,
+                    "courses": m[Types.COURSES],
+                    "candidate_venues": candidate_venues,
+                    "demand": self._module_demand(m_id),
+                })
+
+                # Lecturer clash check
+                for s in occupied:
+                    key = (lecturer, day, s)
+                    if key in lecturer_usage:
+                        other = lecturer_usage[key]
+                        errors.append(
+                            f"Lecturer clash: {m[Types.NAME]} conflicts with "
+                            f"{other['module_name']} on day {day}, slot {s}."
+                        )
+                    else:
+                        lecturer_usage[key] = {
+                            "module_id": m_id,
+                            "module_name": m[Types.NAME],
+                        }
+
+                # Course clash check
+                for c_id, c_data in m[Types.COURSES].items():
+                    level = c_data[Types.LEVEL]
+                    for s in occupied:
+                        key = (c_id, level, day, s)
+                        if key in course_usage:
+                            other = course_usage[key]
+                            errors.append(
+                                f"Course clash: {m[Types.NAME]} conflicts with "
+                                f"{other['module_name']} for course {self.course_get(c_id).name} - {level} "
+                                f"on day {day}, slot {s}."
+                            )
+                        else:
+                            course_usage[key] = {
+                                "module_id": m_id,
+                                "module_name": m[Types.NAME],
+                            }
+
+        # Venue feasibility per day:
+        # try to assign each locked session to a valid venue without overlaps
+        for day, day_sessions in sessions_by_day.items():
+            if len(day_sessions) == 0:
+                continue
+
+            # fail fast if any session has no venue candidate
+            for info in day_sessions:
+                if len(info["candidate_venues"]) == 0:
+                    errors.append(
+                        f"No available venue for {info['module_name']} on day {day}."
+                    )
+
+            # Backtracking venue assignment for the day
+            day_sessions = sorted(day_sessions, key=lambda x: len(x["candidate_venues"]))
+            venue_usage = defaultdict(list)
+
+            def can_place(session_info, venue_id):
+                for other in venue_usage[venue_id]:
+                    if self._intervals_overlap(session_info["occupied_slots"], other["occupied_slots"]):
+                        return False
+                return True
+
+            def backtrack(i):
+                if i == len(day_sessions):
+                    return True
+
+                session_info = day_sessions[i]
+                seen_venues = set()
+
+                for venue_id in session_info["candidate_venues"]:
+                    if venue_id in seen_venues:
+                        continue
+                    seen_venues.add(venue_id)
+
+                    if venue_id not in venues:
+                        continue
+
+                    if can_place(session_info, venue_id):
+                        venue_usage[venue_id].append(session_info)
+                        if backtrack(i + 1):
+                            return True
+                        venue_usage[venue_id].pop()
+
+                return False
+
+            if not backtrack(0):
+                errors.append(
+                    f"Venue feasibility failed on day {day}: the locked sessions "
+                    f"cannot be assigned to the allowed venues."
+                )
+
+        if errors:
+            unique_errors = []
+            seen = set()
+            for e in errors:
+                if e not in seen:
+                    unique_errors.append(e)
+                    seen.add(e)
+            return False, "\n".join(unique_errors)
+
+        return True, ""
